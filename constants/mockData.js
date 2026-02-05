@@ -8,20 +8,18 @@ export const initialFamilyData = [
     deathYear: "1975",
     bio: "Khởi tổ dòng họ, khai hoang lập ấp tại vùng đất phía Nam.",
     parents: [],
-    partners: ["2"],
+    // Danh sách các phu nhân được gom vào đây
+    wives: [
+      {
+        id: "2",
+        name: "Lê Thị Tổ",
+        birthYear: "1905",
+        deathYear: "1980",
+        bio: "Mẫu nghi chính thất, thục đức vẹn toàn.",
+      },
+    ],
   },
-  {
-    id: "2",
-    name: "Lê Thị Tổ",
-    gender: "female",
-    birthYear: "1905",
-    deathYear: "1980",
-    bio: "Mẫu nghi chính thất, thục đức vẹn toàn, Phúc hậu, đoan trang. ",
-    parents: [],
-    partners: ["1"],
-  },
-
-  // THẾ HỆ 2: Các con của Khởi tổ
+  // THẾ HỆ 2
   {
     id: "3",
     name: "Nguyễn Văn Trưởng",
@@ -29,18 +27,23 @@ export const initialFamilyData = [
     birthYear: "1925",
     deathYear: "1990",
     bio: "Trưởng tộc đời thứ 2, Lương y nổi tiếng vùng kinh kỳ.",
-    parents: ["1", "2"],
-    partners: ["4"],
-  },
-  {
-    id: "4",
-    name: "Trần Thị Dâu",
-    gender: "female",
-    birthYear: "1928",
-    deathYear: "1995",
-    bio: "Phụ giúp chồng bốc thuốc cứu người.",
-    parents: [],
-    partners: ["3"],
+    parents: ["1"], // Nối trực tiếp từ mã ID của cha
+    wives: [
+      {
+        id: "4",
+        name: "Trần Thị Dâu",
+        birthYear: "1928",
+        deathYear: "1995",
+        bio: "Phụ giúp chồng bốc thuốc cứu người.",
+      },
+      {
+        id: "4",
+        name: "Trần Thị Dâu 2",
+        birthYear: "1928",
+        deathYear: "1995",
+        bio: "Phụ giúp chồng bốc thuốc cứu người.",
+      },
+    ],
   },
   {
     id: "5",
@@ -49,75 +52,97 @@ export const initialFamilyData = [
     birthYear: "1928",
     deathYear: "2000",
     bio: "Kiến trúc sư tài ba.",
-    parents: ["1", "2"],
-    partners: ["6"],
+    parents: ["1"],
+    wives: [
+      {
+        id: "6",
+        name: "Nguyễn Thị Thứ",
+        birthYear: "1930",
+        deathYear: "2005",
+        bio: "Định cư tại nước ngoài.",
+      },
+    ],
   },
-  {
-    id: "6",
-    name: "Nguyễn Thị Thứ",
-    gender: "female",
-    birthYear: "1930",
-    deathYear: "2005",
-    bio: "Định cư tại nước ngoài, luôn hướng về cội nguồn.",
-    parents: [],
-    partners: ["5"],
-  },
-
-  // THẾ HỆ 3: Các cháu nội/ngoại
+  // THẾ HỆ 3
   {
     id: "7",
-    name: "Nguyễn Văn Cháu Đích Tôn",
+    name: "Nguyễn Đích Tôn",
     gender: "male",
     birthYear: "1955",
     bio: "Giáo sư sử học, đương kim Trưởng tộc.",
-    parents: ["3", "4"],
-    partners: ["8"],
-  },
-  {
-    id: "8",
-    name: "Phạm Thị Hiền",
-    gender: "female",
-    birthYear: "1960",
-    bio: "Giáo viên ưu tú.",
-    parents: [],
-    partners: ["7"],
+    parents: ["3"],
+    wives: [
+      {
+        id: "8",
+        name: "Phạm Thị Hiền",
+        birthYear: "1960",
+        bio: "Giáo viên ưu tú.",
+      },
+    ],
   },
   {
     id: "9",
     name: "Nguyễn Văn Cháu Thứ",
     gender: "male",
     birthYear: "1962",
-    bio: "Doanh nhân thành đạt.",
-    parents: ["3", "4"],
-    partners: [],
+    parents: ["3"],
   },
   {
     id: "10",
     name: "Lê Thị Cháu Ngoại",
-    gender: "female",
+    gender: "female", // Node nữ đơn lẻ (nếu có)
     birthYear: "1958",
-    bio: "Nghệ nhân thêu thùa truyền thống.",
-    parents: ["5", "6"],
-    partners: [],
+    parents: ["5"],
   },
-
-  // THẾ HỆ 4: Các chắt
+  // THẾ HỆ 4
   {
     id: "11",
     name: "Nguyễn Văn Chắt Trai",
     gender: "male",
     birthYear: "1985",
     bio: "Kỹ sư phần mềm (Người tạo ra bản số hóa này).",
-    parents: ["7", "8"],
-    partners: [],
+    parents: ["7"],
   },
   {
     id: "12",
     name: "Nguyễn Thị Chắt Gái",
     gender: "female",
     birthYear: "1990",
-    bio: "Thạc sĩ kinh tế.",
-    parents: ["7", "8"],
-    partners: [],
+    parents: ["7"],
+  },
+  {
+    id: "20",
+    name: "Nguyễn Thị Chắt Gái 2",
+    gender: "female",
+    birthYear: "1990",
+    parents: ["7"],
+  },
+  {
+    id: "21",
+    name: "Nguyễn Thị Chắt Gái 3",
+    gender: "female",
+    birthYear: "1990",
+    parents: ["7"],
+  },
+  {
+    id: "22",
+    name: "Nguyễn Thị Chắt Gái 4",
+    gender: "female",
+    birthYear: "1990",
+    parents: ["7"],
+  },
+  {
+    id: "23",
+    name: "Lê Thị Chắt Gái 3",
+    gender: "female",
+    birthYear: "1990",
+    parents: ["10"],
+  },
+  {
+    id: "24",
+    name: "Lê Thị Chắt Gái 4",
+    gender: "female",
+    birthYear: "1990",
+    parents: ["10"],
   },
 ];

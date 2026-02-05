@@ -1,126 +1,105 @@
-import React from "react";
+import React, { useState } from "react";
 import { Handle, Position } from "reactflow";
+
+const NodeCard = ({ data, person, subTitle, isMain }) => (
+  <div
+    onClick={(e) => {
+      e.stopPropagation();
+      data.onNodeClick(null, { id: person.id });
+    }}
+    className={`min-w-[220px] p-5 shadow-2xl transition-all border-2 rounded-sm cursor-pointer
+        ${
+          person.gender === "male"
+            ? "bg-[#f2e2ba] border-[#8b5a2b]/30 hover:border-[#5d3a1a]"
+            : "bg-[#fdf5e6] border-[#d4a373]/30 hover:border-[#8b5a2b]"
+        } 
+        ${isMain ? "scale-100" : "scale-100 opacity-90"}`}
+  >
+    <div className="flex flex-col items-center font-serif text-[#3d2611]">
+      <div className="text-[9px] uppercase tracking-[0.2em] mb-1 opacity-60">
+        {subTitle}
+      </div>
+      <div className="text-lg font-bold border-b border-[#8b5a2b]/40 pb-1 w-full text-center tracking-tight uppercase">
+        {person.name || person.label}
+      </div>
+      <div className="mt-2 flex items-center justify-center h-[32px]">
+        <div className="text-[10px] italic text-[#5d3a1a]/80 text-center leading-[16px] max-w-[180px] line-clamp-2 overflow-hidden">
+          {person.bio}
+        </div>
+      </div>
+      <div className="text-[10px] mt-2 opacity-70 font-mono">
+        {person.birthYear || "????"} — {person.deathYear || "..."}
+      </div>
+    </div>
+  </div>
+);
 
 export default function PersonNode({ data }) {
   const isMale = data.gender === "male";
 
   return (
-    <div
-      className={`group relative min-w-[220px] p-5 shadow-2xl transition-all border-2
-      /* Hiệu ứng Giấy da */
-      bg-[#f2e2ba] border-[#8b5a2b]/30 rounded-sm
-      hover:border-[#5d3a1a] hover:-translate-y-1`}
-    >
-      {/* Nút thao tác nhanh - Thêm lớp 'pb-4' hoặc 'pt-12' để tạo vùng đệm */}
-      <div className="absolute -top-12 left-0 right-0 hidden group-hover:flex justify-center gap-2 z-[9999] pb-4">
-        {/* Giải thích: 
-      - Căn left-0 right-0 và justify-center để vùng hover rộng bằng cả Node.
-      - pb-4 (padding bottom) đóng vai trò là "cây cầu" vô hình kết nối Node và nút.
-  */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            data.onAddSpouse(data.id);
-          }}
-          className="bg-[#5d3a1a] text-[#f2e2ba] text-[10px] px-3 py-1.5 font-serif border border-[#3d2611] shadow-xl whitespace-nowrap cursor-pointer hover:bg-black transition-all"
-          style={{ pointerEvents: "all" }}
-        >
-          + THÊM VỢ
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            data.onAddChild(data.id);
-          }}
-          className="bg-[#8b5a2b] text-[#f2e2ba] text-[10px] px-3 py-1.5 font-serif border border-[#5d3a1a] shadow-xl whitespace-nowrap cursor-pointer hover:bg-black transition-all"
-          style={{ pointerEvents: "all" }}
-        >
-          + THÊM CON
-        </button>
-      </div>
+    <div className="relative flex flex-row items-start">
+      {/* Handle Top nằm ở giữa Node chính */}
+      {data.id != 1 && (
+        <Handle
+          type="target"
+          position={Position.Top}
+          // Căn chỉnh Handle luôn nằm giữa 220px của Node đầu tiên
+          style={{ left: "110px" }}
+          className="!bg-[#5d3a1a] !w-3 !h-1 !rounded-none !border-none"
+        />
+      )}
 
-      {/* 1. Điểm kết nối TRÊN (Nhận từ Cha/Mẹ) */}
-      <Handle
-        type="target"
-        position={Position.Top}
-        className="!bg-[#5d3a1a] !w-3 !h-1 !rounded-none !border-none"
-      />
+      <div className="flex flex-row items-center">
+        <div className="group relative">
+          <NodeCard
+            data={data}
+            person={data}
+            subTitle={isMale ? "Tiên Tổ (Nam)" : "Nội Tộc (Nữ)"}
+            isMain={true}
+          />
 
-      <div className="flex flex-col items-center font-serif text-[#3d2611]">
-        <div className="text-[9px] uppercase tracking-[0.2em] mb-1 opacity-60">
-          {isMale ? "Tiên Tổ (Nam)" : "Mẫu Nghi (Nữ)"}
-        </div>
-
-        <div className="text-lg font-bold border-b border-[#8b5a2b]/40 pb-1 w-full text-center tracking-tight">
-          {data.label}
-        </div>
-
-        {/* Tiểu sử (Bio) có thêm dấu ngoặc kép */}
-        {/* {data.bio && (
-          <div className="mt-2 text-[10px] italic text-[#5d3a1a]/80 text-center leading-relaxed max-w-[180px] line-clamp-3">
-            {data.bio}
-          </div>
-        )} */}
-
-        {data.bio && (
-          <div className="mt-2 flex items-center justify-center h-[32px]">
-            {" "}
-            {/* Cố định chiều cao cho 2 dòng */}
-            <div
-              className="text-[10px] italic text-[#5d3a1a]/80 text-center leading-[16px] max-w-[180px]"
-              style={{
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
+          {/* NÚT TOGGLE: Đặt tuyệt đối so với Node chính */}
+          {data.hasChildren && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                data.onToggleCollapse(data.id);
               }}
+              // bottom-[-12px] để đè lên Handle đáy, left: 110px để đúng tâm Node chính
+              className="absolute bottom-[-12px] left-[110px] -translate-x-1/2 w-6 h-6 bg-[#5d3a1a] text-white rounded-full border-2 border-[#f2e2ba] flex items-center justify-center text-xs shadow-md z-[110] hover:scale-110 font-bold transition-transform cursor-pointer"
             >
-              {data.bio}
-            </div>
+              {data.isCollapsed ? "+" : "-"}
+            </button>
+          )}
+        </div>
+
+        {/* Danh sách vợ */}
+        {data.wives && data.wives.length > 0 && (
+          <div className="flex flex-row items-center animate-in fade-in slide-in-from-left-5 duration-300">
+            {data.wives.map((wife, index) => (
+              <div key={index} className="flex flex-row items-center">
+                <div className="w-2 border-t-2 border-dashed border-[#8b5a2b]/40"></div>
+                <div className="relative">
+                  <NodeCard
+                    data={data}
+                    person={wife}
+                    subTitle={isMale ? `Vợ ${index + 1}` : `Phu Quân`}
+                    isMain={false}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         )}
-
-        <div className="text-[10px] mt-2 opacity-70 font-mono">
-          {data.birthYear || "????"} — {data.deathYear || "..."}
-        </div>
       </div>
 
-      {/* 2. Điểm kết nối DƯỚI (Dẫn xuống Con) */}
+      {/* Handle Bottom luôn cố định ở tâm Node chính (110px) */}
       <Handle
         type="source"
         position={Position.Bottom}
+        style={{ left: "110px" }}
         className="!bg-[#5d3a1a] !w-3 !h-1 !rounded-none !border-none"
-      />
-
-      {/* Nút Thu gọn/Mở rộng nhánh */}
-      {data.gender === "male" && data.hasChildren && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            data.onToggleCollapse(data.id);
-          }}
-          title={data.isCollapsed ? "Mở rộng nhánh" : "Thu gọn nhánh"}
-          className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-[#5d3a1a] text-white rounded-full border-2 border-[#f2e2ba] flex items-center justify-center text-xs shadow-md cursor-pointer z-[110] hover:scale-110 transition-transform font-bold"
-        >
-          {data.isCollapsed ? "+" : "-"}
-        </button>
-      )}
-
-      {/* 3. Điểm kết nối TRÁI & PHẢI (Cho Vợ/Chồng) */}
-      <Handle
-        type="source"
-        position={Position.Left}
-        id="left"
-        // className="!opacity-0 !pointer-events-none"
-        style={{ top: "50%", background: "transparent", border: "none" }}
-      />
-      <Handle
-        type="source"
-        position={Position.Right}
-        id="right"
-        // className="!opacity-0 !pointer-events-none"
-        style={{ top: "50%", background: "transparent", border: "none" }}
       />
     </div>
   );

@@ -104,6 +104,7 @@ export default function FamilyTreePage() {
           hasChildren: familyData.some((child) =>
             child.parents?.includes(p.id),
           ),
+          wifeNumber: p.wives?.length || 0,
           onAddChild: (id) =>
             setModalState({ isOpen: true, type: "child", targetId: id }),
           onAddSpouse: (id) =>
