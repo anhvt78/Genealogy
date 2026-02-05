@@ -11,10 +11,12 @@ import DetailSidebar from "@/components/ui/DetailSidebar"; // Bạn cần tạo 
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getLayoutedElements } from "@/utils/layoutEngine";
 import { initialFamilyData } from "@/constants/mockData.js";
+import ClanTitleNode from "@/components/nodes/ClanTitleNode";
 
 // Đăng ký loại node tùy chỉnh
 const nodeTypes = {
   personNode: PersonNode,
+  clanTitle: ClanTitleNode,
 };
 
 export default function FamilyTreePage() {
@@ -65,22 +67,52 @@ export default function FamilyTreePage() {
     const visibleFamily = getVisibleData(familyData, collapsedIds);
 
     // Tạo Nodes
-    const rawNodes = visibleFamily.map((p) => ({
-      id: p.id,
-      type: "personNode",
-      data: {
-        ...p,
-        label: p.name,
-        isCollapsed: collapsedIds.includes(p.id),
-        hasChildren: familyData.some((child) => child.parents.includes(p.id)),
-        onAddChild: (id) =>
-          setModalState({ isOpen: true, type: "child", targetId: id }),
-        onAddSpouse: (id) =>
-          setModalState({ isOpen: true, type: "spouse", targetId: id }),
-        onToggleCollapse: toggleCollapse,
+    // const rawNodes = visibleFamily.map((p) => ({
+    //   id: p.id,
+    //   type: "personNode",
+    //   data: {
+    //     ...p,
+    //     label: p.name,
+    //     isCollapsed: collapsedIds.includes(p.id),
+    //     hasChildren: familyData.some((child) => child.parents.includes(p.id)),
+    //     onAddChild: (id) =>
+    //       setModalState({ isOpen: true, type: "child", targetId: id }),
+    //     onAddSpouse: (id) =>
+    //       setModalState({ isOpen: true, type: "spouse", targetId: id }),
+    //     onToggleCollapse: toggleCollapse,
+    //   },
+    //   position: { x: 0, y: 0 },
+    // }));
+
+    const rawNodes = [
+      {
+        id: "clan-header-top",
+        type: "clanTitle",
+        data: {
+          label: "NGUYỄN TỘC PHẢ ĐỒ",
+          subTitle: "Uống nước nhớ nguồn - Ăn quả nhớ kẻ trồng cây",
+        },
+        position: { x: 0, y: 0 },
       },
-      position: { x: 0, y: 0 },
-    }));
+      ...visibleFamily.map((p) => ({
+        id: p.id,
+        type: "personNode",
+        data: {
+          ...p,
+          label: p.name,
+          isCollapsed: collapsedIds.includes(p.id),
+          hasChildren: familyData.some((child) =>
+            child.parents?.includes(p.id),
+          ),
+          onAddChild: (id) =>
+            setModalState({ isOpen: true, type: "child", targetId: id }),
+          onAddSpouse: (id) =>
+            setModalState({ isOpen: true, type: "spouse", targetId: id }),
+          onToggleCollapse: toggleCollapse,
+        },
+        position: { x: 0, y: 0 },
+      })),
+    ];
 
     // Tạo Edges (Đường nối)
     const rawEdges = [];
@@ -141,7 +173,7 @@ export default function FamilyTreePage() {
       <div className="flex-grow relative">
         <header className="absolute top-8 left-8 z-20 pointer-events-none">
           {/* Tiêu đề căn giữa màn hình */}
-          <header className="absolute top-10 left-1/2 -translate-x-1/2 z-20 pointer-events-none text-center w-full">
+          {/* <header className="absolute top-10 left-1/2 -translate-x-1/2 z-20 pointer-events-none text-center w-full">
             <h1 className="text-4xl md:text-5xl font-bold text-[#3d2611] tracking-[0.2em] font-serif drop-shadow-sm uppercase">
               Tộc Phả Truyền Thống
             </h1>
@@ -149,7 +181,7 @@ export default function FamilyTreePage() {
             <p className="text-[10px] text-[#5d3a1a] mt-1 tracking-[0.4em] uppercase opacity-60">
               Ghi chép dòng tộc — Lưu danh thiên cổ
             </p>
-          </header>
+          </header> */}
           {/* <h1 className="text-4xl font-bold text-[#3d2611] tracking-tighter font-serif">
             TỘC PHẢ TRUYỀN THỐNG
           </h1> */}
@@ -160,7 +192,7 @@ export default function FamilyTreePage() {
             XUẤT ẢNH GIA PHẢ
           </button> */}
           {/* Nút Xuất Ảnh - Đưa xuống góc dưới bên phải */}
-          <button
+          {/* <button
             onClick={exportImage}
             className="fixed bottom-10 right-10 z-50 px-6 py-3 bg-[#5d3a1a] text-[#f2e2ba] text-sm font-bold shadow-[0_10px_25px_rgba(0,0,0,0.3)] border-2 border-[#3d2611] cursor-pointer hover:bg-[#3d2611] hover:-translate-y-1 active:scale-95 transition-all flex items-center gap-2"
           >
@@ -175,7 +207,7 @@ export default function FamilyTreePage() {
               <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
             </svg>
             XUẤT ẢNH GIA PHẢ
-          </button>
+          </button> */}
         </header>
 
         {/* <ReactFlow
@@ -220,6 +252,23 @@ export default function FamilyTreePage() {
           />
         </ReactFlow>
       </div>
+
+      <button
+        onClick={exportImage}
+        className="fixed bottom-10 right-10 z-50 px-6 py-3 bg-[#5d3a1a] text-[#f2e2ba] text-sm font-bold shadow-[0_10px_25px_rgba(0,0,0,0.3)] border-2 border-[#3d2611] cursor-pointer hover:bg-[#3d2611] hover:-translate-y-1 active:scale-95 transition-all flex items-center gap-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          viewBox="0 0 16 16"
+        >
+          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+          <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+        </svg>
+        XUẤT ẢNH GIA PHẢ
+      </button>
 
       {/* Sidebar chi tiết bên phải */}
       {selectedPerson && (

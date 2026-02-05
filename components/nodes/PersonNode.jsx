@@ -56,9 +56,28 @@ export default function PersonNode({ data }) {
         </div>
 
         {/* Tiểu sử (Bio) có thêm dấu ngoặc kép */}
-        {data.bio && (
+        {/* {data.bio && (
           <div className="mt-2 text-[10px] italic text-[#5d3a1a]/80 text-center leading-relaxed max-w-[180px] line-clamp-3">
             {data.bio}
+          </div>
+        )} */}
+
+        {data.bio && (
+          <div className="mt-2 flex items-center justify-center h-[32px]">
+            {" "}
+            {/* Cố định chiều cao cho 2 dòng */}
+            <div
+              className="text-[10px] italic text-[#5d3a1a]/80 text-center leading-[16px] max-w-[180px]"
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {data.bio}
+            </div>
           </div>
         )}
 

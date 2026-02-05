@@ -6,7 +6,7 @@ export const getLayoutedElements = (nodes, edges) => {
 
   dagreGraph.setGraph({
     rankdir: "TB",
-    nodesep: 280, // Khoảng cách ngang đủ rộng để kẹp người vợ vào giữa
+    nodesep: 280,
     ranksep: 150,
     marginx: 100,
     marginy: 100,
@@ -16,8 +16,11 @@ export const getLayoutedElements = (nodes, edges) => {
   nodes.forEach((node) => {
     const isWife =
       node.data.gender === "female" && node.data.partners?.length > 0;
-    if (!isWife) {
-      dagreGraph.setNode(node.id, { width: 220, height: 120 });
+    if (!isWife || node.type === "clanTitle") {
+      // Thiết lập kích thước ảo lớn cho Tiêu đề để Dagre đẩy các tầng dưới xuống xa hơn
+      const width = node.type === "clanTitle" ? 500 : 220;
+      const height = node.type === "clanTitle" ? 250 : 120;
+      dagreGraph.setNode(node.id, { width, height });
     }
   });
 
@@ -34,20 +37,43 @@ export const getLayoutedElements = (nodes, edges) => {
 
   dagre.layout(dagreGraph);
 
-  // 3. Gán tọa độ từ Dagre cho các nút chính
+  // 3. Tìm Node Khởi Tổ (Ông Tổ) để lấy mốc căn giữa tiêu đề
+  // Ông tổ là người không có parents và không phải là ClanTitle
+  const ancestorNode = nodes.find(
+    (n) =>
+      (!n.data.parents || n.data.parents.length === 0) &&
+      n.type !== "clanTitle",
+  );
+  const ancestorDagre = ancestorNode ? dagreGraph.node(ancestorNode.id) : null;
+
+  // 4. Gán tọa độ từ Dagre cho các nút chính
   const adjustedNodes = nodes.map((node) => {
     const dagreNode = dagreGraph.node(node.id);
-    if (dagreNode) {
+    const isWife =
+      node.data.gender === "female" && node.data.partners?.length > 0;
+
+    if (dagreNode && !isWife) {
+      // Nếu là Node tiêu đề và tìm thấy ông tổ, ép X theo ông tổ
+      if (node.type === "clanTitle" && ancestorDagre) {
+        return {
+          ...node,
+          position: {
+            x: ancestorDagre.x - 480, // 250 là nửa chiều rộng ClanTitle
+            y: 20, // Cố định Y trên cùng
+          },
+        };
+      }
+
+      // Với các node khác, lấy tọa độ từ Dagre
       return {
         ...node,
         position: { x: dagreNode.x - 110, y: dagreNode.y - 60 },
       };
     }
-    return { ...node, position: { x: 0, y: 0 } }; // Tạm thời cho vợ ở 0,0
+    return { ...node, position: { x: 0, y: 0 } };
   });
 
-  // 4. TỰ TAY ĐẶT NGƯỜI VỢ VÀO BÊN CẠNH CHỒNG
-  // Cách này giúp người vợ không làm ảnh hưởng đến vị trí của các con
+  // 5. ĐẶT NGƯỜI VỢ VÀO BÊN CẠNH CHỒNG
   adjustedNodes.forEach((node) => {
     if (node.data.gender === "female" && node.data.partners?.length > 0) {
       const husbandId = node.data.partners[0];
@@ -55,10 +81,22 @@ export const getLayoutedElements = (nodes, edges) => {
 
       if (husband) {
         node.position.y = husband.position.y;
-        node.position.x = husband.position.x + 260; // Luôn cách chồng 260px bên phải
+        node.position.x = husband.position.x + 260;
       }
     }
   });
 
-  return adjustedNodes;
+  // 6. Xử lý offset Y cuối cùng để chống chồng lấp tuyệt đối
+  return adjustedNodes.map((node) => {
+    if (node.type !== "clanTitle") {
+      return {
+        ...node,
+        position: {
+          ...node.position,
+          y: node.position.y + 120, // Đẩy toàn bộ cây xuống 120px so với tiêu đề
+        },
+      };
+    }
+    return node;
+  });
 };
