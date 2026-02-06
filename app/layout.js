@@ -1,4 +1,8 @@
+import ReduxProvider from "@/components/ReduxProvider";
 import "./globals.css";
+import { GenealogyProvider } from "@/context/GenealogyContext";
+
+// const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Gia Phả Tộc - Truyền Thống Việt",
@@ -8,7 +12,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="vi">
-      <body>{children}</body>
+      <body>
+        <ReduxProvider>
+          <GenealogyProvider>{children}</GenealogyProvider>
+        </ReduxProvider>
+      </body>
     </html>
   );
 }

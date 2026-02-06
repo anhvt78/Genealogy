@@ -41,18 +41,23 @@ export default function PersonNode({ data }) {
   return (
     <div className="relative flex flex-row items-start">
       {/* Handle Top nằm ở giữa Node chính */}
-      {data.id != 1 && (
-        <Handle
-          type="target"
-          position={Position.Top}
-          // Căn chỉnh Handle luôn nằm giữa 220px của Node đầu tiên
-          style={{ left: "110px" }}
-          className="!bg-[#5d3a1a] !w-3 !h-1 !rounded-none !border-none"
-        />
-      )}
 
       <div className="flex flex-row items-center">
         <div className="group relative">
+          {data.id != 1 && (
+            <Handle
+              type="target"
+              position={Position.Top}
+              // Căn chỉnh Handle luôn nằm giữa 220px của Node đầu tiên
+              style={{ left: "50%" }}
+              // style={{
+              //       left: "50%",
+              //       bottom: "0px",
+              //       transform: "translateX(-50%)",
+              //     }}
+              className="!bg-[#5d3a1a] !w-3 !h-1 !rounded-none !border-none"
+            />
+          )}
           <PersonCard
             // data={data}
             person={data}

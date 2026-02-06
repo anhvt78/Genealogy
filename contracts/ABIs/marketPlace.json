@@ -1,0 +1,1127 @@
+{
+    "abi":
+[
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "dao",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "supplier",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "arbitrator",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "rateContract",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventBuyerCanceled",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventConfirmDeliveryFailure",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventConfirmNotReceived",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "creator",
+				"type": "address"
+			}
+		],
+		"name": "EventCreateDispute",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventPurchaseAccepted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "seller",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "buyer",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "totalPrice",
+				"type": "uint256"
+			}
+		],
+		"name": "EventPurchaseCreated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventPurchaseNotReceived",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventPurchasePaid",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventPurchaseReceived",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventPurchaseShipFailure",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventPurchaseShipped",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventReleaseFunds",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventResolveDispute",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventSellerCanceled",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "EventSellerShipped",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "RateProduct",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "arbitratorAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "cancelReason",
+				"type": "bytes"
+			}
+		],
+		"name": "buyerCancel",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "refData",
+				"type": "bytes"
+			}
+		],
+		"name": "buyerNotReceived",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "buyerReceived",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "confirmDeliveryFailure",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "confirmNotReceived",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "createDispute",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "seller",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "saleIds",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "productItemIds",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "amounts",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "address",
+				"name": "shipperAssigner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "arbitrator",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "isPrepaid",
+				"type": "bool"
+			}
+		],
+		"name": "createPurchase",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "daoAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "arbitrator",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			}
+		],
+		"name": "getDisputePurchaseBatch",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "purchaseIds",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "purchaseIds",
+				"type": "uint256[]"
+			}
+		],
+		"name": "getPurchaseBatch",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "seller",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "buyer",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32[]",
+						"name": "saleIds",
+						"type": "bytes32[]"
+					},
+					{
+						"internalType": "bytes32[]",
+						"name": "productItemIds",
+						"type": "bytes32[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "amounts",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalPrice",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "disputeFee",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "marketFee",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Fees",
+						"name": "fees",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "shippedAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "shipFee",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "shippingTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "shipper",
+								"type": "address"
+							}
+						],
+						"internalType": "struct ShipInfo",
+						"name": "shipInfo",
+						"type": "tuple"
+					},
+					{
+						"internalType": "address",
+						"name": "shipperAssigner",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "arbitrator",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "disputedAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isDisputed",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint8",
+						"name": "status",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bool",
+						"name": "isPrepaid",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct PurchaseInfo[]",
+				"name": "purchaseInfos",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			}
+		],
+		"name": "getPurchaseCompletedCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "accountAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "getPurchaseCompletedIndex",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "addr",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "dataType",
+				"type": "bytes32"
+			}
+		],
+		"name": "getPurchaseCounterData",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "accountAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "index",
+				"type": "uint256"
+			}
+		],
+		"name": "getPurchaseIdCompleted",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "accountAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "index",
+				"type": "uint256"
+			}
+		],
+		"name": "getPurchaseIdPending",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "getPurchaseInfo",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "seller",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "buyer",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32[]",
+						"name": "saleIds",
+						"type": "bytes32[]"
+					},
+					{
+						"internalType": "bytes32[]",
+						"name": "productItemIds",
+						"type": "bytes32[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "amounts",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalPrice",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "disputeFee",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "marketFee",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Fees",
+						"name": "fees",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "shippedAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "shipFee",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "shippingTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "shipper",
+								"type": "address"
+							}
+						],
+						"internalType": "struct ShipInfo",
+						"name": "shipInfo",
+						"type": "tuple"
+					},
+					{
+						"internalType": "address",
+						"name": "shipperAssigner",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "arbitrator",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "disputedAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isDisputed",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint8",
+						"name": "status",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bool",
+						"name": "isPrepaid",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct PurchaseInfo",
+				"name": "purchaseInfo",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			}
+		],
+		"name": "getPurchasePendingCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "accountAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "getPurchasePendingIndex",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "getRatePermit",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "refDataId",
+				"type": "bytes32"
+			}
+		],
+		"name": "getRefData",
+		"outputs": [
+			{
+				"internalType": "bytes",
+				"name": "",
+				"type": "bytes"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "paymentPurchase",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "purchaseAccepted",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "purchaseCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "_value",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "refData",
+				"type": "bytes"
+			}
+		],
+		"name": "purchaseDelivered",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "refData",
+				"type": "bytes"
+			}
+		],
+		"name": "purchaseDeliveryFailure",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "shipValue",
+				"type": "bytes"
+			}
+		],
+		"name": "purchaseShipped",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "sellerPoint",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "productPoints",
+				"type": "uint256[]"
+			}
+		],
+		"name": "rate",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "rateAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			}
+		],
+		"name": "releaseFunds",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "winner",
+				"type": "address"
+			}
+		],
+		"name": "resolveDispute",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "saleAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "cancelReason",
+				"type": "bytes"
+			}
+		],
+		"name": "sellerCancel",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "supplierAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "purchaseId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "shipFee",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "shippingTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "shipper",
+				"type": "address"
+			}
+		],
+		"name": "updateShipInfo",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
+}

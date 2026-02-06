@@ -12,6 +12,8 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getLayoutedElements } from "@/utils/layoutEngine";
 import { initialFamilyData } from "@/constants/mockData.js";
 import ClanTitleNode from "@/components/nodes/ClanTitleNode";
+import { useSelector } from "react-redux";
+import { ConnectorModal } from "@/components/Modals/ConnectorModal";
 
 // Đăng ký loại node tùy chỉnh
 const nodeTypes = {
@@ -20,6 +22,7 @@ const nodeTypes = {
 };
 
 export default function FamilyTreePage() {
+  // const [mounted, setMounted] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [familyData, setFamilyData] = useLocalStorage(
     "family-tree-v1",
@@ -32,6 +35,12 @@ export default function FamilyTreePage() {
     type: null,
     targetId: null,
   });
+
+  const [isShowModalConnector, setIsShowModalConnector] = useState(true);
+
+  const userWalletAddress = useSelector(
+    (state) => state.genealogyReducer.walletAddress,
+  );
 
   // 1. Hàm xử lý Đóng/Mở nhánh
   const toggleCollapse = (id) => {
@@ -222,6 +231,12 @@ export default function FamilyTreePage() {
           }}
           type={modalState.type}
           targetId={modalState.targetId}
+        />
+      )}
+      {!userWalletAddress && (
+        <ConnectorModal
+          isShow={isShowModalConnector}
+          onHide={() => setIsShowModalConnector(false)}
         />
       )}
     </div>

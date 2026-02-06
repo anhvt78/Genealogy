@@ -7,7 +7,7 @@ export const getLayoutedElements = (nodes, edges) => {
   // Trong file layoutEngine.js, hãy chỉnh lại phần config Dagre:
   dagreGraph.setGraph({
     rankdir: "TB",
-    nodesep: 200, // Tăng lên từ 280 để có chỗ cho các bà vợ dàn ngang
+    nodesep: 220, // Tăng lên từ 280 để có chỗ cho các bà vợ dàn ngang
     ranksep: 100,
     marginx: 100,
     marginy: 100,
