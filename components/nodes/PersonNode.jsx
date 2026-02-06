@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Handle, Position } from "reactflow";
 
-const NodeCard = ({ data, person, subTitle, isMain }) => (
+const NodeCard = ({ person, subTitle, isMain, onNodeSelect }) => (
   <div
     onClick={(e) => {
       e.stopPropagation();
-      data.onNodeClick(null, { id: person.id });
+      if (onNodeSelect) onNodeSelect(person);
     }}
     className={`min-w-[220px] p-5 shadow-2xl transition-all border-2 rounded-sm cursor-pointer
         ${
@@ -53,10 +53,11 @@ export default function PersonNode({ data }) {
       <div className="flex flex-row items-center">
         <div className="group relative">
           <NodeCard
-            data={data}
+            // data={data}
             person={data}
             subTitle={isMale ? "Tiên Tổ (Nam)" : "Nội Tộc (Nữ)"}
             isMain={true}
+            onNodeSelect={data.onNodeClick}
           />
 
           {/* NÚT TOGGLE: Đặt tuyệt đối so với Node chính */}
@@ -67,10 +68,24 @@ export default function PersonNode({ data }) {
                 data.onToggleCollapse(data.id);
               }}
               // bottom-[-12px] để đè lên Handle đáy, left: 110px để đúng tâm Node chính
-              className="absolute bottom-[-12px] left-[110px] -translate-x-1/2 w-6 h-6 bg-[#5d3a1a] text-white rounded-full border-2 border-[#f2e2ba] flex items-center justify-center text-xs shadow-md z-[110] hover:scale-110 font-bold transition-transform cursor-pointer"
+              // className="absolute bottom-[-12px] left-[110px] -translate-x-1/2 w-8 h-8 bg-[#5d3a1a] text-white rounded-full border-2 border-[#f2e2ba] flex items-center justify-center text-xs shadow-md z-[110] hover:scale-110 font-bold transition-transform cursor-pointer"
+              className="absolute scale-80 bottom-[-16px] left-1/2 -translate-x-1/2 w-8 h-8 bg-[#5d3a1a] text-white rounded-full border-2 border-[#f2e2ba] flex items-center justify-center text-xs shadow-md z-[110] hover:scale-100 font-bold transition-transform cursor-pointer"
             >
               {data.isCollapsed ? "+" : "-"}
             </button>
+          )}
+          {data.hasChildren && (
+            <Handle
+              type="source"
+              position={Position.Bottom}
+              // style={{ left: "110px" }}
+              style={{
+                left: "50%",
+                bottom: "0px",
+                transform: "translateX(-50%)",
+              }}
+              className="!bg-[#5d3a1a] !w-3 !h-1 !rounded-none !border-none"
+            />
           )}
         </div>
 
@@ -86,6 +101,7 @@ export default function PersonNode({ data }) {
                     person={wife}
                     subTitle={isMale ? `Vợ ${index + 1}` : `Phu Quân`}
                     isMain={false}
+                    onNodeSelect={data.onNodeClick}
                   />
                 </div>
               </div>
@@ -95,12 +111,14 @@ export default function PersonNode({ data }) {
       </div>
 
       {/* Handle Bottom luôn cố định ở tâm Node chính (110px) */}
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        style={{ left: "110px" }}
-        className="!bg-[#5d3a1a] !w-3 !h-1 !rounded-none !border-none"
-      />
+      {/* {data.hasChildren && (
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          style={{ left: "110px" }}
+          className="!bg-[#5d3a1a] !w-3 !h-1 !rounded-none !border-none"
+        />
+      )} */}
     </div>
   );
 }

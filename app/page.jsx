@@ -66,24 +66,6 @@ export default function FamilyTreePage() {
   const { nodes, edges } = useMemo(() => {
     const visibleFamily = getVisibleData(familyData, collapsedIds);
 
-    // Tạo Nodes
-    // const rawNodes = visibleFamily.map((p) => ({
-    //   id: p.id,
-    //   type: "personNode",
-    //   data: {
-    //     ...p,
-    //     label: p.name,
-    //     isCollapsed: collapsedIds.includes(p.id),
-    //     hasChildren: familyData.some((child) => child.parents.includes(p.id)),
-    //     onAddChild: (id) =>
-    //       setModalState({ isOpen: true, type: "child", targetId: id }),
-    //     onAddSpouse: (id) =>
-    //       setModalState({ isOpen: true, type: "spouse", targetId: id }),
-    //     onToggleCollapse: toggleCollapse,
-    //   },
-    //   position: { x: 0, y: 0 },
-    // }));
-
     const rawNodes = [
       {
         id: "clan-header-top",
@@ -104,6 +86,7 @@ export default function FamilyTreePage() {
           hasChildren: familyData.some((child) =>
             child.parents?.includes(p.id),
           ),
+          onNodeClick: (nodeData) => setSelectedPerson(nodeData),
           wifeNumber: p.wives?.length || 0,
           onAddChild: (id) =>
             setModalState({ isOpen: true, type: "child", targetId: id }),
@@ -172,64 +155,8 @@ export default function FamilyTreePage() {
     <div className="w-full h-screen bg-[#e8d5b5] flex overflow-hidden">
       {/* Vùng sơ đồ chính */}
       <div className="flex-grow relative">
-        <header className="absolute top-8 left-8 z-20 pointer-events-none">
-          {/* Tiêu đề căn giữa màn hình */}
-          {/* <header className="absolute top-10 left-1/2 -translate-x-1/2 z-20 pointer-events-none text-center w-full">
-            <h1 className="text-4xl md:text-5xl font-bold text-[#3d2611] tracking-[0.2em] font-serif drop-shadow-sm uppercase">
-              Tộc Phả Truyền Thống
-            </h1>
-            <div className="h-1 w-40 bg-[#8b5a2b] mx-auto mt-2 opacity-40"></div>
-            <p className="text-[10px] text-[#5d3a1a] mt-1 tracking-[0.4em] uppercase opacity-60">
-              Ghi chép dòng tộc — Lưu danh thiên cổ
-            </p>
-          </header> */}
-          {/* <h1 className="text-4xl font-bold text-[#3d2611] tracking-tighter font-serif">
-            TỘC PHẢ TRUYỀN THỐNG
-          </h1> */}
-          {/* <button
-            onClick={exportImage}
-            className="mt-4 px-6 py-2 bg-[#5d3a1a] text-[#f2e2ba] text-xs font-bold shadow-xl border border-[#3d2611] cursor-pointer pointer-events-auto hover:bg-[#3d2611] transition-colors"
-          >
-            XUẤT ẢNH GIA PHẢ
-          </button> */}
-          {/* Nút Xuất Ảnh - Đưa xuống góc dưới bên phải */}
-          {/* <button
-            onClick={exportImage}
-            className="fixed bottom-10 right-10 z-50 px-6 py-3 bg-[#5d3a1a] text-[#f2e2ba] text-sm font-bold shadow-[0_10px_25px_rgba(0,0,0,0.3)] border-2 border-[#3d2611] cursor-pointer hover:bg-[#3d2611] hover:-translate-y-1 active:scale-95 transition-all flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              viewBox="0 0 16 16"
-            >
-              <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-              <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
-            </svg>
-            XUẤT ẢNH GIA PHẢ
-          </button> */}
-        </header>
+        {/* <header className="absolute top-8 left-8 z-20 pointer-events-none"></header> */}
 
-        {/* <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          onNodeClick={onNodeClick}
-          onPaneClick={() => setSelectedPerson(null)}
-          fitView
-          minZoom={0.1}
-          maxZoom={1.5}
-        >
-          <Background
-            color="#8b5a2b"
-            gap={25}
-            size={1}
-            variant="dots"
-            opacity={0.2}
-          />
-          <Controls className="bg-white border-2 border-[#8b5a2b]" />
-        </ReactFlow> */}
         <ReactFlow
           nodes={nodes}
           edges={edges}
