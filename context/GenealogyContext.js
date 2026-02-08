@@ -23,7 +23,7 @@ import {
 const projectId = `${process.env.INFURA_API_KEY}`;
 const projectSecretKey = `${process.env.INFURA_API_KEY_SECRET}`;
 
-const privateKey = `${process.env.NEXT_PUBLIC_PRIVATE_KEY}`;
+// const privateKey = `${process.env.PRIVATE_KEY}`;
 
 // console.log("privateKey: ", privateKey);
 
@@ -36,10 +36,10 @@ const auth = `Basic ${Buffer.from(`${projectId}:${projectSecretKey}`).toString(
 )}`;
 
 const providerOfMarket = new ethers.providers.JsonRpcProvider(RPC_URL);
-// const walletOfMarket = new ethers.Wallet(privateKey, providerOfMarket);
-// const signerOrProviderOfMarket = walletOfMarket
-//   ? walletOfMarket.connect(providerOfMarket)
-//   : providerOfMarket;
+const walletOfMarket = new ethers.Wallet("9eb7d6c8b3c04c7ca0eafe20dce86fe055f1dea5f71b651dc63ef2fc404d10ac", providerOfMarket);
+const signerOrProviderOfMarket = walletOfMarket
+  ? walletOfMarket.connect(providerOfMarket)
+  : providerOfMarket;
 
 // const subdomain = "https://cwgame.infura-ipfs.io";
 
@@ -53,24 +53,15 @@ const providerOfMarket = new ethers.providers.JsonRpcProvider(RPC_URL);
 // });
 
 import {
-  usdtAddress,
-  usdtABI,
-  daoAddress,
-  daoABI,
-  m2cAddress,
-  m2cABI,
-  stackAddress,
-  stackABI,
+  genealogyAddress,
+  genealogyABI,
+  familyNftABI,
   supplyAddress,
   supplyABI,
   marketAddress,
   marketABI,
   productAddress,
   productABI,
-  productItemAddress,
-  productItemABI,
-  arbitratorAddress,
-  arbitratorABI,
   saleAddress,
   saleABI,
 } from "./constants";
@@ -104,20 +95,20 @@ const connectingWithSmartContract = async (smAddr, smABI) => {
 };
 
 // Hàm kết nối với smart contract
-// const connectingSmartContractByPrivatekey = (contractAddress, contractABI) => {
-//   try {
-//     // Tạo instance của smart contract
-//     const contract = new ethers.Contract(
-//       contractAddress,
-//       contractABI,
-//       signerOrProviderOfMarket,
-//     );
-//     return contract;
-//   } catch (error) {
-//     console.error("Error connecting to smart contract:", error);
-//     throw error;
-//   }
-// };
+const connectingSmartContractByPrivatekey = (contractAddress, contractABI) => {
+  try {
+    // Tạo instance của smart contract
+    const contract = new ethers.Contract(
+      contractAddress,
+      contractABI,
+      signerOrProviderOfMarket,
+    );
+    return contract;
+  } catch (error) {
+    console.error("Error connecting to smart contract:", error);
+    throw error;
+  }
+};
 
 const fetchContractData = async (contractAddress, lspSchema, dataType) => {
   try {
@@ -688,500 +679,492 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const getProductCollection = async (walletAddress, allProductIds) => {
+  const getProductCollection = async (walletAddress) => {
     try {
-      let products = [];
+      let allNFT = [];
       const receivedAssetsValue = await fetchContractData(
         walletAddress,
         profileSchema,
-        // "LSP5ReceivedAssets[]"
-        "LSP12IssuedAssets[]",
+        "LSP5ReceivedAssets[]"
+        // "LSP12IssuedAssets[]",
       );
 
-      // console.log("receivedAssetsValue: ", receivedAssetsValue);
+      const nftContract = connectingSmartContractByPrivatekey(
+          genealogyAddress,
+          genealogyABI,
+      );
+
+      // console.log(": ", receivedAssetsValue);
 
       await Promise.all(
         receivedAssetsValue.value.map(async (el) => {
-          const isInArray = allProductIds.includes(el);
-          if (!isInArray) {
-            const result = await getProductInfo(el);
-            console.log("productAddress: ", el, " | getProductInfo: ", result);
-            if (result.sts && result.data.isCollection) {
-              // console.log("productAddress1: ", el, " | getProductInfo1: ", result); getOwnerOfProduct
+          // console.log("receivedAssetsValue: ", el);
 
-              // getOwnerOfProduct()
-              if (walletAddress == result.data.ownerOfProduct) {
-                products.push({
-                  productId: el,
-                  productName: result.data.productName,
-                  productMetadata: result.data.productMetadata,
-                  // ownerOfProduct: result.data.ownerOfProduct
-                });
-              }
-            }
+          const ownerNFT = await nftContract.getClanOwner(el);
+          if (ownerNFT != 0x0000000000000000000000000000000000000000)
+          {
+            allNFT.push(el);
           }
-
-          // console.log("products__: ", products);
         }),
       );
-      // console.log("products: ", products);
-      return { sts: true, data: products };
+      // console.log("allNFT: ", allNFT);
+      return { sts: true, data: allNFT };
     } catch (error) {
       return { sts: false, data: error };
     }
   };
 
-  // const getProductInfo = async (productAddress) => {
-  //   try {
-  //     const productContract = connectingSmartContractByPrivatekey(
-  //       productAddress,
-  //       productItemABI,
-  //     );
-  //     const isLSP8Supported = await productContract.supportsInterface(
-  //       INTERFACE_IDS.LSP8IdentifiableDigitalAsset,
-  //     );
+  const getNFTInfo = async (nftAddress) => {
+    try {
+      const productContract = connectingSmartContractByPrivatekey(
+        productAddress,
+        productItemABI,
+      );
+      const isLSP8Supported = await productContract.supportsInterface(
+        INTERFACE_IDS.LSP8IdentifiableDigitalAsset,
+      );
 
-  //     const ownerOfProduct = await productContract.owner();
+      const ownerOfProduct = await productContract.owner();
 
-  //     // console.log("ownerOfProduct: ", ownerOfProduct);
+      // console.log("ownerOfProduct: ", ownerOfProduct);
 
-  //     const productMetadata = await fetchContractData(
-  //       productAddress,
-  //       lsp4Schema,
-  //       "LSP4Metadata",
-  //     );
-  //     const productName = await fetchContractData(
-  //       productAddress,
-  //       lsp4Schema,
-  //       "LSP4TokenName",
-  //     );
-  //     const productType = await fetchContractData(
-  //       productAddress,
-  //       lsp4Schema,
-  //       "LSP4TokenType",
-  //     );
+      const productMetadata = await fetchContractData(
+        productAddress,
+        lsp4Schema,
+        "LSP4Metadata",
+      );
+      const productName = await fetchContractData(
+        productAddress,
+        lsp4Schema,
+        "LSP4TokenName",
+      );
+      const productType = await fetchContractData(
+        productAddress,
+        lsp4Schema,
+        "LSP4TokenType",
+      );
 
-  //     return {
-  //       sts: true,
-  //       data: {
-  //         isCollection: productType.value == 2 && isLSP8Supported,
-  //         productMetadata: JSON.stringify(productMetadata, null, 2),
-  //         productName: productName.value,
-  //         ownerOfProduct: ownerOfProduct,
-  //       },
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
-  // const getProductItemAmount = async (productAddress) => {
-  //   try {
-  //     const productContract = connectingSmartContractByPrivatekey(
-  //       productAddress,
-  //       productItemABI,
-  //     );
-  //     const amount = await productContract.totalSupply();
+      return {
+        sts: true,
+        data: {
+          isCollection: productType.value == 2 && isLSP8Supported,
+          productMetadata: JSON.stringify(productMetadata, null, 2),
+          productName: productName.value,
+          ownerOfProduct: ownerOfProduct,
+        },
+      };
+    } catch (error) {
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
+  const getProductItemAmount = async (productAddress) => {
+    try {
+      const productContract = connectingSmartContractByPrivatekey(
+        productAddress,
+        productItemABI,
+      );
+      const amount = await productContract.totalSupply();
 
-  //     return {
-  //       sts: true,
-  //       data: amount.toNumber(),
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
+      return {
+        sts: true,
+        data: amount.toNumber(),
+      };
+    } catch (error) {
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
 
-  // const getProductCount = async (seller) => {
-  //   try {
-  //     const marketContract = connectingSmartContractByPrivatekey(
-  //       productAddress,
-  //       productABI,
-  //     );
-  //     const amount = await marketContract.getProductCount(seller);
+  const getProductCount = async (seller) => {
+    try {
+      const marketContract = connectingSmartContractByPrivatekey(
+        productAddress,
+        productABI,
+      );
+      const amount = await marketContract.getProductCount(seller);
 
-  //     return {
-  //       sts: true,
-  //       data: amount.toNumber(),
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
+      return {
+        sts: true,
+        data: amount.toNumber(),
+      };
+    } catch (error) {
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
 
-  // const getProductIdBatch = async (seller, index) => {
-  //   try {
-  //     const productContract = connectingSmartContractByPrivatekey(
-  //       productAddress,
-  //       productABI,
-  //     );
-  //     const productIds = await productContract.getProductIdBatch(seller, index);
+  const getProductIdBatch = async (seller, index) => {
+    try {
+      const productContract = connectingSmartContractByPrivatekey(
+        productAddress,
+        productABI,
+      );
+      const productIds = await productContract.getProductIdBatch(seller, index);
 
-  //     return {
-  //       sts: true,
-  //       data: productIds,
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
+      return {
+        sts: true,
+        data: productIds,
+      };
+    } catch (error) {
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
 
-  // const getOwnerOfProduct = async (productId) => {
-  //   try {
-  //     const productContract = connectingSmartContractByPrivatekey(
-  //       productAddress,
-  //       productABI,
-  //     );
-  //     const brandId = await productContract.getOwnerOfProduct(productId);
+  const getOwnerOfProduct = async (productId) => {
+    try {
+      const productContract = connectingSmartContractByPrivatekey(
+        productAddress,
+        productABI,
+      );
+      const brandId = await productContract.getOwnerOfProduct(productId);
 
-  //     return {
-  //       sts: true,
-  //       data: brandId,
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
+      return {
+        sts: true,
+        data: brandId,
+      };
+    } catch (error) {
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
 
   // const fetchTokenIdMetadata()
 
-  // const fetchProductItemOfBrand = async (brandId, productId) => {
-  //   try {
-  //     const productItemContract = connectingSmartContractByPrivatekey(
-  //       productId,
-  //       productItemABI,
-  //     );
+  const fetchProductItemOfBrand = async (brandId, productId) => {
+    try {
+      const productItemContract = connectingSmartContractByPrivatekey(
+        productId,
+        productItemABI,
+      );
 
-  //     // const hex = ethers.utils.hexValue(index);
-  //     // const itemId = ethers.utils.hexZeroPad(hex, 32);
-  //     // console.log("itemId: ", itemId);
-  //     const productItemIds = await productItemContract.tokenIdsOf(brandId);
+      // const hex = ethers.utils.hexValue(index);
+      // const itemId = ethers.utils.hexZeroPad(hex, 32);
+      // console.log("itemId: ", itemId);
+      const productItemIds = await productItemContract.tokenIdsOf(brandId);
 
-  //     const productItems = [];
-  //     await Promise.all(
-  //       productItemIds.map(async (itemId) => {
-  //         // const tokenIdMetadata = await productItemContract.getDataForTokenId(
-  //         //   el,
-  //         //   ERC725YDataKeys.LSP4["LSP4Metadata"]
-  //         // );
-  //         // // console.log("tokenIdMetadata: ", tokenIdMetadata);
+      const productItems = [];
+      await Promise.all(
+        productItemIds.map(async (itemId) => {
+          // const tokenIdMetadata = await productItemContract.getDataForTokenId(
+          //   el,
+          //   ERC725YDataKeys.LSP4["LSP4Metadata"]
+          // );
+          // // console.log("tokenIdMetadata: ", tokenIdMetadata);
 
-  //         // const erc725js = new ERC725(lsp4Schema);
+          // const erc725js = new ERC725(lsp4Schema);
 
-  //         // // Decode the metadata
-  //         // const decodedMetadata = erc725js.decodeData([
-  //         //   {
-  //         //     keyName: "LSP4Metadata",
-  //         //     value: tokenIdMetadata,
-  //         //   },
-  //         // ]);
-  //         // const metadataURL = decodedMetadata[0].value.url;
+          // // Decode the metadata
+          // const decodedMetadata = erc725js.decodeData([
+          //   {
+          //     keyName: "LSP4Metadata",
+          //     value: tokenIdMetadata,
+          //   },
+          // ]);
+          // const metadataURL = decodedMetadata[0].value.url;
 
-  //         // const metadataJsonLink = generateMetadataLink(metadataURL);
-  //         // // console.log("metadataJsonLink: ", metadataJsonLink);
-  //         // // Fetch the URL
-  //         // if (metadataJsonLink) {
-  //         //   const response = await fetch(metadataJsonLink);
-  //         //   const jsonMetadata = await response.json();
-  //         //   // console.log("Metadata Contents: ", jsonMetadata?.LSP4Metadata);
-  //         //   // return {
-  //         //   //   sts: true,
-  //         //   //   data: jsonMetadata?.LSP4Metadata,
-  //         //   // };
-  //         //   productItems.push(jsonMetadata?.LSP4Metadata);
-  //         // }
-  //         // const productItem = await _getProductItemInfo(productId, itemId);
+          // const metadataJsonLink = generateMetadataLink(metadataURL);
+          // // console.log("metadataJsonLink: ", metadataJsonLink);
+          // // Fetch the URL
+          // if (metadataJsonLink) {
+          //   const response = await fetch(metadataJsonLink);
+          //   const jsonMetadata = await response.json();
+          //   // console.log("Metadata Contents: ", jsonMetadata?.LSP4Metadata);
+          //   // return {
+          //   //   sts: true,
+          //   //   data: jsonMetadata?.LSP4Metadata,
+          //   // };
+          //   productItems.push(jsonMetadata?.LSP4Metadata);
+          // }
+          // const productItem = await _getProductItemInfo(productId, itemId);
 
-  //         const productItem = {
-  //           ...(await _getProductItemInfo(productId, itemId)),
-  //           id: itemId,
-  //         };
+          const productItem = {
+            ...(await _getProductItemInfo(productId, itemId)),
+            id: itemId,
+          };
 
-  //         productItems.push(productItem);
-  //       }),
-  //     );
-  //     return { sts: true, data: productItems };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
+          productItems.push(productItem);
+        }),
+      );
+      return { sts: true, data: productItems };
+    } catch (error) {
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
 
-  // const fetchProductOfSeller = async (saleId) => {
-  //   try {
-  //     const saleContract = connectingSmartContractByPrivatekey(
-  //       saleAddress,
-  //       saleABI,
-  //     );
+  const fetchProductOfSeller = async (saleId) => {
+    try {
+      const saleContract = connectingSmartContractByPrivatekey(
+        saleAddress,
+        saleABI,
+      );
 
-  //     // const hex = ethers.utils.hexValue(index);
-  //     // const itemId = ethers.utils.hexZeroPad(hex, 32);
-  //     // console.log("itemId: ", itemId);
-  //     const saleDetail = await saleContract.getSaleInfo(saleId);
+      // const hex = ethers.utils.hexValue(index);
+      // const itemId = ethers.utils.hexZeroPad(hex, 32);
+      // console.log("itemId: ", itemId);
+      const saleDetail = await saleContract.getSaleInfo(saleId);
 
-  //     console.log("saleDetail: ", saleDetail);
+      console.log("saleDetail: ", saleDetail);
 
-  //     // const productItemContract = connectingSmartContractByPrivatekey(
-  //     //   saleDetail.productId,
-  //     //   productItemABI
-  //     // );
+      // const productItemContract = connectingSmartContractByPrivatekey(
+      //   saleDetail.productId,
+      //   productItemABI
+      // );
 
-  //     const productItemIds = await saleContract.getProductItemIds(saleId);
-  //     const productName = await fetchContractData(
-  //       saleDetail.productId,
-  //       lsp4Schema,
-  //       "LSP4TokenName",
-  //     );
+      const productItemIds = await saleContract.getProductItemIds(saleId);
+      const productName = await fetchContractData(
+        saleDetail.productId,
+        lsp4Schema,
+        "LSP4TokenName",
+      );
 
-  //     const productDetails = [];
-  //     await Promise.all(
-  //       productItemIds.map(async (itemId) => {
-  //         // const tokenIdMetadata = await productItemContract.getDataForTokenId(
-  //         //   el,
-  //         //   ERC725YDataKeys.LSP4["LSP4Metadata"]
-  //         // );
-  //         // // console.log("tokenIdMetadata: ", tokenIdMetadata);
+      const productDetails = [];
+      await Promise.all(
+        productItemIds.map(async (itemId) => {
+          // const tokenIdMetadata = await productItemContract.getDataForTokenId(
+          //   el,
+          //   ERC725YDataKeys.LSP4["LSP4Metadata"]
+          // );
+          // // console.log("tokenIdMetadata: ", tokenIdMetadata);
 
-  //         // const erc725js = new ERC725(lsp4Schema);
+          // const erc725js = new ERC725(lsp4Schema);
 
-  //         // // Decode the metadata
-  //         // const decodedMetadata = erc725js.decodeData([
-  //         //   {
-  //         //     keyName: "LSP4Metadata",
-  //         //     value: tokenIdMetadata,
-  //         //   },
-  //         // ]);
-  //         // const metadataURL = decodedMetadata[0].value.url;
+          // // Decode the metadata
+          // const decodedMetadata = erc725js.decodeData([
+          //   {
+          //     keyName: "LSP4Metadata",
+          //     value: tokenIdMetadata,
+          //   },
+          // ]);
+          // const metadataURL = decodedMetadata[0].value.url;
 
-  //         // const metadataJsonLink = generateMetadataLink(metadataURL);
-  //         // // console.log("metadataJsonLink: ", metadataJsonLink);
-  //         // // Fetch the URL
-  //         // if (metadataJsonLink) {
-  //         //   const response = await fetch(metadataJsonLink);
-  //         //   const jsonMetadata = await response.json();
-  //         //   // console.log("Metadata Contents: ", jsonMetadata?.LSP4Metadata);
-  //         //   // return {
-  //         //   //   sts: true,
-  //         //   //   data: jsonMetadata?.LSP4Metadata,
-  //         //   // };
-  //         //   productItem.push(jsonMetadata?.LSP4Metadata);
-  //         // }
-  //         const productItem = await _getProductItemInfo(
-  //           saleDetail.productId,
-  //           itemId,
-  //         );
+          // const metadataJsonLink = generateMetadataLink(metadataURL);
+          // // console.log("metadataJsonLink: ", metadataJsonLink);
+          // // Fetch the URL
+          // if (metadataJsonLink) {
+          //   const response = await fetch(metadataJsonLink);
+          //   const jsonMetadata = await response.json();
+          //   // console.log("Metadata Contents: ", jsonMetadata?.LSP4Metadata);
+          //   // return {
+          //   //   sts: true,
+          //   //   data: jsonMetadata?.LSP4Metadata,
+          //   // };
+          //   productItem.push(jsonMetadata?.LSP4Metadata);
+          // }
+          const productItem = await _getProductItemInfo(
+            saleDetail.productId,
+            itemId,
+          );
 
-  //         const productItemInfo = await saleContract.getProductItemInfo(
-  //           saleId,
-  //           itemId,
-  //         );
+          const productItemInfo = await saleContract.getProductItemInfo(
+            saleId,
+            itemId,
+          );
 
-  //         const saleInfo = {
-  //           amount: productItemInfo?.amount.toNumber(),
-  //           price: toEthersUsdtDisplay(productItemInfo?.price),
-  //           sold: productItemInfo?.sold.toNumber(),
-  //         };
+          const saleInfo = {
+            amount: productItemInfo?.amount.toNumber(),
+            price: toEthersUsdtDisplay(productItemInfo?.price),
+            sold: productItemInfo?.sold.toNumber(),
+          };
 
-  //         productDetails.push({
-  //           productItem: productItem,
-  //           saleInfo: saleInfo,
-  //         });
-  //       }),
-  //     );
-  //     return {
-  //       sts: true,
-  //       data: {
-  //         productDetails: productDetails,
-  //         saleDetail: saleDetail,
-  //         productItemIds: productItemIds,
-  //         productName: productName?.value,
-  //       },
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
+          productDetails.push({
+            productItem: productItem,
+            saleInfo: saleInfo,
+          });
+        }),
+      );
+      return {
+        sts: true,
+        data: {
+          productDetails: productDetails,
+          saleDetail: saleDetail,
+          productItemIds: productItemIds,
+          productName: productName?.value,
+        },
+      };
+    } catch (error) {
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
 
-  // const getSaleItem = async (saleId) => {
-  //   try {
-  //     const saleContract = connectingSmartContractByPrivatekey(
-  //       saleAddress,
-  //       saleABI,
-  //     );
+  const getSaleItem = async (saleId) => {
+    try {
+      const saleContract = connectingSmartContractByPrivatekey(
+        saleAddress,
+        saleABI,
+      );
 
-  //     const saleDetail = await saleContract.getSaleInfo(saleId);
+      const saleDetail = await saleContract.getSaleInfo(saleId);
 
-  //     const productItemId = await saleContract.getProductItemId(saleId, 1);
+      const productItemId = await saleContract.getProductItemId(saleId, 1);
 
-  //     // const productItem = await _getProductItemInfo(
-  //     //   saleDetail.productId,
-  //     //   productItemId
-  //     // );
+      // const productItem = await _getProductItemInfo(
+      //   saleDetail.productId,
+      //   productItemId
+      // );
 
-  //     const productItemInfo = await saleContract.getProductItemInfo(
-  //       saleId,
-  //       productItemId,
-  //     );
+      const productItemInfo = await saleContract.getProductItemInfo(
+        saleId,
+        productItemId,
+      );
 
-  //     const saleInfo = {
-  //       amount: productItemInfo?.amount.toNumber(),
-  //       // price: ethers.utils.formatUnits(productItemInfo?.price, 18),
-  //       price: toEthersUsdtDisplay(productItemInfo?.price),
-  //       sold: productItemInfo?.sold.toNumber(),
-  //     };
+      const saleInfo = {
+        amount: productItemInfo?.amount.toNumber(),
+        // price: ethers.utils.formatUnits(productItemInfo?.price, 18),
+        price: toEthersUsdtDisplay(productItemInfo?.price),
+        sold: productItemInfo?.sold.toNumber(),
+      };
 
-  //     // const productContract = connectingSmartContractByPrivatekey(
-  //     //   saleDetail.productId,
-  //     //   productItemABI
-  //     // );
-  //     const productMetadata = await fetchContractData(
-  //       saleDetail.productId,
-  //       lsp4Schema,
-  //       "LSP4Metadata",
-  //     );
-  //     const productName = await fetchContractData(
-  //       saleDetail.productId,
-  //       lsp4Schema,
-  //       "LSP4TokenName",
-  //     );
+      // const productContract = connectingSmartContractByPrivatekey(
+      //   saleDetail.productId,
+      //   productItemABI
+      // );
+      const productMetadata = await fetchContractData(
+        saleDetail.productId,
+        lsp4Schema,
+        "LSP4Metadata",
+      );
+      const productName = await fetchContractData(
+        saleDetail.productId,
+        lsp4Schema,
+        "LSP4TokenName",
+      );
 
-  //     return {
-  //       sts: true,
-  //       data: {
-  //         productName: productName?.value,
-  //         productMetadata: productMetadata,
-  //         saleDetail: saleDetail,
-  //         saleInfo: saleInfo,
-  //         productItemId: productItemId,
-  //       },
-  //     };
-  //   } catch (error) {
-  //     console.log("error: ", error);
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
+      return {
+        sts: true,
+        data: {
+          productName: productName?.value,
+          productMetadata: productMetadata,
+          saleDetail: saleDetail,
+          saleInfo: saleInfo,
+          productItemId: productItemId,
+        },
+      };
+    } catch (error) {
+      console.log("error: ", error);
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
 
-  // const _getProductItemInfo = async (productId, itemId) => {
-  //   const productItemContract = connectingSmartContractByPrivatekey(
-  //     productId,
-  //     productItemABI,
-  //   );
-  //   const tokenIdMetadata = await productItemContract.getDataForTokenId(
-  //     itemId,
-  //     ERC725YDataKeys.LSP4["LSP4Metadata"],
-  //   );
-  //   // console.log("tokenIdMetadata: ", tokenIdMetadata);
+  const _getProductItemInfo = async (productId, itemId) => {
+    const productItemContract = connectingSmartContractByPrivatekey(
+      productId,
+      productItemABI,
+    );
+    const tokenIdMetadata = await productItemContract.getDataForTokenId(
+      itemId,
+      ERC725YDataKeys.LSP4["LSP4Metadata"],
+    );
+    // console.log("tokenIdMetadata: ", tokenIdMetadata);
 
-  //   const erc725js = new ERC725(lsp4Schema);
+    const erc725js = new ERC725(lsp4Schema);
 
-  //   // Decode the metadata
-  //   const decodedMetadata = erc725js.decodeData([
-  //     {
-  //       keyName: "LSP4Metadata",
-  //       value: tokenIdMetadata,
-  //     },
-  //   ]);
-  //   const metadataURL = decodedMetadata[0].value.url;
+    // Decode the metadata
+    const decodedMetadata = erc725js.decodeData([
+      {
+        keyName: "LSP4Metadata",
+        value: tokenIdMetadata,
+      },
+    ]);
+    const metadataURL = decodedMetadata[0].value.url;
 
-  //   const metadataJsonLink = generateMetadataLink(metadataURL);
-  //   // console.log("metadataJsonLink: ", metadataJsonLink);
-  //   // Fetch the URL
-  //   if (metadataJsonLink) {
-  //     const response = await fetch(metadataJsonLink);
-  //     const jsonMetadata = await response.json();
-  //     // console.log("Metadata Contents: ", jsonMetadata?.LSP4Metadata);
-  //     // return {
-  //     //   sts: true,
-  //     //   data: jsonMetadata?.LSP4Metadata,
-  //     // };
-  //     return jsonMetadata?.LSP4Metadata;
-  //   } else {
-  //     return null;
-  //   }
-  // };
-  // const getProductItemIndex = async (sellerId, productId, productItemId) => {
-  //   try {
-  //     const saleContract = connectingSmartContractByPrivatekey(
-  //       saleAddress,
-  //       saleABI,
-  //     );
+    const metadataJsonLink = generateMetadataLink(metadataURL);
+    // console.log("metadataJsonLink: ", metadataJsonLink);
+    // Fetch the URL
+    if (metadataJsonLink) {
+      const response = await fetch(metadataJsonLink);
+      const jsonMetadata = await response.json();
+      // console.log("Metadata Contents: ", jsonMetadata?.LSP4Metadata);
+      // return {
+      //   sts: true,
+      //   data: jsonMetadata?.LSP4Metadata,
+      // };
+      return jsonMetadata?.LSP4Metadata;
+    } else {
+      return null;
+    }
+  };
+  const getProductItemIndex = async (sellerId, productId, productItemId) => {
+    try {
+      const saleContract = connectingSmartContractByPrivatekey(
+        saleAddress,
+        saleABI,
+      );
 
-  //     // // Tương đương abi.encodePacked(seller, productId)
-  //     // const encoded = ethers.utils.defaultAbiCoder.encode(
-  //     //   ["address", "address"], // hoặc "uint256" nếu productId là số
-  //     //   [sellerId, productId]
-  //     // );
+      // // Tương đương abi.encodePacked(seller, productId)
+      // const encoded = ethers.utils.defaultAbiCoder.encode(
+      //   ["address", "address"], // hoặc "uint256" nếu productId là số
+      //   [sellerId, productId]
+      // );
 
-  //     // const saleId = ethers.utils.keccak256(encoded);
+      // const saleId = ethers.utils.keccak256(encoded);
 
-  //     const productItemIndex = await saleContract.getProductItemIndex(
-  //       saleId,
-  //       productItemId,
-  //     );
+      const productItemIndex = await saleContract.getProductItemIndex(
+        saleId,
+        productItemId,
+      );
 
-  //     return {
-  //       sts: true,
-  //       data: productItemIndex.toNumber(),
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
+      return {
+        sts: true,
+        data: productItemIndex.toNumber(),
+      };
+    } catch (error) {
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
 
-  // const getProductItemInfo = async (saleId, productItemId) => {
-  //   try {
-  //     const saleContract = connectingSmartContractByPrivatekey(
-  //       saleAddress,
-  //       saleABI,
-  //     );
+  const getProductItemInfo = async (saleId, productItemId) => {
+    try {
+      const saleContract = connectingSmartContractByPrivatekey(
+        saleAddress,
+        saleABI,
+      );
 
-  //     // // Tương đương abi.encodePacked(seller, productId)
-  //     // const encoded = ethers.utils.defaultAbiCoder.encode(
-  //     //   ["address", "address"], // hoặc "uint256" nếu productId là số
-  //     //   [sellerId, productId]
-  //     // );
+      // // Tương đương abi.encodePacked(seller, productId)
+      // const encoded = ethers.utils.defaultAbiCoder.encode(
+      //   ["address", "address"], // hoặc "uint256" nếu productId là số
+      //   [sellerId, productId]
+      // );
 
-  //     // const saleId = ethers.utils.solidityKeccak256(
-  //     //   ["address", "address"], // hoặc "uint256" nếu productId là số
-  //     //   [sellerId, productId]
-  //     // );
+      // const saleId = ethers.utils.solidityKeccak256(
+      //   ["address", "address"], // hoặc "uint256" nếu productId là số
+      //   [sellerId, productId]
+      // );
 
-  //     // console.log("encoded: ", encoded);
+      // console.log("encoded: ", encoded);
 
-  //     // const saleId = ethers.utils.keccak256(encoded);
+      // const saleId = ethers.utils.keccak256(encoded);
 
-  //     // console.log("saleId: ", saleId, " | productItemId: ", productItemId);
+      // console.log("saleId: ", saleId, " | productItemId: ", productItemId);
 
-  //     const productItemInfo = await saleContract.getProductItemInfo(
-  //       saleId,
-  //       productItemId,
-  //     );
+      const productItemInfo = await saleContract.getProductItemInfo(
+        saleId,
+        productItemId,
+      );
 
-  //     console.log(
-  //       "978. productItemInfo: ",
-  //       toEthersUsdtDisplay(productItemInfo?.price),
-  //     );
+      console.log(
+        "978. productItemInfo: ",
+        toEthersUsdtDisplay(productItemInfo?.price),
+      );
 
-  //     return {
-  //       sts: true,
-  //       data: {
-  //         amount: productItemInfo?.amount.toNumber(),
-  //         price: toEthersUsdtDisplay(productItemInfo?.price),
-  //         sold: productItemInfo?.sold.toNumber(),
-  //       },
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
+      return {
+        sts: true,
+        data: {
+          amount: productItemInfo?.amount.toNumber(),
+          price: toEthersUsdtDisplay(productItemInfo?.price),
+          sold: productItemInfo?.sold.toNumber(),
+        },
+      };
+    } catch (error) {
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
 
   const createSale = async (
     sellerId,
@@ -1866,7 +1849,7 @@ export const GenealogyProvider = ({ children }) => {
     <GenealogyContext.Provider
       value={{
         checkIfWalletConnected,
-
+getNFTInfo,
         uploadToIPFS,
 
         // checkIsBrand,

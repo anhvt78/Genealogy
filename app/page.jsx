@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import ReactFlow, { Background, Controls } from "reactflow";
 import "reactflow/dist/style.css";
 import { toPng } from "html-to-image";
@@ -14,6 +14,7 @@ import { initialFamilyData } from "@/constants/mockData.js";
 import ClanTitleNode from "@/components/nodes/ClanTitleNode";
 import { useSelector } from "react-redux";
 import { ConnectorModal } from "@/components/Modals/ConnectorModal";
+import { GenealogyContext } from "@/context/GenealogyContext";
 
 // Đăng ký loại node tùy chỉnh
 const nodeTypes = {
@@ -22,6 +23,7 @@ const nodeTypes = {
 };
 
 export default function FamilyTreePage() {
+  const {getProductCollection} = useContext(GenealogyContext);
   // const [mounted, setMounted] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [familyData, setFamilyData] = useLocalStorage(
@@ -41,6 +43,13 @@ export default function FamilyTreePage() {
   const userWalletAddress = useSelector(
     (state) => state.genealogyReducer.walletAddress,
   );
+
+  useEffect(()=>{
+    getProductCollection("0x188eec07287d876a23565c3c568cbe0bb1984b83").then((result) => {
+      console.log("result: ", result);
+      
+    })
+  },[])
 
   // 1. Hàm xử lý Đóng/Mở nhánh
   const toggleCollapse = (id) => {
