@@ -1,0 +1,1453 @@
+{
+	"id": "58c11892fca4773fe4cea47e820b28d6",
+	"_format": "hh-sol-build-info-1",
+	"solcVersion": "0.8.31",
+	"solcLongVersion": "0.8.31+commit.fd3a2265",
+	"input": {
+		"language": "Solidity",
+		"sources": {
+			"contracts/constants/marketConstant.sol": {
+				"content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.20;\r\n\r\n    // // From marketPlaceConstants.sol\r\n    bytes32 constant MKP_COMPLETED_FORMAT_KEY = 0x69fb0b3d366a2e9342fe926fcc460c73a465da3b9925c6953c98f308a3c8f3a3;\r\n    bytes32 constant MKP_CANCEL_FORMAT_KEY = 0x99859bd454e72cbf07d343d772554a68fa2eeb6bc47311f949cf625085f55b32;\r\n    bytes32 constant MKP_SHIP_FAILURE_FORMAT_KEY = 0x9f87a92427041a3c00e6be4d2e97287e4aae67cf5d34a654ca00203544b45b61;\r\n    bytes32 constant MKP_NOT_RECV_FORMAT_KEY = 0x2a1a36e8cf88eed8319f6fed0b1fa498ca58a6f084b64f299f4ac7c46832f454;\r\n    bytes32 constant MKP_DISPUTE_FORMAT_KEY = 0xb76664828d87801e3809f393d45b30e3115a889ea972ce64e971585a04a58162;\r\n    bytes32 constant MKP_DISPUTE_FAILURE_FORMAT_KEY = 0x047256f6d73fc29d8992528bc0af8d012448c94b77eb3e356b82a85f251b13d9;\r\n    bytes32 constant MKP_RELEASE_FUNDS_FORMAT_KEY = 0x4b14f3aa56743de1b05548935b32a8317469768c7e89756654d6c95941258323;\r\n\r\n    // From purchaseConstant.sol and purchaseExt.sol\r\n    uint8 constant BUYER_CREATED = 1;\r\n    uint8 constant SELLER_ACCEPTED = 2;\r\n    uint8 constant BUYER_PAID = 3;\r\n    uint8 constant SELLER_SHIPPED = 4;\r\n    uint8 constant BUYER_CANCELED = 5;\r\n    uint8 constant SELLER_CANCELED = 6;\r\n    uint8 constant BUYER_RECEIVED = 7;\r\n    uint8 constant BUYER_NOT_RECEIVED = 8;\r\n    uint8 constant SHIPPER_DELIVERY_FAILURE = 9;\r\n    uint8 constant SHIPPER_DELIVERED = 10;\r\n    uint8 constant BUYER_CONFIRM_DELIVERY_FAILURE = 11;\r\n    uint8 constant SELLER_CONFIRM_NOT_RECEIVED = 12;\r\n    uint8 constant DISPUTED_NOT_RECEIVED = 13;\r\n    uint8 constant DISPUTED_DELIVERY_FAILURE = 14;\r\n    uint8 constant SELLER_RELEASE_FUNDS = 15;\r\n\r\n    uint256 constant SHIPPING_DEADLINE = 7 days;\r\n    uint256 constant RECEIPT_DEADLINE = 7 days;\r\n    uint256 constant DISPUTE_DEADLINE = 15 days;\r\n\r\n    bytes32 constant PURCHASE_DELIVERED_INFO_FORMAT_KEY = 0xa45e4644b39c85c0a6f90a8bb8c04e8626117d12ffc140a8e75fb10ca685913a;\r\n    bytes32 constant PURCHASE_SHIPPING_INFO_FORMAT_KEY = 0xf1abca2890382a91a6dac188a3098bb627a5e0b5a83539d61bf90e90a7c3e602;\r\n    bytes32 constant PURCHASE_SHIP_FAILURE_INFO_FORMAT_KEY = 0x37cfa705751e428f3c3158cca39d98900da88cf76ae0c6e38dcfe0546f78ba6c;\r\n    bytes32 constant PURCHASE_NOT_RECEIVED_INFO_FORMAT_KEY = 0x5be038d40779e7554c7d845824c510204a4c37f5855379658b94bc0f753a1ce8;\r\n    bytes32 constant PURCHASE_CANCEL_REASON_INFO_FORMAT_KEY = 0xfb6c8ba52619b7ef0e1390a755111a7073424becccf68e55ac0f51ce2a450a60;\r\n"
+			}
+		},
+		"settings": {
+			"optimizer": {
+				"enabled": false,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"": [
+						"ast"
+					],
+					"*": [
+						"abi",
+						"metadata",
+						"devdoc",
+						"userdoc",
+						"storageLayout",
+						"evm.legacyAssembly",
+						"evm.bytecode",
+						"evm.deployedBytecode",
+						"evm.methodIdentifiers",
+						"evm.gasEstimates",
+						"evm.assembly"
+					]
+				}
+			},
+			"remappings": []
+		}
+	},
+	"output": {
+		"sources": {
+			"contracts/constants/marketConstant.sol": {
+				"ast": {
+					"absolutePath": "contracts/constants/marketConstant.sol",
+					"exportedSymbols": {
+						"BUYER_CANCELED": [
+							37
+						],
+						"BUYER_CONFIRM_DELIVERY_FAILURE": [
+							55
+						],
+						"BUYER_CREATED": [
+							25
+						],
+						"BUYER_NOT_RECEIVED": [
+							46
+						],
+						"BUYER_PAID": [
+							31
+						],
+						"BUYER_RECEIVED": [
+							43
+						],
+						"DISPUTED_DELIVERY_FAILURE": [
+							64
+						],
+						"DISPUTED_NOT_RECEIVED": [
+							61
+						],
+						"DISPUTE_DEADLINE": [
+							76
+						],
+						"MKP_CANCEL_FORMAT_KEY": [
+							7
+						],
+						"MKP_COMPLETED_FORMAT_KEY": [
+							4
+						],
+						"MKP_DISPUTE_FAILURE_FORMAT_KEY": [
+							19
+						],
+						"MKP_DISPUTE_FORMAT_KEY": [
+							16
+						],
+						"MKP_NOT_RECV_FORMAT_KEY": [
+							13
+						],
+						"MKP_RELEASE_FUNDS_FORMAT_KEY": [
+							22
+						],
+						"MKP_SHIP_FAILURE_FORMAT_KEY": [
+							10
+						],
+						"PURCHASE_CANCEL_REASON_INFO_FORMAT_KEY": [
+							91
+						],
+						"PURCHASE_DELIVERED_INFO_FORMAT_KEY": [
+							79
+						],
+						"PURCHASE_NOT_RECEIVED_INFO_FORMAT_KEY": [
+							88
+						],
+						"PURCHASE_SHIPPING_INFO_FORMAT_KEY": [
+							82
+						],
+						"PURCHASE_SHIP_FAILURE_INFO_FORMAT_KEY": [
+							85
+						],
+						"RECEIPT_DEADLINE": [
+							73
+						],
+						"SELLER_ACCEPTED": [
+							28
+						],
+						"SELLER_CANCELED": [
+							40
+						],
+						"SELLER_CONFIRM_NOT_RECEIVED": [
+							58
+						],
+						"SELLER_RELEASE_FUNDS": [
+							67
+						],
+						"SELLER_SHIPPED": [
+							34
+						],
+						"SHIPPER_DELIVERED": [
+							52
+						],
+						"SHIPPER_DELIVERY_FAILURE": [
+							49
+						],
+						"SHIPPING_DEADLINE": [
+							70
+						]
+					},
+					"id": 92,
+					"license": "MIT",
+					"nodeType": "SourceUnit",
+					"nodes": [
+						{
+							"id": 1,
+							"literals": [
+								"solidity",
+								"^",
+								"0.8",
+								".20"
+							],
+							"nodeType": "PragmaDirective",
+							"src": "33:24:0"
+						},
+						{
+							"constant": true,
+							"id": 4,
+							"mutability": "constant",
+							"name": "MKP_COMPLETED_FORMAT_KEY",
+							"nameLocation": "123:24:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "106:110:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 2,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "106:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307836396662306233643336366132653933343266653932366663633436306337336134363564613362393932356336393533633938663330386133633866336133",
+								"id": 3,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "150:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_47936405283999451102712923253201654498487113643238982322786814136883700364195_by_1",
+									"typeString": "int_const 4793...(69 digits omitted)...4195"
+								},
+								"value": "0x69fb0b3d366a2e9342fe926fcc460c73a465da3b9925c6953c98f308a3c8f3a3"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 7,
+							"mutability": "constant",
+							"name": "MKP_CANCEL_FORMAT_KEY",
+							"nameLocation": "240:21:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "223:107:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 5,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "223:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307839393835396264343534653732636266303764333433643737323535346136386661326565623662633437333131663934396366363235303835663535623332",
+								"id": 6,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "264:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_69439931987989060803012220787324816492825208064470262217854608236645639871282_by_1",
+									"typeString": "int_const 6943...(69 digits omitted)...1282"
+								},
+								"value": "0x99859bd454e72cbf07d343d772554a68fa2eeb6bc47311f949cf625085f55b32"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 10,
+							"mutability": "constant",
+							"name": "MKP_SHIP_FAILURE_FORMAT_KEY",
+							"nameLocation": "354:27:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "337:113:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 8,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "337:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307839663837613932343237303431613363303065366265346432653937323837653461616536376366356433346136353463613030323033353434623435623631",
+								"id": 9,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "384:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_72157434648283992295223802882443482705279779875431663950986307935811075857249_by_1",
+									"typeString": "int_const 7215...(69 digits omitted)...7249"
+								},
+								"value": "0x9f87a92427041a3c00e6be4d2e97287e4aae67cf5d34a654ca00203544b45b61"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 13,
+							"mutability": "constant",
+							"name": "MKP_NOT_RECV_FORMAT_KEY",
+							"nameLocation": "474:23:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "457:109:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 11,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "457:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307832613161333665386366383865656438333139663666656430623166613439386361353861366630383462363466323939663461633763343638333266343534",
+								"id": 12,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "500:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_19043456635047755112307248992628294207583781161968107090878268986346758665300_by_1",
+									"typeString": "int_const 1904...(69 digits omitted)...5300"
+								},
+								"value": "0x2a1a36e8cf88eed8319f6fed0b1fa498ca58a6f084b64f299f4ac7c46832f454"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 16,
+							"mutability": "constant",
+							"name": "MKP_DISPUTE_FORMAT_KEY",
+							"nameLocation": "590:22:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "573:108:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 14,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "573:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307862373636363438323864383738303165333830396633393364343562333065333131356138383965613937326365363465393731353835613034613538313632",
+								"id": 15,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "615:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_82954163385677664841730674849367586650635924875895971999669946857650903155042_by_1",
+									"typeString": "int_const 8295...(69 digits omitted)...5042"
+								},
+								"value": "0xb76664828d87801e3809f393d45b30e3115a889ea972ce64e971585a04a58162"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 19,
+							"mutability": "constant",
+							"name": "MKP_DISPUTE_FAILURE_FORMAT_KEY",
+							"nameLocation": "705:30:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "688:116:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 17,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "688:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307830343732353666366437336663323964383939323532386263306166386430313234343863393462373765623365333536623832613835663235316231336439",
+								"id": 18,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "738:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_2011272164718877614985309399453529475801338123902328760334631920313652941785_by_1",
+									"typeString": "int_const 2011...(68 digits omitted)...1785"
+								},
+								"value": "0x047256f6d73fc29d8992528bc0af8d012448c94b77eb3e356b82a85f251b13d9"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 22,
+							"mutability": "constant",
+							"name": "MKP_RELEASE_FUNDS_FORMAT_KEY",
+							"nameLocation": "828:28:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "811:114:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 20,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "811:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307834623134663361613536373433646531623035353438393335623332613833313734363937363863376538393735363635346436633935393431323538333233",
+								"id": 21,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "859:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_33960482301698426492750588974398177274196431751601222238166268532143088304931_by_1",
+									"typeString": "int_const 3396...(69 digits omitted)...4931"
+								},
+								"value": "0x4b14f3aa56743de1b05548935b32a8317469768c7e89756654d6c95941258323"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 25,
+							"mutability": "constant",
+							"name": "BUYER_CREATED",
+							"nameLocation": "1003:13:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "988:32:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 23,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "988:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "31",
+								"id": 24,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1019:1:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_1_by_1",
+									"typeString": "int_const 1"
+								},
+								"value": "1"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 28,
+							"mutability": "constant",
+							"name": "SELLER_ACCEPTED",
+							"nameLocation": "1042:15:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1027:34:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 26,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1027:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "32",
+								"id": 27,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1060:1:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_2_by_1",
+									"typeString": "int_const 2"
+								},
+								"value": "2"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 31,
+							"mutability": "constant",
+							"name": "BUYER_PAID",
+							"nameLocation": "1083:10:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1068:29:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 29,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1068:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "33",
+								"id": 30,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1096:1:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_3_by_1",
+									"typeString": "int_const 3"
+								},
+								"value": "3"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 34,
+							"mutability": "constant",
+							"name": "SELLER_SHIPPED",
+							"nameLocation": "1119:14:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1104:33:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 32,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1104:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "34",
+								"id": 33,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1136:1:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_4_by_1",
+									"typeString": "int_const 4"
+								},
+								"value": "4"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 37,
+							"mutability": "constant",
+							"name": "BUYER_CANCELED",
+							"nameLocation": "1159:14:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1144:33:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 35,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1144:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "35",
+								"id": 36,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1176:1:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_5_by_1",
+									"typeString": "int_const 5"
+								},
+								"value": "5"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 40,
+							"mutability": "constant",
+							"name": "SELLER_CANCELED",
+							"nameLocation": "1199:15:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1184:34:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 38,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1184:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "36",
+								"id": 39,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1217:1:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_6_by_1",
+									"typeString": "int_const 6"
+								},
+								"value": "6"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 43,
+							"mutability": "constant",
+							"name": "BUYER_RECEIVED",
+							"nameLocation": "1240:14:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1225:33:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 41,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1225:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "37",
+								"id": 42,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1257:1:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_7_by_1",
+									"typeString": "int_const 7"
+								},
+								"value": "7"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 46,
+							"mutability": "constant",
+							"name": "BUYER_NOT_RECEIVED",
+							"nameLocation": "1280:18:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1265:37:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 44,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1265:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "38",
+								"id": 45,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1301:1:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_8_by_1",
+									"typeString": "int_const 8"
+								},
+								"value": "8"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 49,
+							"mutability": "constant",
+							"name": "SHIPPER_DELIVERY_FAILURE",
+							"nameLocation": "1324:24:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1309:43:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 47,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1309:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "39",
+								"id": 48,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1351:1:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_9_by_1",
+									"typeString": "int_const 9"
+								},
+								"value": "9"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 52,
+							"mutability": "constant",
+							"name": "SHIPPER_DELIVERED",
+							"nameLocation": "1374:17:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1359:37:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 50,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1359:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "3130",
+								"id": 51,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1394:2:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_10_by_1",
+									"typeString": "int_const 10"
+								},
+								"value": "10"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 55,
+							"mutability": "constant",
+							"name": "BUYER_CONFIRM_DELIVERY_FAILURE",
+							"nameLocation": "1418:30:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1403:50:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 53,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1403:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "3131",
+								"id": 54,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1451:2:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_11_by_1",
+									"typeString": "int_const 11"
+								},
+								"value": "11"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 58,
+							"mutability": "constant",
+							"name": "SELLER_CONFIRM_NOT_RECEIVED",
+							"nameLocation": "1475:27:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1460:47:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 56,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1460:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "3132",
+								"id": 57,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1505:2:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_12_by_1",
+									"typeString": "int_const 12"
+								},
+								"value": "12"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 61,
+							"mutability": "constant",
+							"name": "DISPUTED_NOT_RECEIVED",
+							"nameLocation": "1529:21:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1514:41:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 59,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1514:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "3133",
+								"id": 60,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1553:2:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_13_by_1",
+									"typeString": "int_const 13"
+								},
+								"value": "13"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 64,
+							"mutability": "constant",
+							"name": "DISPUTED_DELIVERY_FAILURE",
+							"nameLocation": "1577:25:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1562:45:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 62,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1562:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "3134",
+								"id": 63,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1605:2:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_14_by_1",
+									"typeString": "int_const 14"
+								},
+								"value": "14"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 67,
+							"mutability": "constant",
+							"name": "SELLER_RELEASE_FUNDS",
+							"nameLocation": "1629:20:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1614:40:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint8",
+								"typeString": "uint8"
+							},
+							"typeName": {
+								"id": 65,
+								"name": "uint8",
+								"nodeType": "ElementaryTypeName",
+								"src": "1614:5:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint8",
+									"typeString": "uint8"
+								}
+							},
+							"value": {
+								"hexValue": "3135",
+								"id": 66,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1652:2:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_15_by_1",
+									"typeString": "int_const 15"
+								},
+								"value": "15"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 70,
+							"mutability": "constant",
+							"name": "SHIPPING_DEADLINE",
+							"nameLocation": "1680:17:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1663:43:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint256",
+								"typeString": "uint256"
+							},
+							"typeName": {
+								"id": 68,
+								"name": "uint256",
+								"nodeType": "ElementaryTypeName",
+								"src": "1663:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint256",
+									"typeString": "uint256"
+								}
+							},
+							"value": {
+								"hexValue": "37",
+								"id": 69,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1700:6:0",
+								"subdenomination": "days",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_604800_by_1",
+									"typeString": "int_const 604800"
+								},
+								"value": "7"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 73,
+							"mutability": "constant",
+							"name": "RECEIPT_DEADLINE",
+							"nameLocation": "1730:16:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1713:42:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint256",
+								"typeString": "uint256"
+							},
+							"typeName": {
+								"id": 71,
+								"name": "uint256",
+								"nodeType": "ElementaryTypeName",
+								"src": "1713:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint256",
+									"typeString": "uint256"
+								}
+							},
+							"value": {
+								"hexValue": "37",
+								"id": 72,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1749:6:0",
+								"subdenomination": "days",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_604800_by_1",
+									"typeString": "int_const 604800"
+								},
+								"value": "7"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 76,
+							"mutability": "constant",
+							"name": "DISPUTE_DEADLINE",
+							"nameLocation": "1779:16:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1762:43:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_uint256",
+								"typeString": "uint256"
+							},
+							"typeName": {
+								"id": 74,
+								"name": "uint256",
+								"nodeType": "ElementaryTypeName",
+								"src": "1762:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_uint256",
+									"typeString": "uint256"
+								}
+							},
+							"value": {
+								"hexValue": "3135",
+								"id": 75,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1798:7:0",
+								"subdenomination": "days",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_1296000_by_1",
+									"typeString": "int_const 1296000"
+								},
+								"value": "15"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 79,
+							"mutability": "constant",
+							"name": "PURCHASE_DELIVERED_INFO_FORMAT_KEY",
+							"nameLocation": "1831:34:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1814:120:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 77,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "1814:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307861343565343634346233396338356330613666393061386262386330346538363236313137643132666663313430613865373566623130636136383539313361",
+								"id": 78,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1868:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_74345875766180794344379463365090823353613412860927362134046397613955927609658_by_1",
+									"typeString": "int_const 7434...(69 digits omitted)...9658"
+								},
+								"value": "0xa45e4644b39c85c0a6f90a8bb8c04e8626117d12ffc140a8e75fb10ca685913a"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 82,
+							"mutability": "constant",
+							"name": "PURCHASE_SHIPPING_INFO_FORMAT_KEY",
+							"nameLocation": "1958:33:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "1941:119:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 80,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "1941:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307866316162636132383930333832613931613664616331383861333039386262363237613565306235613833353339643631626639306539306137633365363032",
+								"id": 81,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "1994:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_109310922602992297167984123181429569170919248928963894889928419760497456571906_by_1",
+									"typeString": "int_const 1093...(70 digits omitted)...1906"
+								},
+								"value": "0xf1abca2890382a91a6dac188a3098bb627a5e0b5a83539d61bf90e90a7c3e602"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 85,
+							"mutability": "constant",
+							"name": "PURCHASE_SHIP_FAILURE_INFO_FORMAT_KEY",
+							"nameLocation": "2084:37:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "2067:123:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 83,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "2067:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307833376366613730353735316534323866336333313538636361333964393839303064613838636637366165306336653338646366653035343666373862613663",
+								"id": 84,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "2124:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_25244096753262410643075763323918713937315182816983833360232190427940467030636_by_1",
+									"typeString": "int_const 2524...(69 digits omitted)...0636"
+								},
+								"value": "0x37cfa705751e428f3c3158cca39d98900da88cf76ae0c6e38dcfe0546f78ba6c"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 88,
+							"mutability": "constant",
+							"name": "PURCHASE_NOT_RECEIVED_INFO_FORMAT_KEY",
+							"nameLocation": "2214:37:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "2197:123:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 86,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "2197:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307835626530333864343037373965373535346337643834353832346335313032303461346333376635383535333739363538623934626330663735336131636538",
+								"id": 87,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "2254:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_41556635177679047431963164872482385283491627326418234377716678169490418703592_by_1",
+									"typeString": "int_const 4155...(69 digits omitted)...3592"
+								},
+								"value": "0x5be038d40779e7554c7d845824c510204a4c37f5855379658b94bc0f753a1ce8"
+							},
+							"visibility": "internal"
+						},
+						{
+							"constant": true,
+							"id": 91,
+							"mutability": "constant",
+							"name": "PURCHASE_CANCEL_REASON_INFO_FORMAT_KEY",
+							"nameLocation": "2344:38:0",
+							"nodeType": "VariableDeclaration",
+							"scope": 92,
+							"src": "2327:124:0",
+							"stateVariable": false,
+							"storageLocation": "default",
+							"typeDescriptions": {
+								"typeIdentifier": "t_bytes32",
+								"typeString": "bytes32"
+							},
+							"typeName": {
+								"id": 89,
+								"name": "bytes32",
+								"nodeType": "ElementaryTypeName",
+								"src": "2327:7:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_bytes32",
+									"typeString": "bytes32"
+								}
+							},
+							"value": {
+								"hexValue": "307866623663386261353236313962376566306531333930613735353131316137303733343234626563636366363865353561633066353163653261343530613630",
+								"id": 90,
+								"isConstant": false,
+								"isLValue": false,
+								"isPure": true,
+								"kind": "number",
+								"lValueRequested": false,
+								"nodeType": "Literal",
+								"src": "2385:66:0",
+								"typeDescriptions": {
+									"typeIdentifier": "t_rational_113722308272541780014644377634822548542014356264885113643522708172008583400032_by_1",
+									"typeString": "int_const 1137...(70 digits omitted)...0032"
+								},
+								"value": "0xfb6c8ba52619b7ef0e1390a755111a7073424becccf68e55ac0f51ce2a450a60"
+							},
+							"visibility": "internal"
+						}
+					],
+					"src": "33:2421:0"
+				},
+				"id": 0
+			}
+		}
+	}
+}

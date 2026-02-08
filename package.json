@@ -12,6 +12,7 @@
     "@erc725/erc725.js": "^0.28.2",
     "@lukso/lsp-smart-contracts": "^0.16.7",
     "@reduxjs/toolkit": "^2.11.2",
+    "@remix-project/remixd": "^0.6.60",
     "bootstrap": "^5.3.8",
     "dagre": "^0.8.5",
     "ethers": "^5.7.2",

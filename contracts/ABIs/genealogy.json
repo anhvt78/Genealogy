@@ -1,0 +1,178 @@
+{
+    "abi":
+[
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "clanId",
+				"type": "address"
+			}
+		],
+		"name": "ChangeClanOwner",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "nftAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "ClanCreated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "subCollection",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "upperCollection",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "upperId",
+				"type": "bytes32"
+			}
+		],
+		"name": "ClanReconnected",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "clanId",
+				"type": "address"
+			}
+		],
+		"name": "ClanRemovedFromOwned",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "clanId",
+				"type": "address"
+			}
+		],
+		"name": "changeClanOwner",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "clanName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ancestorName",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "birthTimestamp",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "deathTimestamp",
+				"type": "uint256"
+			}
+		],
+		"name": "createClan",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "getClanId",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "clanId",
+				"type": "address"
+			}
+		],
+		"name": "getClanOwner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "clanId",
+				"type": "address"
+			}
+		],
+		"name": "removeClanFromOwned",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
+}
