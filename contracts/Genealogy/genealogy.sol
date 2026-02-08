@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {FamilyNFT} from "./FamilyNFT.sol";
+import {FamilyNFT} from "./familyNFT.sol";
 import {FamilyTypes} from "./types/FamilyTypes.sol";
 
 contract Genealogy {

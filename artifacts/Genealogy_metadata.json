@@ -438,7 +438,7 @@
 				"dweb:/ipfs/QmSYuH1AhvJkPK8hNvoPqtExBcgTB42pPRHgTHkS5c5zYW"
 			]
 		},
-		"contracts/Genealogy/FamilyNFT.sol": {
+		"contracts/Genealogy/familyNFT.sol": {
 			"keccak256": "0x4e18676daa14e697cd9be63d848dc2bcbaa7b89096fd72215d99fac0fa998fd9",
 			"license": "MIT",
 			"urls": [
@@ -447,11 +447,11 @@
 			]
 		},
 		"contracts/Genealogy/genealogy.sol": {
-			"keccak256": "0x0053465da78c13bc6f138cd033356fc92a457a70860de75eeaee1f867be3d3fa",
+			"keccak256": "0xf1c3a9e4a0095756f933b5865497175f5e671bea2ab65925666f244bf1b09439",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://d4d093641037ac2f3822182a69c032c51f0e0bd3e77693804935c17fe9f88a91",
-				"dweb:/ipfs/QmTS2hZ16tqQw1EsiHyJftgNrJJ73F2ogEszcFpg1814v4"
+				"bzz-raw://48d946b655ea1339b88b6a102f273cab56c6b697b54f1959f49219c4157226b7",
+				"dweb:/ipfs/QmX1FF6acWUeUHT3huQkxm1P9ATLBUMqQXzGE6jhMuWvm6"
 			]
 		},
 		"contracts/Genealogy/types/FamilyTypes.sol": {
