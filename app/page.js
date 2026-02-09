@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { ConnectorModal } from "@/components/Modals/ConnectorModal";
 import ConnectPage from "../pages/ConnectPage/ConnectPage";
 import ContentPage from "../pages/ContentPage";
+import GenealogyDetailPage from "@/pages/GenealogyDetailPage/GenealogyDetailPage";
 
 export default function FamilyTreePage() {
   const [isShowModalConnector, setIsShowModalConnector] = useState(true);
@@ -19,14 +20,10 @@ export default function FamilyTreePage() {
       {!userWalletAddress ? (
         <ConnectPage setIsShowModalConnector={setIsShowModalConnector} />
       ) : (
-        <ContentPage />
+        // <ContentPage />
+        <GenealogyDetailPage clanId = {"0x632d00e238fb6919b2b461dd5d75e6002da64210"}/>
       )}
-      {/* {!userWalletAddress && (
-        <ConnectorModal
-          isShow={isShowModalConnector}
-          onHide={() => setIsShowModalConnector(false)}
-        />
-      )} */}
+      
     </div>
   );
 }
