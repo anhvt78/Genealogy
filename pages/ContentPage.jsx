@@ -10,7 +10,7 @@ const GENEALOGY_DATA = [
       "Dòng dõi cụ Nguyễn Văn Tổ, khởi nguồn từ vùng đất tổ linh thiêng.",
     image:
       "https://cdn3648.cdn4s7.io.vn/media/1547697242_1496913269_custom_1.png", // Thay bằng link ảnh thật
-    route: "/family-tree/nguyen-toc",
+    clanId: "0x632d00e238fb6919b2b461dd5d75e6002da64210",
   },
   {
     id: "le-toc",
@@ -19,7 +19,7 @@ const GENEALOGY_DATA = [
       "Ghi chép về sự phát triển của dòng họ Lê qua 12 đời con cháu.",
     image:
       "https://cdn3648.cdn4s7.io.vn/media/1547697242_1496913269_custom_1.png",
-    route: "/family-tree/le-toc",
+    clanId: "0x632d00e238fb6919b2b461dd5d75e6002da64210",
   },
   {
     id: "le-toc",
@@ -28,7 +28,7 @@ const GENEALOGY_DATA = [
       "Ghi chép về sự phát triển của dòng họ Lê qua 12 đời con cháu.",
     image:
       "https://cdn3648.cdn4s7.io.vn/media/1547697242_1496913269_custom_1.png",
-    route: "/family-tree/le-toc",
+    clanId: "0x632d00e238fb6919b2b461dd5d75e6002da64210",
   },
   {
     id: "le-toc",
@@ -37,7 +37,7 @@ const GENEALOGY_DATA = [
       "Ghi chép về sự phát triển của dòng họ Lê qua 12 đời con cháu.",
     image:
       "https://cdn3648.cdn4s7.io.vn/media/1547697242_1496913269_custom_1.png",
-    route: "/family-tree/le-toc",
+    clanId: "0x632d00e238fb6919b2b461dd5d75e6002da64210",
   },
   // Thêm các mục khác tại đây...
 ];
@@ -68,7 +68,7 @@ export default function ContentPage() {
           {GENEALOGY_DATA.map((item) => (
             <div
               key={item.id}
-              onClick={() => router.push(item.route)}
+              onClick={() => router.push(`/genealogyDetail?clandId=${item.clanId}`)}
               className="group cursor-pointer bg-[#f2e2ba] border-2 border-[#5d3a1a] shadow-[10px_10px_0px_0px_rgba(93,58,26,0.1)] hover:shadow-[15px_15px_0px_0px_rgba(93,58,26,0.2)] hover:-translate-y-2 transition-all duration-300 overflow-hidden"
             >
               {/* Hình ảnh đại diện */}
