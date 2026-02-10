@@ -1,11 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setWalletAddress } from "@/redux/genealogySlide";
 import { checkChainId } from "@/components/Utils/helpers";
 import sweetalert2 from "@/configs/swal";
 import { ethers } from "ethers";
 import { useRouter } from "next/navigation"; // Thêm router để điều hướng
+import { Html5QrcodeScanner, Html5Qrcode } from "html5-qrcode";
 
 export default function ConnectPage() {
   const [isShaking, setIsShaking] = useState(false);
@@ -95,12 +96,96 @@ export default function ConnectPage() {
     }
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  // useEffect(() => {
+  //   // Kiểm tra User Agent hoặc chiều rộng màn hình
+  //   const checkMobile = () => {
+  //     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  //     const isMobileDevice = /android|iphone|ipad|ipod/i.test(
+  //       userAgent.toLowerCase(),
+  //     );
+  //     setIsMobile(isMobileDevice);
+  //   };
+
+  //   checkMobile();
+  // }, []);
+
+  // Sử dụng useRef để theo dõi trạng thái scanner, tránh khởi tạo nhiều lần
+  const scannerRef = useRef(null);
+
+  // 1. Kiểm tra thiết bị khi load trang
+  useEffect(() => {
+    const checkDevice = () => {
+      const isMobileDevice =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent,
+        );
+      setIsMobile(isMobileDevice);
+    };
+    checkDevice();
+  }, []);
+
+  // Logic quét QR thực tế
+
+  // Hàm khởi tạo camera tách biệt
+  const startScanner = async () => {
+    // Đợi một chút để React render xong thẻ div#reader
+    setTimeout(async () => {
+      const element = document.getElementById("reader");
+      if (!element) return; // Nếu vẫn chưa có thì thoát để tránh lỗi crash
+
+      try {
+        scannerRef.current = new Html5Qrcode("reader");
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        await scannerRef.current.start(
+          { facingMode: "environment" },
+          config,
+          (decodedText) => {
+            const clanId = decodedText.includes("/")
+              ? decodedText.split("/").pop()
+              : decodedText;
+            stopScanner();
+            router.push(`/detail/${clanId.trim()}`);
+          },
+        );
+      } catch (err) {
+        console.error("Lỗi khởi tạo camera:", err);
+        setIsScanning(false);
+      }
+    }, 100); // Delay 100ms để đảm bảo DOM đã sẵn sàng
+  };
+
+  const stopScanner = async () => {
+    if (scannerRef.current && scannerRef.current.isScanning) {
+      await scannerRef.current.stop();
+      scannerRef.current = null;
+    }
+    setIsScanning(false);
+  };
+  // 2. Logic khởi tạo và dừng Camera thực tế
+  // Lắng nghe biến isScanning để kích hoạt/tắt
+  useEffect(() => {
+    if (isScanning && isMobile) {
+      startScanner();
+    }
+    return () => {
+      if (scannerRef.current) stopScanner();
+    };
+  }, [isScanning]);
+
+  // const handleAccessById = () => {
+  //   if (!inputClanId.trim()) return;
+  //   router.push(`/detail/${inputClanId.trim()}`);
+  // };
+
   return (
     <div className="w-full h-screen bg-[#e8d5b5] flex overflow-hidden">
       <div className="absolute inset-0 z-[100] flex items-center justify-center bg-[#3d2611]/70 backdrop-blur-md transition-all duration-500">
         <div
           onClick={(e) => e.stopPropagation()}
-          className={`bg-[#f2e2ba] p-8 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-b-4 border-[#5d3a1a] w-full max-w-md text-center transform transition-all 
+          className={`bg-[#f2e2ba] p-8 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-b-2 border-[#5d3a1a] w-full max-w-md text-center transform transition-all 
               ${isShaking ? "animate-shake" : "scale-100"}`}
         >
           {/* Header & Icon */}
@@ -154,7 +239,7 @@ export default function ConnectPage() {
 
             {/* PHẦN 2: SCAN & WALLET */}
             <div className="grid grid-cols-2 gap-3">
-              <button
+              {/* <button
                 onClick={() => setIsScanning(!isScanning)}
                 className={`flex flex-col items-center gap-2 p-3 border-2 rounded-xl transition-all ${
                   isScanning
@@ -174,7 +259,35 @@ export default function ConnectPage() {
                 <span className="text-[10px] font-bold uppercase tracking-tighter">
                   Quét QR Code
                 </span>
+              </button> */}
+
+              <button
+                onClick={() => (isMobile ? setIsScanning(true) : null)}
+                className={`flex flex-col items-center gap-2 p-3 border-2 rounded-xl transition-all w-full
+      ${
+        isMobile
+          ? "border-[#5d3a1a]/20 text-[#5d3a1a] hover:border-[#5d3a1a] active:scale-95"
+          : "border-gray-300 text-gray-400 cursor-not-allowed opacity-50"
+      }`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 256 256"
+                >
+                  <path d="M224,144v48a16,16,0,0,1-16,16H160a8,8,0,0,1,0-16h48V144a8,8,0,0,1,16,0ZM96,208H48V160a8,8,0,0,0-16,0v48a16,16,0,0,0,16,16H96a8,8,0,0,0,0-16ZM208,32H160a8,8,0,0,0,0,16h48V96a8,8,0,0,0,16,0V48A16,16,0,0,0,208,32ZM48,96a8,8,0,0,0,16,0V48H96a8,8,0,0,0,0-16H48A16,16,0,0,0,32,48V96Z"></path>
+                </svg>
+                <span className="text-[10px] font-bold uppercase">Quét QR</span>
               </button>
+
+              {/* Tooltip hiển thị khi rê chuột vào trên Desktop */}
+              {!isMobile && (
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap">
+                  Chỉ hỗ trợ trên thiết bị di động
+                </div>
+              )}
 
               <button
                 onClick={connectWalletHandler}
