@@ -42,7 +42,7 @@ const GENEALOGY_DATA = [
   // Thêm các mục khác tại đây...
 ];
 
-export default function ContentPage() {
+export default function ClanListPage() {
   const router = useRouter();
 
   return (
@@ -57,7 +57,7 @@ export default function ContentPage() {
           <div className="flex items-center justify-center gap-4">
             <div className="h-[2px] w-20 bg-[#5d3a1a]"></div>
             <p className="text-[#5d3a1a] italic text-lg italic">
-              "Cây có cội, nước có nguồn"
+              Cây có cội, nước có nguồn
             </p>
             <div className="h-[2px] w-20 bg-[#5d3a1a]"></div>
           </div>
@@ -71,7 +71,7 @@ export default function ContentPage() {
               // onClick={() =>
               //   router.push(`/genealogyDetail?clanId=${item.clanId}`)
               // }
-              onClick={() => router.push(`/genealogy/detail/${item.clanId}`)}
+              onClick={() => router.push(`/detail/${item.clanId}`)}
               className="group cursor-pointer bg-[#f2e2ba] border-2 border-[#5d3a1a] shadow-[10px_10px_0px_0px_rgba(93,58,26,0.1)] hover:shadow-[15px_15px_0px_0px_rgba(93,58,26,0.2)] hover:-translate-y-2 transition-all duration-300 overflow-hidden"
             >
               {/* Hình ảnh đại diện */}

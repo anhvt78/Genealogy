@@ -5,7 +5,7 @@ import "reactflow/dist/style.css";
 import { useSelector } from "react-redux";
 import { ConnectorModal } from "@/components/Modals/ConnectorModal";
 import ConnectPage from "../pages/ConnectPage/ConnectPage";
-import ContentPage from "../pages/ContentPage";
+import ClanListPage from "../pages/ClanListPage";
 import GenealogyDetailPage from "@/pages/GenealogyDetailPage/GenealogyDetailPage";
 
 export default function FamilyTreePage() {
@@ -20,7 +20,7 @@ export default function FamilyTreePage() {
       {!userWalletAddress ? (
         <ConnectPage setIsShowModalConnector={setIsShowModalConnector} />
       ) : (
-        <ContentPage />
+        <ClanListPage />
         // <GenealogyDetailPage clanId = {"0x632d00e238fb6919b2b461dd5d75e6002da64210"}/>
       )}
     </div>
