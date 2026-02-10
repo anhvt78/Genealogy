@@ -13,9 +13,9 @@ contract Genealogy {
     event ClanRemovedFromOwned(address indexed clanId);
     event ClanReconnected(address indexed subCollection, address indexed upperCollection, bytes32 upperId);
 
-    function createClan(string calldata clanName, string calldata ancestorName, uint256 birthTimestamp, uint256 deathTimestamp) external {
+    function createClan(string calldata clanName, string calldata ancestorName, string calldata ancestorDesc, uint256 birthTimestamp, uint256 deathTimestamp) external {
         require(_clanIds[msg.sender] == address(0), "Clan existed");
-        FamilyNFT familyNFT = new FamilyNFT(clanName, ancestorName,birthTimestamp, deathTimestamp, msg.sender);
+        FamilyNFT familyNFT = new FamilyNFT(clanName, ancestorName, ancestorDesc, birthTimestamp, deathTimestamp, msg.sender);
         address clanId = address(familyNFT);
         _clanIds[msg.sender] = clanId;
         _owners[clanId] = msg.sender;
