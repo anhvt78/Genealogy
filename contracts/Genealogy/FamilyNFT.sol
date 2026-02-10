@@ -19,24 +19,25 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     event SpouseAdded(bytes32 indexed husbanId, bytes32 indexed spouseId, uint256 marriedAt);
     event ChildAdded(bytes32 indexed childId, bytes32 indexed fatherId, FamilyTypes.ChildType childType);
 
-    constructor(string memory clanName, string memory ancestorName, uint256 birthTimestamp, uint256 deathTimestamp, address owner)
+    constructor(string memory clanName,  string memory ancestorName, string memory descShort, uint256 birthTimestamp, uint256 deathTimestamp, address owner)
         LSP8IdentifiableDigitalAsset(clanName, "FAMILY", owner, _LSP4_TOKEN_TYPE_COLLECTION, _LSP8_TOKENID_FORMAT_NUMBER)
     {
         genealogyAddress = msg.sender;
-        _createNewPerson(ancestorName, owner, FamilyTypes.Sex.MALE, birthTimestamp, deathTimestamp);
+        _createNewPerson(ancestorName, descShort, owner, FamilyTypes.Sex.MALE, birthTimestamp, deathTimestamp);
     }
 
 
     function addSpouse(
         bytes32 husbanId,
         string calldata name,
+        string calldata descShort,
         uint256 birthTimestamp,
         uint256 deathTimestamp,
         uint256 marriedAt,
         uint256 divorcedAt,
         address ownership
     ) external onlyAuthorized(husbanId) {
-        bytes32 spouseId = _createNewPerson(name, ownership, FamilyTypes.Sex.FEMALE, birthTimestamp, deathTimestamp);
+        bytes32 spouseId = _createNewPerson(name, descShort, ownership, FamilyTypes.Sex.FEMALE, birthTimestamp, deathTimestamp);
         persons[spouseId].spouses.push(FamilyTypes.Spouse({spouseId: spouseId, marriedAt: marriedAt, divorcedAt: divorcedAt}));
         emit SpouseAdded(husbanId, spouseId, marriedAt);
     }
@@ -67,6 +68,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
 
     function addChild(
         string calldata childName,
+        string calldata descShort,
         FamilyTypes.Sex sex,
         uint256 birthTimestamp,
         uint256 deathTimestamp,
@@ -77,7 +79,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     ) external onlyAuthorized(fatherId){
         FamilyTypes.Person storage father = persons[fatherId];
 
-        bytes32 childId = _createNewPerson(childName, ownership, sex, birthTimestamp, deathTimestamp);
+        bytes32 childId = _createNewPerson(childName, descShort, ownership, sex, birthTimestamp, deathTimestamp);
 
         father.children.push(FamilyTypes.Child({childType: childType, childId: childId}));
         persons[childId].fatherId = fatherId;
@@ -114,6 +116,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
 
     function _createNewPerson(
         string memory name,
+        string memory descShort,
         address ownership,
         FamilyTypes.Sex sex,
         uint256 birthTimestamp, 
@@ -129,6 +132,9 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         p.sex = sex;
         p.birthTimestamp = birthTimestamp;
         p.deathTimestamp = deathTimestamp;
+
+        _setDataForTokenId(personId, keccak256("ClanName"), bytes(name));
+        _setDataForTokenId(personId, keccak256("ClanShortDescription"), bytes(descShort));
 
         emit PersonCreated(personId, name, ownership);
     }

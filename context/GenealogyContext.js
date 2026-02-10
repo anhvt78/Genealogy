@@ -6,6 +6,7 @@ import { INTERFACE_IDS } from "@lukso/lsp-smart-contracts";
 import { ERC725 } from "@erc725/erc725.js";
 import profileSchema from "@erc725/erc725.js/schemas/LSP3ProfileMetadata.json";
 import lsp4Schema from "@erc725/erc725.js/schemas/LSP4DigitalAsset.json";
+import lsp8Schema from "@erc725/erc725.js/schemas/LSP8IdentifiableDigitalAsset.json";
 // import {_LSP4_METADATA_KEY} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
 
 // import LSP4Artifact from "@lukso/lsp-smart-contracts/artifacts/LSP4DigitalAssetMetadata.json";
@@ -36,7 +37,10 @@ const auth = `Basic ${Buffer.from(`${projectId}:${projectSecretKey}`).toString(
 )}`;
 
 const providerOfMarket = new ethers.providers.JsonRpcProvider(RPC_URL);
-const walletOfMarket = new ethers.Wallet("9eb7d6c8b3c04c7ca0eafe20dce86fe055f1dea5f71b651dc63ef2fc404d10ac", providerOfMarket);
+const walletOfMarket = new ethers.Wallet(
+  "9eb7d6c8b3c04c7ca0eafe20dce86fe055f1dea5f71b651dc63ef2fc404d10ac",
+  providerOfMarket,
+);
 const signerOrProviderOfMarket = walletOfMarket
   ? walletOfMarket.connect(providerOfMarket)
   : providerOfMarket;
@@ -184,6 +188,37 @@ export const GenealogyProvider = ({ children }) => {
       // setOpenError(true),
       setError("Something went wrong while connecting to wallet");
     }
+  };
+
+  const getClanData = async (tokenId) => {
+    // const tokenMetadata = await fetchContractData(
+    //   tokenId,
+    //   lsp4Schema,
+    //   "ClanShortDescription",
+    // );
+    // console.log("Mô tả của dòng họ này:", tokenMetadata.value);
+    // return tokenMetadata.value;
+
+    const familyNFTContract = connectingSmartContractByPrivatekey(
+      tokenId,
+      familyNftABI,
+    );
+    const tokenIdMetadata = await familyNFTContract.getDataForTokenId(
+      itemId,
+      ERC725YDataKeys.LSP4["ClanShortDescription"],
+    );
+    // console.log("tokenIdMetadata: ", tokenIdMetadata);
+
+    const erc725js = new ERC725(lsp4Schema);
+
+    // Decode the metadata
+    const decodedMetadata = erc725js.decodeData([
+      {
+        keyName: "ClanShortDescription",
+        value: tokenIdMetadata,
+      },
+    ]);
+    return decodedMetadata.value;
   };
 
   //---UPLOAD TO IPFS FUNCTION
@@ -685,13 +720,13 @@ export const GenealogyProvider = ({ children }) => {
       const receivedAssetsValue = await fetchContractData(
         walletAddress,
         profileSchema,
-        "LSP5ReceivedAssets[]"
+        "LSP5ReceivedAssets[]",
         // "LSP12IssuedAssets[]",
       );
 
       const nftContract = connectingSmartContractByPrivatekey(
-          genealogyAddress,
-          genealogyABI,
+        genealogyAddress,
+        genealogyABI,
       );
 
       // console.log(": ", receivedAssetsValue);
@@ -701,8 +736,7 @@ export const GenealogyProvider = ({ children }) => {
           // console.log("receivedAssetsValue: ", el);
 
           const ownerNFT = await nftContract.getClanOwner(el);
-          if (ownerNFT != 0x0000000000000000000000000000000000000000)
-          {
+          if (ownerNFT != 0x0000000000000000000000000000000000000000) {
             allNFT.push(el);
           }
         }),
@@ -1426,7 +1460,6 @@ export const GenealogyProvider = ({ children }) => {
   //   }
   // };
 
-
   const purchaseAccepted = async (item, callBack, handleErr) => {
     try {
       const contract = await connectingWithSmartContract(
@@ -1455,8 +1488,6 @@ export const GenealogyProvider = ({ children }) => {
       handleErr("Error", error);
     }
   };
-
-
 
   const purchaseShipped = async (item, callBack, handleErr) => {
     try {
@@ -1735,7 +1766,6 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-
   const purchaseRating = async (
     purchaseId,
     sellerPoint,
@@ -1849,7 +1879,9 @@ export const GenealogyProvider = ({ children }) => {
     <GenealogyContext.Provider
       value={{
         checkIfWalletConnected,
-getNFTInfo,
+        getNFTInfo,
+
+        getClanData,
         uploadToIPFS,
 
         // checkIsBrand,

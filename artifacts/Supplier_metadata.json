@@ -9,7 +9,7 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "daoAddress",
+						"name": "_daoAddress",
 						"type": "address"
 					}
 				],
@@ -26,20 +26,7 @@
 						"type": "address"
 					}
 				],
-				"name": "BrandRegister",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": false,
-						"internalType": "address",
-						"name": "arbitratorAddress",
-						"type": "address"
-					}
-				],
-				"name": "BrandUnRegister",
+				"name": "BrandRegistered",
 				"type": "event"
 			},
 			{
@@ -61,7 +48,7 @@
 					{
 						"indexed": true,
 						"internalType": "address",
-						"name": "supplierAddress",
+						"name": "brandAddress",
 						"type": "address"
 					}
 				],
@@ -74,7 +61,7 @@
 					{
 						"indexed": true,
 						"internalType": "address",
-						"name": "supplierAddress",
+						"name": "brandAddress",
 						"type": "address"
 					},
 					{
@@ -93,7 +80,7 @@
 					{
 						"indexed": true,
 						"internalType": "address",
-						"name": "supplierAddress",
+						"name": "brandAddress",
 						"type": "address"
 					},
 					{
@@ -105,6 +92,63 @@
 				],
 				"name": "PartnerEnabled",
 				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "brandAddress",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "agentAddress",
+						"type": "address"
+					}
+				],
+				"name": "PartnerRejected",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "brandAddress",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "agentAddress",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "feePaid",
+						"type": "uint256"
+					}
+				],
+				"name": "PartnerRequested",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "agentAddress",
+						"type": "address"
+					}
+				],
+				"name": "approvePartner",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
 			},
 			{
 				"inputs": [],
@@ -128,35 +172,15 @@
 			},
 			{
 				"inputs": [],
-				"name": "brandUnRegister",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
+				"name": "daoAddress",
+				"outputs": [
 					{
 						"internalType": "address",
-						"name": "agentAddress",
+						"name": "",
 						"type": "address"
 					}
 				],
-				"name": "disablePartner",
-				"outputs": [],
-				"stateMutability": "payable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "agentAddress",
-						"type": "address"
-					}
-				],
-				"name": "enablePartner",
-				"outputs": [],
-				"stateMutability": "payable",
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -203,51 +227,19 @@
 						"internalType": "address",
 						"name": "brandAddress",
 						"type": "address"
-					}
-				],
-				"name": "getBrandIndex",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "getDaoAddress",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "brandAddress",
-						"type": "address"
 					},
 					{
-						"internalType": "uint256",
-						"name": "index",
-						"type": "uint256"
+						"internalType": "uint256[]",
+						"name": "indexes",
+						"type": "uint256[]"
 					}
 				],
-				"name": "getPartnerAddress",
+				"name": "getPartnerBatch",
 				"outputs": [
 					{
-						"internalType": "address",
+						"internalType": "address[]",
 						"name": "",
-						"type": "address"
+						"type": "address[]"
 					}
 				],
 				"stateMutability": "view",
@@ -302,14 +294,148 @@
 						"internalType": "address",
 						"name": "brandAddress",
 						"type": "address"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "indexes",
+						"type": "uint256[]"
 					}
 				],
-				"name": "getVerifier",
+				"name": "getPartnerRequestBatch",
 				"outputs": [
 					{
-						"internalType": "address",
+						"internalType": "address[]",
 						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "brandAddress",
 						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "agentAddress",
+						"type": "address"
+					}
+				],
+				"name": "getPartnerStatus",
+				"outputs": [
+					{
+						"internalType": "enum Supplier.PartnerStatus",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "brandAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "indexes",
+						"type": "uint256[]"
+					}
+				],
+				"name": "getRejectBatch",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "brandAddress",
+						"type": "address"
+					}
+				],
+				"name": "getRejectCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "brandAddress",
+						"type": "address"
+					}
+				],
+				"name": "getRequestCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "sellerAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "indexes",
+						"type": "uint256[]"
+					}
+				],
+				"name": "getSellerBrandBatch",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "sellerAddress",
+						"type": "address"
+					}
+				],
+				"name": "getSellerBrandCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -381,6 +507,32 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "agentAddress",
+						"type": "address"
+					}
+				],
+				"name": "rejectPartner",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "brandAddress",
+						"type": "address"
+					}
+				],
+				"name": "requestToJoin",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "brandAddress",
 						"type": "address"
 					}
@@ -417,7 +569,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/supplier_bk.sol": "Supplier"
+			"contracts/supplier.sol": "Supplier"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},
@@ -425,7 +577,7 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
 		"remappings": []
@@ -447,12 +599,12 @@
 				"dweb:/ipfs/QmezuXg5GK5oeA4F91EZhozBFekhq5TD966bHPH18cCqhu"
 			]
 		},
-		"contracts/supplier_bk.sol": {
-			"keccak256": "0xce4530f09387d9ac0fab319a9dad8a630ea1f3f1e27658a2cc46f23331d091ea",
+		"contracts/supplier.sol": {
+			"keccak256": "0x5302628b85f2d3c119915d2de8b0199454eb7e1bed969c77e665ec02143a6efd",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://21bf121b55c3f1ea22f7236ca9fccb8d5d70f3349867f1a99bdb28b63d1006c7",
-				"dweb:/ipfs/QmSSfLp8ihYeDCDgw1ZAXGnCw3rJU4oSC1vFcKCFPvatHz"
+				"bzz-raw://0afe605b3ce0548813b5b76912e625f42d0451a03572c11a219c44e7164b4334",
+				"dweb:/ipfs/QmPqqqvTLeWXgMBKXB81sYfsVuCt6bnNrF1gjSDggUC7tA"
 			]
 		}
 	},

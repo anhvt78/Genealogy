@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const DATA_DETAIL = {
@@ -15,32 +15,108 @@ Trải qua nhiều biến cố lịch sử, gia phả vẫn được lưu giữ 
     "https://cdn3648.cdn4s7.io.vn/media/articles/plugin/news/3280/1657886556-400426901-y-ngh-a-c-a-v-n-hoa-lang-va-dong-h.jpg",
     "https://cdn3648.cdn4s7.io.vn/media/img_9300_1.webp",
     "https://cdn3648.cdn4s7.io.vn/media/img_9310_1.webp",
+    "https://cdn3648.cdn4s7.io.vn/media/img_9300_1.webp",
+    "https://cdn3648.cdn4s7.io.vn/media/img_9310_1.webp",
+    "https://cdn3648.cdn4s7.io.vn/media/img_9300_1.webp",
+    "https://cdn3648.cdn4s7.io.vn/media/img_9310_1.webp",
+    "https://cdn3648.cdn4s7.io.vn/media/img_9300_1.webp",
   ],
 };
 
-export default function GenealogyDetailPage() {
+export default function GenealogyDetailPage({ clanId }) {
   const router = useRouter();
+  // Thay vì lưu URL, ta lưu index của ảnh trong mảng gallery
+  const [currentIndex, setCurrentIndex] = useState(null);
+
+  // Hàm chuyển ảnh tiếp theo
+  const nextImage = (e) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev + 1) % DATA_DETAIL.gallery.length);
+  };
+
+  // Hàm quay lại ảnh trước
+  const prevImage = (e) => {
+    e.stopPropagation();
+    setCurrentIndex(
+      (prev) =>
+        (prev - 1 + DATA_DETAIL.gallery.length) % DATA_DETAIL.gallery.length,
+    );
+  };
 
   return (
     <div className="min-h-screen w-full bg-[#e8d5b5] font-serif overflow-y-auto pb-20">
-      {/* Nút quay lại */}
-      <button
-        onClick={() => router.back()}
-        className="fixed top-6 left-6 z-50 p-3 bg-[#5d3a1a] text-[#f2e2ba] rounded-full shadow-lg hover:bg-[#3d2611] transition-all"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
+      {/* 1. KHUNG HÌNH ĐẦY ĐỦ (LIGHTBOX) VỚI PHÍM ĐIỀU HƯỚNG */}
+      {currentIndex !== null && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+          onClick={() => setCurrentIndex(null)}
         >
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-      </button>
+          {/* Nút Đóng */}
+          <button className="absolute top-6 right-6 text-white/70 hover:text-white z-[110]">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
 
+          {/* Nút Trước (<) */}
+          <button
+            onClick={prevImage}
+            className="absolute left-4 md:left-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all z-[110]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+
+          {/* Ảnh hiển thị */}
+          <div className="relative max-w-5xl max-h-[85vh] flex items-center justify-center">
+            <img
+              src={DATA_DETAIL.gallery[currentIndex]}
+              className="max-w-full max-h-full object-contain shadow-2xl animate-in fade-in zoom-in duration-300"
+              alt="Full view"
+              onClick={(e) => e.stopPropagation()}
+            />
+            {/* Hiển thị số thứ tự ảnh (Ví dụ: 1/8) */}
+            <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-white/80 font-sans text-sm tracking-widest">
+              {currentIndex + 1} / {DATA_DETAIL.gallery.length}
+            </div>
+          </div>
+
+          {/* Nút Tiếp Theo (>) */}
+          <button
+            onClick={nextImage}
+            className="absolute right-4 md:right-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all z-[110]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+      )}
       {/* Banner Header */}
       <div className="w-full h-[40vh] relative border-b-4 border-[#5d3a1a]">
         <img
@@ -49,7 +125,7 @@ export default function GenealogyDetailPage() {
           alt="banner"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#3d2611] to-transparent"></div>
-        <div className="absolute bottom-10 left-10 right-10 text-center md:text-left">
+        <div className="absolute bottom-4 left-10 right-10 text-center">
           <h1 className="text-4xl md:text-6xl font-black text-[#f2e2ba] uppercase tracking-[0.2em] drop-shadow-lg">
             {DATA_DETAIL.title}
           </h1>
@@ -87,6 +163,7 @@ export default function GenealogyDetailPage() {
                 <div
                   key={index}
                   className="h-40 overflow-hidden border-2 border-[#5d3a1a] shadow-md group"
+                  onClick={() => setCurrentIndex(index)} // Truyền index vào state
                 >
                   <img
                     src={img}
@@ -106,7 +183,7 @@ export default function GenealogyDetailPage() {
               Truy cập dữ liệu
             </h3>
             <button
-              onClick={() => router.push("/family-tree/nguyen-toc/graph")}
+              onClick={() => router.push(`/genealogy/diagram/${clanId}`)}
               className="w-full py-4 bg-[#5d3a1a] text-[#f2e2ba] font-bold rounded hover:bg-[#3d2611] transition-all flex items-center justify-center gap-3 shadow-md"
             >
               <svg
@@ -120,7 +197,7 @@ export default function GenealogyDetailPage() {
               >
                 <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
               </svg>
-              XEM SƠ ĐỒ CÂY
+              XEM PHẢ ĐỒ
             </button>
           </div>
 

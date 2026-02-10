@@ -20,10 +20,9 @@ export default function FamilyTreePage() {
       {!userWalletAddress ? (
         <ConnectPage setIsShowModalConnector={setIsShowModalConnector} />
       ) : (
-        // <ContentPage />
-        <GenealogyDetailPage clanId = {"0x632d00e238fb6919b2b461dd5d75e6002da64210"}/>
+        <ContentPage />
+        // <GenealogyDetailPage clanId = {"0x632d00e238fb6919b2b461dd5d75e6002da64210"}/>
       )}
-      
     </div>
   );
 }

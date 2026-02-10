@@ -68,7 +68,10 @@ export default function ContentPage() {
           {GENEALOGY_DATA.map((item) => (
             <div
               key={item.id}
-              onClick={() => router.push(`/genealogyDetail?clandId=${item.clanId}`)}
+              // onClick={() =>
+              //   router.push(`/genealogyDetail?clanId=${item.clanId}`)
+              // }
+              onClick={() => router.push(`/genealogy/detail/${item.clanId}`)}
               className="group cursor-pointer bg-[#f2e2ba] border-2 border-[#5d3a1a] shadow-[10px_10px_0px_0px_rgba(93,58,26,0.1)] hover:shadow-[15px_15px_0px_0px_rgba(93,58,26,0.2)] hover:-translate-y-2 transition-all duration-300 overflow-hidden"
             >
               {/* Hình ảnh đại diện */}

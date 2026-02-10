@@ -1,0 +1,515 @@
+{
+	"compiler": {
+		"version": "0.8.31+commit.fd3a2265"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "arbitrator",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "ids",
+						"type": "uint256[]"
+					}
+				],
+				"name": "getDisputePurchaseBatch",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "purchaseIds",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "purchaseIds",
+						"type": "uint256[]"
+					}
+				],
+				"name": "getPurchaseBatch",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "seller",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "buyer",
+								"type": "address"
+							},
+							{
+								"internalType": "bytes32[]",
+								"name": "saleIds",
+								"type": "bytes32[]"
+							},
+							{
+								"internalType": "bytes32[]",
+								"name": "productItemIds",
+								"type": "bytes32[]"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "amounts",
+								"type": "uint256[]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "totalPrice",
+								"type": "uint256"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "disputeFee",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "marketFee",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct Fees",
+								"name": "fees",
+								"type": "tuple"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "shippedAt",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "shipFee",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "shippingTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "address",
+										"name": "shipper",
+										"type": "address"
+									}
+								],
+								"internalType": "struct ShipInfo",
+								"name": "shipInfo",
+								"type": "tuple"
+							},
+							{
+								"internalType": "address",
+								"name": "shipperAssigner",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "arbitrator",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "disputedAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "isDisputed",
+								"type": "bool"
+							},
+							{
+								"internalType": "uint8",
+								"name": "status",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bool",
+								"name": "isPrepaid",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct PurchaseInfo[]",
+						"name": "purchaseInfos",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "userAddress",
+						"type": "address"
+					}
+				],
+				"name": "getPurchaseCompletedCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "accountAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "purchaseId",
+						"type": "uint256"
+					}
+				],
+				"name": "getPurchaseCompletedIndex",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "accountAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "index",
+						"type": "uint256"
+					}
+				],
+				"name": "getPurchaseIdCompleted",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "accountAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "index",
+						"type": "uint256"
+					}
+				],
+				"name": "getPurchaseIdPending",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "purchaseId",
+						"type": "uint256"
+					}
+				],
+				"name": "getPurchaseInfo",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "seller",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "buyer",
+								"type": "address"
+							},
+							{
+								"internalType": "bytes32[]",
+								"name": "saleIds",
+								"type": "bytes32[]"
+							},
+							{
+								"internalType": "bytes32[]",
+								"name": "productItemIds",
+								"type": "bytes32[]"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "amounts",
+								"type": "uint256[]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "totalPrice",
+								"type": "uint256"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "disputeFee",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "marketFee",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct Fees",
+								"name": "fees",
+								"type": "tuple"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "shippedAt",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "shipFee",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "shippingTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "address",
+										"name": "shipper",
+										"type": "address"
+									}
+								],
+								"internalType": "struct ShipInfo",
+								"name": "shipInfo",
+								"type": "tuple"
+							},
+							{
+								"internalType": "address",
+								"name": "shipperAssigner",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "arbitrator",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "disputedAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "isDisputed",
+								"type": "bool"
+							},
+							{
+								"internalType": "uint8",
+								"name": "status",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bool",
+								"name": "isPrepaid",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct PurchaseInfo",
+						"name": "purchaseInfo",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "userAddress",
+						"type": "address"
+					}
+				],
+				"name": "getPurchasePendingCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "accountAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "purchaseId",
+						"type": "uint256"
+					}
+				],
+				"name": "getPurchasePendingIndex",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "purchaseId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "refDataId",
+						"type": "bytes32"
+					}
+				],
+				"name": "getRefData",
+				"outputs": [
+					{
+						"internalType": "bytes",
+						"name": "",
+						"type": "bytes"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "purchaseCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "_value",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/purchase.sol": "Purchase"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts/utils/Counters.sol": {
+			"keccak256": "0xf0018c2440fbe238dd3a8732fa8e17a0f9dce84d31451dc8a32f6d62b349c9f1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://59e1c62884d55b70f3ae5432b44bb3166ad71ae3acd19c57ab6ddc3c87c325ee",
+				"dweb:/ipfs/QmezuXg5GK5oeA4F91EZhozBFekhq5TD966bHPH18cCqhu"
+			]
+		},
+		"contracts/constants/marketConstant.sol": {
+			"keccak256": "0x8d688b482db5a19df350b0708ed77a1546b0a3a0cb78148e8310b240a4319db7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5a34ccec5a315261b8c0521f9b812f9d5205715877a0b64171e19f6edd504fa5",
+				"dweb:/ipfs/Qma7epYWF7YfssjxY3T1KribQ9A5CCNcfsdzuFxCzqfw8t"
+			]
+		},
+		"contracts/purchase.sol": {
+			"keccak256": "0xc4504ccf20287be2e51308f000f90efdc5dcbd022ac85e673392ecd6561004a5",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1e44e96638ce8519798117c24a7bf6051fee97b6533a705619a85063d1e7dcbd",
+				"dweb:/ipfs/QmS8mNn9yhf7Uaa46Ngpdx6EM4ojHEnkhyFbb5tqvP8uAS"
+			]
+		},
+		"contracts/structs/marketStruct.sol": {
+			"keccak256": "0xb80db42aaeef8064522f9123d27cfd7a0301944604447644c9a53caff19bcf13",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ba550a8ae63a934ca7e90badfeb8725905112aaf602257104d4014ddfc44d4c6",
+				"dweb:/ipfs/QmbsNouXku4VTPjJypK6RcvT2T7tEYw4v6A15P1LNiSt5V"
+			]
+		}
+	},
+	"version": 1
+}

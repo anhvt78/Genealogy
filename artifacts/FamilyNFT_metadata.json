@@ -18,6 +18,11 @@
 						"type": "string"
 					},
 					{
+						"internalType": "string",
+						"name": "descShort",
+						"type": "string"
+					},
+					{
 						"internalType": "uint256",
 						"name": "birthTimestamp",
 						"type": "uint256"
@@ -734,6 +739,11 @@
 						"type": "string"
 					},
 					{
+						"internalType": "string",
+						"name": "descShort",
+						"type": "string"
+					},
+					{
 						"internalType": "enum FamilyTypes.Sex",
 						"name": "sex",
 						"type": "uint8"
@@ -784,6 +794,11 @@
 					{
 						"internalType": "string",
 						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "descShort",
 						"type": "string"
 					},
 					{
@@ -2168,11 +2183,11 @@
 			]
 		},
 		"contracts/Genealogy/FamilyNFT.sol": {
-			"keccak256": "0x4e18676daa14e697cd9be63d848dc2bcbaa7b89096fd72215d99fac0fa998fd9",
+			"keccak256": "0xe9b344e19b881f8e0ea43c1e5d54969862fed8dcfdb74ff39bbdbe9f25e9b99f",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://6529b6dde7f887964959b7be1e2b3a2d17078c0c62f2049114c0f0fb91293b90",
-				"dweb:/ipfs/QmdVNMVzLADkVABGzKXZa6aZTGRjuKpwS9LBWZk9J3bBjf"
+				"bzz-raw://795305e5b0f31a787b0523eb1daed50f37957fbf755e9ae099927f6c14b7d9e4",
+				"dweb:/ipfs/QmVVV7yC7mTD9VdThiwAkQyrspf7BGu14D3CExdZ6eP8ym"
 			]
 		},
 		"contracts/Genealogy/types/FamilyTypes.sol": {

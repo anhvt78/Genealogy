@@ -37,42 +37,11 @@
 		},
 		"gasEstimates": null,
 		"methodIdentifiers": {
-			"getFeeInfo()": "0002eab7",
 			"getStackInfo()": "ae23876c",
-			"isReviewer(address)": "fdc6258a",
-			"operator()": "570ca735",
 			"stacking()": "c62bfd8f"
 		}
 	},
 	"abi": [
-		{
-			"inputs": [],
-			"name": "getFeeInfo",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
 		{
 			"inputs": [],
 			"name": "getStackInfo",
@@ -86,38 +55,6 @@
 					"internalType": "uint256",
 					"name": "",
 					"type": "uint256"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "address",
-					"name": "reviewer",
-					"type": "address"
-				}
-			],
-			"name": "isReviewer",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "",
-					"type": "bool"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [],
-			"name": "operator",
-			"outputs": [
-				{
-					"internalType": "address",
-					"name": "",
-					"type": "address"
 				}
 			],
 			"stateMutability": "view",
