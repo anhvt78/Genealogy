@@ -43,6 +43,10 @@ export default function GenealogyDetailForm({ clanId }) {
     );
   };
 
+  if (!clanId) {
+    return <div className="p-20 text-center">Đang tải dữ liệu dòng tộc...</div>;
+  }
+
   return (
     <div className="min-h-screen w-full bg-[#e8d5b5] font-serif overflow-y-auto pb-20">
       {/* 1. KHUNG HÌNH ĐẦY ĐỦ (LIGHTBOX) VỚI PHÍM ĐIỀU HƯỚNG */}

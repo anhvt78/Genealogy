@@ -714,7 +714,7 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const getProductCollection = async (walletAddress) => {
+  const getNFTCollection = async (walletAddress) => {
     try {
       let allNFT = [];
       const receivedAssetsValue = await fetchContractData(
@@ -1906,7 +1906,7 @@ export const GenealogyProvider = ({ children }) => {
 
         addProduct,
         removeProduct,
-        getProductCollection,
+        getNFTCollection,
         // getProductInfo,
         // getProductItemMetadata,
         // getProductItemAmount,

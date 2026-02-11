@@ -46,7 +46,7 @@ export default function ClanDiagram({ clanId }) {
   // Thêm vào trong component FamilyTreePage
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showDaughters, setShowDaughters] = useState(true); // State để gạt ẩn/hiện con gái
-  const { getProductCollection } = useContext(GenealogyContext);
+  const { getNFTCollection } = useContext(GenealogyContext);
   // const [mounted, setMounted] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [familyData, setFamilyData] = useLocalStorage(
@@ -68,7 +68,7 @@ export default function ClanDiagram({ clanId }) {
   //   );
 
   useEffect(() => {
-    getProductCollection(clanId).then((result) => {
+    getNFTCollection(clanId).then((result) => {
       console.log("result: ", result);
     });
   }, [clanId]);
