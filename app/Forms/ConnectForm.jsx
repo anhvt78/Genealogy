@@ -8,7 +8,7 @@ import { ethers } from "ethers";
 import { useRouter } from "next/navigation"; // Thêm router để điều hướng
 import { Html5QrcodeScanner, Html5Qrcode } from "html5-qrcode";
 
-export default function ConnectPage() {
+export default function ConnectForm() {
   const [isShaking, setIsShaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [inputClanId, setInputClanId] = useState(""); // State cho ô nhập liệu
@@ -26,7 +26,7 @@ export default function ConnectPage() {
       });
       return;
     }
-    router.push(`/detail/${inputClanId.trim()}`);
+    router.push(`/pages/detail/${inputClanId.trim()}`);
   };
 
   const connectWalletHandler = async () => {
@@ -147,7 +147,7 @@ export default function ConnectPage() {
               ? decodedText.split("/").pop()
               : decodedText;
             stopScanner();
-            router.push(`/detail/${clanId.trim()}`);
+            router.push(`/pages/detail/${clanId.trim()}`);
           },
         );
       } catch (err) {

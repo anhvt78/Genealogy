@@ -23,7 +23,7 @@ Trải qua nhiều biến cố lịch sử, gia phả vẫn được lưu giữ 
   ],
 };
 
-export default function GenealogyDetailPage({ clanId }) {
+export default function GenealogyDetailForm({ clanId }) {
   const router = useRouter();
   // Thay vì lưu URL, ta lưu index của ảnh trong mảng gallery
   const [currentIndex, setCurrentIndex] = useState(null);
@@ -183,7 +183,7 @@ export default function GenealogyDetailPage({ clanId }) {
               Truy cập dữ liệu
             </h3>
             <button
-              onClick={() => router.push(`/diagram/${clanId}`)}
+              onClick={() => router.push(`/pages/diagram/${clanId}`)}
               className="w-full py-4 bg-[#5d3a1a] text-[#f2e2ba] font-bold rounded hover:bg-[#3d2611] transition-all flex items-center justify-center gap-3 shadow-md"
             >
               <svg

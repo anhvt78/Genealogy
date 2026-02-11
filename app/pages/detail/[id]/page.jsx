@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import GenealogyDetailPage from "@/pages/GenealogyDetailPage/GenealogyDetailPage";
+import GenealogyDetailForm from "@/app/Forms/GenealogyDetailForm";
 import { useParams } from "next/navigation";
 
 export default function GenealogyDetail() {
@@ -20,7 +20,7 @@ export default function GenealogyDetail() {
 
   return (
     <div className="w-full h-screen bg-[#e8d5b5] flex overflow-hidden">
-      <GenealogyDetailPage clanId={clanId} />
+      <GenealogyDetailForm clanId={clanId} />
     </div>
   );
 }

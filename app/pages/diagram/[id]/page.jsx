@@ -241,7 +241,7 @@ export default function ClanDiagram({ clanId }) {
             </button>
 
             <button
-              onClick={() => router.push(`/detail/${clanId}`)}
+              onClick={() => router.push(`/pages/detail/${clanId}`)}
               className="flex items-center gap-3 px-4 py-3 bg-[#5d3a1a] hover:bg-[#8b5a2b] transition-colors rounded-md text-sm font-semibold"
             >
               <svg
