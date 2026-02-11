@@ -1,0 +1,45 @@
+{
+	"compiler": {
+		"version": "0.8.31+commit.fd3a2265"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/Genealogy/types/FamilyTypes.sol": "FamilyTypes"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/Genealogy/types/FamilyTypes.sol": {
+			"keccak256": "0x029e973bec7931a388f5ffe16ee2e4f8cfb8806d2e12ed7ccfec045e4c724ae9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f79f21dfbd5fbdaca5e72d46aaea58d774acbb6f2c034da092e739d3141aecea",
+				"dweb:/ipfs/QmXXXHc2vxeY8cT1JCZPkntQWyspnVfWdG5wtKQEWkmi4a"
+			]
+		}
+	},
+	"version": 1
+}

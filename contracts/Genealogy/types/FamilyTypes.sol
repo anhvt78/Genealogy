@@ -33,7 +33,7 @@ contract FamilyTypes {
         Child[] children;
         Spouse[] spouses;
         Sex sex;
-        uint256 birthTimestamp;
-        uint256 deathTimestamp;
+        string birthTimestamp;
+        string deathTimestamp;
     }
 }

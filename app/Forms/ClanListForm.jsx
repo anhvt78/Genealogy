@@ -3,13 +3,15 @@ import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GenealogyContext } from "@/context/GenealogyContext";
 import ClanListItem from "./Items/ClanListItem";
+import sweetalert2 from "@/configs/swal";
 
 export default function ClanListForm({ userWalletAddress }) {
   const router = useRouter();
-  const { getNFTCollection } = useContext(GenealogyContext);
+  const { getNFTCollection, createClan } = useContext(GenealogyContext);
   const [isLoading, setIsLoading] = useState(true);
   const [allClanId, setAllClanId] = useState([]);
   const [isCreator, setIsCreator] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isStillAlive, setIsStillAlive] = useState(false);
@@ -30,7 +32,22 @@ export default function ClanListForm({ userWalletAddress }) {
     e.preventDefault();
     console.log("Dữ liệu mới:", formData);
     // Xử lý logic gửi dữ liệu lên blockchain hoặc API ở đây
+    setIsProcessing(true);
+    createClan(userWalletAddress, formData, callBack, handleErr);
+  };
+
+  const callBack = (clanId) => {
+    setIsProcessing(false);
     setIsModalOpen(false); // Đóng modal sau khi xong
+    router.push(`/pages/detail/${clanId}`);
+  };
+
+  const handleErr = (title, error) => {
+    setIsProcessing(false);
+    sweetalert2.popupAlert({
+      title: title,
+      text: error,
+    });
   };
 
   const getClanId = () => {
@@ -258,9 +275,13 @@ export default function ClanListForm({ userWalletAddress }) {
 
               <button
                 type="submit"
-                className="w-full bg-[#5d3a1a] text-[#f2e2ba] font-bold py-4 mt-2 hover:bg-[#3d2611] transition-all uppercase tracking-[0.2em] shadow-lg"
+                disabled={isProcessing}
+                className="w-full bg-[#5d3a1a] text-[#f2e2ba] font-bold py-4 mt-2 hover:bg-[#3d2611] transition-all uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-3"
               >
-                Xác nhận khởi tạo
+                {isProcessing && (
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#eeeae6]"></div>
+                )}
+                <span>Xác nhận khởi tạo</span>
               </button>
             </form>
           </div>

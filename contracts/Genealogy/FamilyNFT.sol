@@ -19,7 +19,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     event SpouseAdded(bytes32 indexed husbanId, bytes32 indexed spouseId, uint256 marriedAt);
     event ChildAdded(bytes32 indexed childId, bytes32 indexed fatherId, FamilyTypes.ChildType childType);
 
-    constructor(string memory clanName,  string memory ancestorName, string memory descShort, uint256 birthTimestamp, uint256 deathTimestamp, address owner)
+    constructor(string memory clanName,  string memory ancestorName, string memory descShort, string memory birthTimestamp, string memory deathTimestamp, address owner)
         LSP8IdentifiableDigitalAsset(clanName, "FAMILY", owner, _LSP4_TOKEN_TYPE_COLLECTION, _LSP8_TOKENID_FORMAT_NUMBER)
     {
         genealogyAddress = msg.sender;
@@ -29,10 +29,10 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
 
     function addSpouse(
         bytes32 husbanId,
-        string calldata name,
-        string calldata descShort,
-        uint256 birthTimestamp,
-        uint256 deathTimestamp,
+        string memory name,
+        string memory descShort,
+        string memory birthTimestamp,
+        string memory deathTimestamp,
         uint256 marriedAt,
         uint256 divorcedAt,
         address ownership
@@ -67,11 +67,11 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     }
 
     function addChild(
-        string calldata childName,
-        string calldata descShort,
+        string memory childName,
+        string memory descShort,
         FamilyTypes.Sex sex,
-        uint256 birthTimestamp,
-        uint256 deathTimestamp,
+        string memory birthTimestamp,
+        string memory deathTimestamp,
         bytes32 fatherId,
         bytes32 motherId,
         address ownership,
@@ -119,8 +119,8 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         string memory descShort,
         address ownership,
         FamilyTypes.Sex sex,
-        uint256 birthTimestamp, 
-        uint256 deathTimestamp
+        string memory birthTimestamp, 
+        string memory deathTimestamp
     ) private returns(bytes32 personId) {
         personCount.increment();
         personId = bytes32(personCount.current());
@@ -146,7 +146,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     event PersonOwnershipTransferred(bytes32 indexed personId, address oldOwner, address newOwner);
 
 
-    function updatePersonName(bytes32 personId, string calldata newName) 
+    function updatePersonName(bytes32 personId, string memory newName) 
         external onlyAuthorized(personId) 
     {
         FamilyTypes.Person storage p = persons[personId];

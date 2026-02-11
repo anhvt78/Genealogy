@@ -30,6 +30,12 @@
 					{
 						"indexed": true,
 						"internalType": "address",
+						"name": "creatorAddress",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
 						"name": "nftAddress",
 						"type": "address"
 					},
@@ -205,7 +211,7 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
 		"remappings": []
@@ -452,11 +458,11 @@
 			]
 		},
 		"contracts/Genealogy/genealogy.sol": {
-			"keccak256": "0x749507645037293b6ad4202cd1488f2090f94cba5bb74ea7ac949ab85503fa02",
+			"keccak256": "0x99b78bbdba5ac48550ddb8d4a44f3612b46e136661067af3ba2aefe1a764717e",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://8815f06a3d27b93af4e1b9a8ba17672910f1b4baa2e73a9275e51fcec1765c0a",
-				"dweb:/ipfs/QmRzVhswzmu1uWdT6ntFAtopfSSXGBmsCbcSYSGCuh3iNf"
+				"bzz-raw://144bdb3c352005d2164fb434d9655e91283555b3c456db9e06cbce9c1767e92e",
+				"dweb:/ipfs/QmZFQ1Wq8KgSt4vbAU8JCSxVxaHgLuctray69DbZcBiZCH"
 			]
 		},
 		"contracts/Genealogy/types/FamilyTypes.sol": {

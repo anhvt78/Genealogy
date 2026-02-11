@@ -221,6 +221,35 @@ export const GenealogyProvider = ({ children }) => {
     return decodedMetadata.value;
   };
 
+  const createClan = async (walletAddress, formData, callBack, handleErr) => {
+    console.log("walletAddress: ", walletAddress, " \ formData: ", formData);
+
+    // try {
+    //   const contract = await connectingWithSmartContract(
+    //     supplyAddress,
+    //     supplyABI,
+    //   );
+
+    //   await contract.createClan(
+    //     formData.clanName,
+    //     formData.ancestorName,
+    //     formData.ancestorDesc,
+    //     formData.birthTimestamp,
+    //     formData.deathTimestamp,
+    //   );
+
+    //   contract.on("ClanCreated", async (_creatorAddress, clanId) => {
+    //     // console.log("_brandAddress = ", _brandAddress, ", newId = ", newId);
+
+    //     if (walletAddress == _creatorAddress) {
+    //       callBack(clanId);
+    //     }
+    //   });
+    // } catch (error) {
+    //   handleErr("Error", error);
+    // }
+  };
+
   //---UPLOAD TO IPFS FUNCTION
   const uploadToIPFS = async (file) => {
     try {
@@ -1884,7 +1913,7 @@ export const GenealogyProvider = ({ children }) => {
       value={{
         checkIfWalletConnected,
         getNFTInfo,
-
+        createClan,
         getClanData,
         uploadToIPFS,
 
