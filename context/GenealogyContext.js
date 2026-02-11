@@ -717,6 +717,7 @@ export const GenealogyProvider = ({ children }) => {
   const getNFTCollection = async (walletAddress) => {
     try {
       let allNFT = [];
+      let isCreator = false;
       const receivedAssetsValue = await fetchContractData(
         walletAddress,
         profileSchema,
@@ -738,11 +739,14 @@ export const GenealogyProvider = ({ children }) => {
           const ownerNFT = await nftContract.getClanOwner(el);
           if (ownerNFT != 0x0000000000000000000000000000000000000000) {
             allNFT.push(el);
+            if (ownerNFT == walletAddress) {
+              isCreator = true;
+            }
           }
         }),
       );
       // console.log("allNFT: ", allNFT);
-      return { sts: true, data: allNFT };
+      return { sts: true, data: { allNFT: allNFT, isCreator: isCreator } };
     } catch (error) {
       return { sts: false, data: error };
     }
