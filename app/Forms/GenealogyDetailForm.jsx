@@ -144,7 +144,7 @@ export default function GenealogyDetailForm({ clanId }) {
               Mô tả ngắn
             </h2>
             <p className="text-[#5d3a1a] text-lg italic leading-relaxed">
-              "{DATA_DETAIL.shortDesc}"
+              {DATA_DETAIL.shortDesc}
             </p>
           </section>
 

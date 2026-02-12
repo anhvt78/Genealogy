@@ -190,7 +190,38 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const getClanData = async (tokenId) => {
+  const getClanInfo = async (clanId) => {
+    try {
+      // const contract = connectingSmartContractByPrivatekey(
+      //   clanId,
+      //   familyNftABI,
+      // );
+
+      const clanMetadata = await fetchContractData(
+        clanId,
+        lsp4Schema,
+        "LSP4Metadata",
+      );
+      const clanName = await fetchContractData(
+        clanId,
+        lsp4Schema,
+        "LSP4TokenName",
+      );
+
+      return {
+        sts: true,
+        data: {
+          clanMetadata: JSON.stringify(clanMetadata, null, 2),
+          clanName: clanName.value,
+        },
+      };
+    } catch (error) {
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
+
+  const getMemberData = async (tokenId) => {
     // const tokenMetadata = await fetchContractData(
     //   tokenId,
     //   lsp4Schema,
@@ -266,41 +297,6 @@ export const GenealogyProvider = ({ children }) => {
       // setOpenError(true), setError("Error uploading to IPFS: ", error);
     }
   };
-
-  // const checkIsBrand = async (walletAddress) => {
-  //   try {
-  //     const supplyContract = connectingSmartContractByPrivatekey(
-  //       supplyAddress,
-  //       supplyABI,
-  //     );
-
-  //     const mIsBrand = await supplyContract.isBrand(walletAddress);
-
-  //     // updateFeeInfo();
-  //     console.log("mIsBrand: ", mIsBrand);
-
-  //     return { sts: true, data: mIsBrand };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //   }
-  // };
-
-  // const isVerifiedBrand = async (walletAddress) => {
-  //   try {
-  //     const contract = connectingSmartContractByPrivatekey(
-  //       supplyAddress,
-  //       supplyABI,
-  //     );
-
-  //     const isVerifiedBrand = await contract.isVerifiedBrand(walletAddress);
-
-  //     // updateFeeInfo();
-
-  //     return { sts: true, data: isVerifiedBrand };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //   }
-  // };
 
   const checkDeployedCode = async (address) => {
     // new ethers.providers.Web3Provider(window.ethereum);
@@ -385,107 +381,6 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const approvePartner = async (
-    walletAddress,
-    partnerAddress,
-    callBack,
-    handleErr,
-  ) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        supplyAddress,
-        supplyABI,
-      );
-      const isBrand = await contract.isBrand(walletAddress);
-      if (isBrand) {
-        if (feeInfo) {
-          const brandFee = feeInfo[2];
-          const value = brandFee;
-
-          await contract.approvePartner(partnerAddress, {
-            value: value.toString(),
-          });
-
-          contract.on("PartnerEnabled", async (supplier, agentAddress) => {
-            // console.log("_brandAddress = ", _brandAddress, ", newId = ", newId);
-
-            if (walletAddress == supplier && partnerAddress == agentAddress) {
-              // callBack(walletAddress, partnerAddress);
-              // updatePartnerInfoDB(
-              //   walletAddress,
-              //   partnerAddress,
-              //   { sts: "partner", timeStamp: new Date().getTime() },
-              //   callBack,
-              //   handleErr,
-              // );
-              callBack();
-            }
-          });
-
-          // console.log(result);
-        } else {
-          handleErr("Error", "Cannot get brand's fee");
-        }
-      } else {
-        handleErr("Error", "Not Brand");
-      }
-    } catch (error) {
-      handleErr("Error", error);
-    }
-    // const isBrand = await supplyContract.isBrand(walletAddress);
-    // if (isBrand) {
-    //   if (feeInfo) {
-    //     const brandFee = feeInfo[2];
-    //     const value = brandFee;
-    //     try {
-    //       const contract = await connectingWithSmartContract(
-    //         supplyAddress,
-    //         supplyABI,
-    //       );
-
-    //       await contract.approvePartner(partnerAddress, {
-    //         value: value.toString(),
-    //       });
-
-    //       contract.on("PartnerEnabled", async (supplier, agentAddress) => {
-    //         // console.log("_brandAddress = ", _brandAddress, ", newId = ", newId);
-
-    //         if (walletAddress == supplier && partnerAddress == agentAddress) {
-    //           // callBack(walletAddress, partnerAddress);
-    //           // updatePartnerInfoDB(
-    //           //   walletAddress,
-    //           //   partnerAddress,
-    //           //   { sts: "partner", timeStamp: new Date().getTime() },
-    //           //   callBack,
-    //           //   handleErr,
-    //           // );
-    //           callBack();
-    //         }
-    //       });
-    //     } catch (error) {
-    //       handleErr("Error", error);
-    //     }
-
-    //     // console.log(result);
-    //   } else {
-    //     handleErr("Error", "Cannot get brand's fee");
-    //   }
-    // } else {
-    //   handleErr("Error", "Not Brand");
-    // }
-    // checkIsBrand(walletAddress).then(async (result) => {
-    //   if (result.sts) {
-    //     if (result.data.isVerifiedBrand) {
-
-    //     } else {
-    //       handleErr("Error", "Brand is not verified");
-    //     }
-    //   } else {
-    //     handleErr("Error", "Cannot get brand's info");
-    //   }
-    // });
-  };
-
   const rejectPartner = async (
     walletAddress,
     partnerAddress,
@@ -528,41 +423,6 @@ export const GenealogyProvider = ({ children }) => {
       handleErr("Error", "Cannot get brand's fee");
     }
   };
-
-  // const getPartnerShip = async (brandId, sellerId) => {
-  //   try {
-  //     const contract = connectingSmartContractByPrivatekey(
-  //       supplyAddress,
-  //       supplyABI,
-  //     );
-
-  //     const result = await contract.isPartner(brandId, sellerId);
-  //     return { sts: true, data: result };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //   }
-  // };
-
-  // const getAllBrands = async () => {
-  //   try {
-  //     const contract = connectingSmartContractByPrivatekey(
-  //       supplyAddress,
-  //       supplyABI,
-  //     );
-
-  //     const counter = await contract.brandCounter();
-
-  //     const arrayIndex = Array.from(
-  //       { length: counter },
-  //       (_, index) => index + 1,
-  //     );
-
-  //     const brands = await contract.getBrandBatch(arrayIndex);
-  //     return { sts: true, data: brands };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //   }
-  // };
 
   const transferOwnershipProduct = async (
     brandAddress,
@@ -1829,32 +1689,6 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const rateProduct = async (
-    purchaseId,
-    productIds,
-    points,
-    callBack,
-    handleErr,
-  ) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      console.log(purchaseId, productIds, points);
-
-      await contract.rateProduct(purchaseId, productIds, points);
-      contract.on("RateProduct", async (id) => {
-        if (purchaseId == id) {
-          callBack();
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
   const getPurchaseInfo = async (purchaseId) => {
     try {
       const contract = await connectingWithSmartContract(
@@ -1917,51 +1751,31 @@ export const GenealogyProvider = ({ children }) => {
         checkIfWalletConnected,
         getNFTInfo,
         createClan,
-        getClanData,
+        getClanInfo,
         uploadToIPFS,
 
-        // checkIsBrand,
-        // isVerifiedBrand,
         getUserProfile,
-        // getIssuedProduct,
-        // getUserName,
-        // updateUserName,
 
-        // fetchProductItemOfBrand,
         createProductInfo,
 
-        approvePartner,
+      
         rejectPartner,
-        // getPartnerShip,
+
         enableProductInfo,
         disableProductInfo,
-        // getProductCount,
-        // getProductIdBatch,
+
         transferOwnershipProduct,
-        // getOwnerOfProduct,
 
         addProduct,
         removeProduct,
         getNFTCollection,
-        // getProductInfo,
-        // getProductItemMetadata,
-        // getProductItemAmount,
-        // getProductItemIds,
+
         approveProduct,
-        // generateMetadataLink,
-        // getProductAllowance,
 
         createSale,
         updateSaleItem,
-        // getSaleCount,
-        // getSaleIdBatch,
-        // getSaleOfSellerCount,
-        // getSaleIdOfSeller,
-        // fetchProductOfSeller,
-        // getSaleItem,
 
         brandRegister,
-        // getAllBrands,
 
         purchaseAccepted,
 
@@ -1978,13 +1792,6 @@ export const GenealogyProvider = ({ children }) => {
 
         purchaseRating,
 
-        // createException,
-
-        // getSaleIdDetail,
-        // getSaleIndex,
-        // getProductItemIndex,
-        // getProductItemInfo,
-        // purchaseComplete,
         getPurchaseInfo,
         getProductRate,
         getProductRatePermitted,

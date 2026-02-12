@@ -17,18 +17,12 @@ contract Genealogy {
 
     function createClan(
         string memory clanName,
-        string memory ancestorName,
-        string memory ancestorDesc,
-        FamilyTypes.DateInfo memory birthDate,
-        FamilyTypes.DateInfo memory deathDate
+        string memory clanShortDesc
     ) external {
         require(_clanIds[msg.sender] == address(0), "Clan existed");
         FamilyNFT familyNFT = new FamilyNFT(
             clanName,
-            ancestorName,
-            ancestorDesc,
-            birthDate,
-            deathDate,
+            clanShortDesc,
             msg.sender
         );
         address clanId = address(familyNFT);

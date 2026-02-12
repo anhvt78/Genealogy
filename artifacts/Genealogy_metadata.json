@@ -83,57 +83,8 @@
 					},
 					{
 						"internalType": "string",
-						"name": "ancestorName",
+						"name": "clanShortDesc",
 						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "ancestorDesc",
-						"type": "string"
-					},
-					{
-						"components": [
-							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
-							},
-							{
-								"internalType": "uint8",
-								"name": "month",
-								"type": "uint8"
-							},
-							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
-							}
-						],
-						"internalType": "struct FamilyTypes.DateInfo",
-						"name": "birthDate",
-						"type": "tuple"
-					},
-					{
-						"components": [
-							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
-							},
-							{
-								"internalType": "uint8",
-								"name": "month",
-								"type": "uint8"
-							},
-							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
-							}
-						],
-						"internalType": "struct FamilyTypes.DateInfo",
-						"name": "deathDate",
-						"type": "tuple"
 					}
 				],
 				"name": "createClan",
@@ -461,19 +412,19 @@
 			]
 		},
 		"contracts/Genealogy/familyNFT.sol": {
-			"keccak256": "0x9bb9b530bfd8f2bacb67a48079376c06d28aac7e2c4ca880d5448520d0b4bdfe",
+			"keccak256": "0x9394f90cfbaddac0d0d67e231e75db0c1480f0bfa30e35aa9a31d2004257146e",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://d2baca924267195466cfe06d30b65d1f4976b1b40862d51f37030556f529b559",
-				"dweb:/ipfs/QmWAn1G7D9j441QrrMNnBcKYGSAJ5ga3mAVMh2TzVbdKuE"
+				"bzz-raw://ac4b9442897486ab098d90fdec14cc5217e4a19fa546b8f5e647c7f087a99eb1",
+				"dweb:/ipfs/QmZVPMu2jfsdWSgNAN58mdZk57Y8FEo4mz8UvpzTaUxENw"
 			]
 		},
 		"contracts/Genealogy/genealogy.sol": {
-			"keccak256": "0x45c9513c5f97b9bbe50476a4cfc6fcd14d50aa7f71690013e56979e66fde8929",
+			"keccak256": "0xa5b61cc9cef5713196b9298353df2bd42e0c46c8b324d75b2a5cd49ca0204ab3",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f0443a9a72299a224638e668c60db4187b1790988fbf4891f3b867b91a197ca5",
-				"dweb:/ipfs/QmQGqbXpSwjbjAbuuZTPXADcz8eqS7Gr9GunHJmm4Ti3VD"
+				"bzz-raw://19416a11fa9786c75b167770af4f44a24034c707551f10f305bbe90d2937dd20",
+				"dweb:/ipfs/Qmersgx2wL9z1BHCSzTVzn6mSh6ccXU7huoq9gzVoRb1m7"
 			]
 		}
 	},

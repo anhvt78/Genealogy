@@ -10,57 +10,8 @@
 			},
 			{
 				"internalType": "string",
-				"name": "ancestorName",
+				"name": "shortDesc",
 				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "descShort",
-				"type": "string"
-			},
-			{
-				"components": [
-					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint8",
-						"name": "month",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct FamilyTypes.DateInfo",
-				"name": "birthDate",
-				"type": "tuple"
-			},
-			{
-				"components": [
-					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint8",
-						"name": "month",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct FamilyTypes.DateInfo",
-				"name": "deathDate",
-				"type": "tuple"
 			},
 			{
 				"internalType": "address",
@@ -388,6 +339,19 @@
 		"inputs": [
 			{
 				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "ClanShortDescChanged",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
 				"internalType": "bytes32",
 				"name": "dataKey",
 				"type": "bytes32"
@@ -514,19 +478,6 @@
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "personId",
-				"type": "bytes32"
-			}
-		],
-		"name": "SetDeathDate",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "bytes32",
 				"name": "husbanId",
 				"type": "bytes32"
 			},
@@ -625,6 +576,19 @@
 			}
 		],
 		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "bytes32",
+				"name": "personId",
+				"type": "bytes32"
+			}
+		],
+		"name": "UpdatePersonData",
 		"type": "event"
 	},
 	{
@@ -893,6 +857,19 @@
 			}
 		],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "clanShortDesc",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -1220,6 +1197,19 @@
 	{
 		"inputs": [
 			{
+				"internalType": "string",
+				"name": "newClanShortDesc",
+				"type": "string"
+			}
+		],
+		"name": "setClanShortDesc",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "bytes32",
 				"name": "dataKey",
 				"type": "bytes32"
@@ -1295,41 +1285,6 @@
 			}
 		],
 		"name": "setDataForTokenId",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "personId",
-				"type": "bytes32"
-			},
-			{
-				"components": [
-					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint8",
-						"name": "month",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct FamilyTypes.DateInfo",
-				"name": "newDeathDate",
-				"type": "tuple"
-			}
-		],
-		"name": "setDeathDate",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -1492,6 +1447,78 @@
 			}
 		],
 		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "personId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "string",
+				"name": "newName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "newDescShort",
+				"type": "string"
+			},
+			{
+				"internalType": "enum FamilyTypes.Sex",
+				"name": "sex",
+				"type": "uint8"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint8",
+						"name": "month",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
+					}
+				],
+				"internalType": "struct FamilyTypes.DateInfo",
+				"name": "birthDate",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint8",
+						"name": "month",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
+					}
+				],
+				"internalType": "struct FamilyTypes.DateInfo",
+				"name": "deathDate",
+				"type": "tuple"
+			}
+		],
+		"name": "updatePersonData",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

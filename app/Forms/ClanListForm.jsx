@@ -249,7 +249,7 @@ export default function ClanListForm({ userWalletAddress }) {
                 />
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-[#5d3a1a] font-bold text-xs uppercase mb-1">
                   Tên Thuỷ tổ
                 </label>
@@ -261,7 +261,7 @@ export default function ClanListForm({ userWalletAddress }) {
                   className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white transition-colors"
                   placeholder="Tên vị tổ tiên đời thứ nhất"
                 />
-              </div>
+              </div> */}
 
               <div>
                 <label className="block text-[#5d3a1a] font-bold text-xs uppercase mb-1">
@@ -275,7 +275,7 @@ export default function ClanListForm({ userWalletAddress }) {
                 ></textarea>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              {/* <div className="grid grid-cols-2 gap-6">
                 <div>
                   <label className="block text-[#5d3a1a] font-bold text-xs uppercase mb-1">
                     Năm/Ngày sinh
@@ -316,7 +316,7 @@ export default function ClanListForm({ userWalletAddress }) {
                     className={`w-full border-2 border-[#5d3a1a] p-2 outline-none text-sm transition-all ${isStillAlive ? "bg-gray-300/50 opacity-50 cursor-not-allowed" : "bg-white/50 focus:bg-white"}`}
                   />
                 </div>
-              </div>
+              </div> */}
 
               <button
                 type="submit"
