@@ -76,27 +76,75 @@ const fetchContract = (smAddr, smABI, signerOrProvider) =>
 //---CONNECTING WITH SMART CONTRACT
 
 const connectingWithSmartContract = async (smAddr, smABI) => {
-  try {
-    // console.log("connection: " + JSON.stringify(connection));
+  // try {
 
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
+  //   const web3Modal = new Web3Modal();
+  //   const connection = await web3Modal.connect();
 
-    const provider = new ethers.providers.Web3Provider(connection);
+  //   const provider = new ethers.providers.Web3Provider(connection);
 
-    const signer = provider.getSigner();
-    const contract = fetchContract(smAddr, smABI, signer);
+  //   const signer = provider.getSigner();
+  //   const contract = fetchContract(smAddr, smABI, signer);
 
-    // console.log("signer: ", signer);
-    // console.log("connection: ", connection);
+  //   return contract;
+  // } catch (error) {
+  //   console.log(
+  //     "Something went wrong while connecting with contract: " + error,
+  //   );
+  // }
 
-    return contract;
-  } catch (error) {
-    console.log(
-      "Something went wrong while connecting with contract: " + error,
-    );
-  }
+        const injectedProvider = window.lukso;
+        // const isCorrectChain = await checkChainId(injectedProvider);
+  
+        // if (!isCorrectChain) {
+        //   try {
+        //     await injectedProvider.request({
+        //       method: "wallet_switchEthereumChain",
+        //       params: [{ chainId: "0x1069" }],
+        //     });
+        //   } catch (switchError) {
+        //     if (switchError.code === 4902) {
+        //       try {
+        //         await injectedProvider.request({
+        //           method: "wallet_addEthereumChain",
+        //           params: [
+        //             {
+        //               chainId: "0x1069",
+        //               chainName: "LUKSO Testnet",
+        //               nativeCurrency: {
+        //                 name: "Test LYX",
+        //                 symbol: "LYXt",
+        //                 decimals: 18,
+        //               },
+        //               rpcUrls: ["https://rpc.testnet.lukso.network"],
+        //               blockExplorerUrls: [
+        //                 "https://explorer.execution.testnet.lukso.network",
+        //               ],
+        //             },
+        //           ],
+        //         });
+        //       } catch (addError) {
+        //         sweetalert2.popupAlert({
+        //           title: "Error",
+        //           text: "Failed to add LUKSO Testnet.",
+        //         });
+        //         return;
+        //       }
+        //     }
+        //   }
+        // }
+  
+        const provider = new ethers.providers.Web3Provider(injectedProvider);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        // const walletAddress = await signer.getAddress();
+        const contract = fetchContract(smAddr, smABI, signer);
+        return contract;
+        
+      
 };
+
+
 
 // Hàm kết nối với smart contract
 const connectingSmartContractByPrivatekey = (contractAddress, contractABI) => {
@@ -261,8 +309,9 @@ export const GenealogyProvider = ({ children }) => {
 
       await contract.createClan(
         formData.clanName,
-        formData.ancestorName,
         formData.description,
+        formData.ancestorName,
+        formData.ancestorDesc,
         formData.birthDate,
         formData.deathDate,
       );

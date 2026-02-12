@@ -61,7 +61,7 @@ const [formData, setFormData] = useState({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Dữ liệu mới:", formData);
+    // console.log("Dữ liệu mới:", formData);
     // Xử lý logic gửi dữ liệu lên blockchain hoặc API ở đây
     setIsProcessing(true);
 
