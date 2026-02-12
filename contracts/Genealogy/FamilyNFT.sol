@@ -23,17 +23,18 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     event ClanShortDescChanged(address indexed owner);
     event UpdatePersonData(bytes32 indexed personId);
 
-    constructor(string memory clanName, string memory shortDesc,  address owner)
+    constructor(string memory clanName, 
+            string memory clanDesc,
+            string memory ancestorName,
+            string memory ancestorShortDesc,
+            FamilyTypes.DateInfo memory birthDate,
+            FamilyTypes.DateInfo memory deathDate, 
+            address owner)
         LSP8IdentifiableDigitalAsset(clanName, "FAMILY", owner, _LSP4_TOKEN_TYPE_COLLECTION, _LSP8_TOKENID_FORMAT_NUMBER)
     {
         genealogyAddress = msg.sender;
-        clanShortDesc = shortDesc;
-        FamilyTypes.DateInfo memory defaultDate = FamilyTypes.DateInfo({
-            year: 0,
-            month: 0,
-            day: 0
-        });
-        _createNewPerson("", "", owner, FamilyTypes.Sex.MALE, defaultDate, defaultDate);
+        clanShortDesc = clanDesc;
+        _createNewPerson(ancestorName, ancestorShortDesc, owner, FamilyTypes.Sex.MALE, birthDate, deathDate);
     }
 
     function updatePersonData (bytes32 personId, string memory newName, string memory newDescShort, FamilyTypes.Sex sex, FamilyTypes.DateInfo memory birthDate, FamilyTypes.DateInfo memory deathDate) external onlyAuthorized(personId) {

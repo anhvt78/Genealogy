@@ -15,13 +15,15 @@ export default function ClanListForm({ userWalletAddress }) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isStillAlive, setIsStillAlive] = useState(false);
-  const [formData, setFormData] = useState({
-    clanName: "",
-    ancestorName: "",
-    description: "",
-    birthDate: "",
-    deathDate: "",
-  });
+  // Tìm đến phần khởi tạo useState của formData
+const [formData, setFormData] = useState({
+  clanName: "",
+  ancestorName: "",
+  description: "",      // Đây là mô tả chung của dòng tộc
+  ancestorDesc: "",     // THÊM MỚI: Tiểu sử tóm tắt của thủy tổ
+  birthDate: "",
+  deathDate: "",
+});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -101,7 +103,7 @@ export default function ClanListForm({ userWalletAddress }) {
         setIsCreator(result.data.isCreator);
       } else {
         sweetalert2.popupAlert({
-          title: "Đã xả ra lỗi",
+          title: "Đã xảy ra lỗi",
           text: "Lỗi khi tải danh sách Gia phả.",
         });
       }
@@ -139,52 +141,7 @@ export default function ClanListForm({ userWalletAddress }) {
           {/* Danh sách các mục chọn */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl w-full">
             {allClanId.map((clanId, index) => (
-              // <div
-              //   key={index}
-              //   // onClick={() =>
-              //   //   router.push(`/genealogyDetail?clanId=${item.clanId}`)
-              //   // }
-              //   onClick={() => router.push(`/pages/detail/${item.clanId}`)}
-              //   className="group cursor-pointer bg-[#f2e2ba] border-2 border-[#5d3a1a] shadow-[10px_10px_0px_0px_rgba(93,58,26,0.1)] hover:shadow-[15px_15px_0px_0px_rgba(93,58,26,0.2)] hover:-translate-y-2 transition-all duration-300 overflow-hidden"
-              // >
-              //   {/* Hình ảnh đại diện */}
-              //   <div className="h-48 overflow-hidden border-b-2 border-[#5d3a1a] relative">
-              //     <img
-              //       src={item.image}
-              //       alt={item.title}
-              //       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100"
-              //     />
-              //     <div className="absolute inset-0 bg-[#3d2611]/10 group-hover:bg-transparent transition-colors"></div>
-              //   </div>
-
-              //   {/* Nội dung mô tả */}
-              //   <div className="p-6">
-              //     <h3 className="text-[#3d2611] text-xl font-bold mb-3 uppercase tracking-wider group-hover:text-[#8b5a2b] transition-colors">
-              //       {item.title}
-              //     </h3>
-              //     <p className="text-[#5d3a1a] text-sm leading-relaxed line-clamp-3">
-              //       {item.description}
-              //     </p>
-
-              //     <div className="mt-6 flex items-center text-[#3d2611] font-bold text-xs uppercase tracking-widest">
-              //       <span>Xem chi tiết</span>
-              //       <svg
-              //         xmlns="http://www.w3.org/2000/svg"
-              //         className="h-4 w-4 ml-2 group-hover:translate-x-2 transition-transform"
-              //         fill="none"
-              //         viewBox="0 0 24 24"
-              //         stroke="currentColor"
-              //       >
-              //         <path
-              //           strokeLinecap="round"
-              //           strokeLinejoin="round"
-              //           strokeWidth={2}
-              //           d="M17 8l4 4m0 0l-4 4m4-4H3"
-              //         />
-              //       </svg>
-              //     </div>
-              //   </div>
-              // </div>
+              
               <ClanListItem clanId={clanId} key={index} />
             ))}
 
@@ -249,7 +206,20 @@ export default function ClanListForm({ userWalletAddress }) {
                 />
               </div>
 
-              {/* <div>
+               <div>
+                <label className="block text-[#5d3a1a] font-bold text-xs uppercase mb-1">
+                  Thông tin sơ lược
+                </label>
+                <textarea
+                  name="description"
+                  rows="2"
+                  onChange={handleInputChange}
+                  placeholder="Thông tin sơ lược về dòng tộc."
+                  className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white transition-colors"
+                ></textarea>
+              </div>
+
+              <div>
                 <label className="block text-[#5d3a1a] font-bold text-xs uppercase mb-1">
                   Tên Thuỷ tổ
                 </label>
@@ -261,21 +231,23 @@ export default function ClanListForm({ userWalletAddress }) {
                   className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white transition-colors"
                   placeholder="Tên vị tổ tiên đời thứ nhất"
                 />
-              </div> */}
-
-              <div>
-                <label className="block text-[#5d3a1a] font-bold text-xs uppercase mb-1">
-                  Mô tả ngắn
-                </label>
-                <textarea
-                  name="description"
-                  rows="2"
-                  onChange={handleInputChange}
-                  className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white transition-colors"
-                ></textarea>
               </div>
 
-              {/* <div className="grid grid-cols-2 gap-6">
+             
+
+             
+            <div className="md:col-span-2">
+              <label className="block text-[#3d2611] font-bold mb-2 text-xs uppercase">Tiểu sử tóm tắt của Thủy tổ</label>
+              <textarea
+                name="ancestorDesc"
+                onChange={handleInputChange}
+                placeholder="Nhập tiểu sử ngắn gọn của vị thủy tổ..."
+                rows="3"
+                className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white text-sm transition-all resize-none"
+              />
+            </div>
+
+              <div className="grid grid-cols-2 gap-6">
                 <div>
                   <label className="block text-[#5d3a1a] font-bold text-xs uppercase mb-1">
                     Năm/Ngày sinh
@@ -316,7 +288,7 @@ export default function ClanListForm({ userWalletAddress }) {
                     className={`w-full border-2 border-[#5d3a1a] p-2 outline-none text-sm transition-all ${isStillAlive ? "bg-gray-300/50 opacity-50 cursor-not-allowed" : "bg-white/50 focus:bg-white"}`}
                   />
                 </div>
-              </div> */}
+              </div>
 
               <button
                 type="submit"
@@ -329,9 +301,211 @@ export default function ClanListForm({ userWalletAddress }) {
                 <span>Xác nhận khởi tạo</span>
               </button>
             </form>
+
+            {/* <form onSubmit={handleSubmit} className="p-8">
+               <h2 className="text-2xl font-bold text-[#3d2611] text-center mb-8 uppercase tracking-widest border-b-2 border-[#5d3a1a] pb-4">
+                Khai báo Gia tộc Phả đồ
+               </h2>
+
+               
+               <div className="mb-10 space-y-4">
+                 <div className="flex items-center gap-2 mb-4">
+                   <span className="bg-[#5d3a1a] text-[#f2e2ba] text-xs px-2 py-1 font-bold">I</span>
+                   <h3 className="text-[#5d3a1a] font-bold uppercase tracking-wider text-sm">Thông tin dòng tộc</h3>
+                 </div>
+                 <div className="grid gap-4">
+                   <div>
+                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">TÊN DÒNG TỘC</label>
+                     <input name="clanName" onChange={handleInputChange} required className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white" />
+                   </div>
+                   <div>
+                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">MÔ TẢ CHUNG DÒNG TỘC</label>
+                     <textarea name="description" onChange={handleInputChange} rows="2" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white resize-none" />
+                   </div>
+                 </div>
+               </div>
+
+               
+               <div className="mb-8 space-y-4 p-5 bg-[#5d3a1a]/5 border border-[#5d3a1a]/20 rounded">
+                 <div className="flex items-center gap-2 mb-4">
+                   <span className="bg-[#8b5a2b] text-white text-xs px-2 py-1 font-bold">II</span>
+                   <h3 className="text-[#5d3a1a] font-bold uppercase tracking-wider text-sm">Thông tin Thủy tổ (Đời thứ 1)</h3>
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="md:col-span-2">
+                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">HỌ VÀ TÊN THỦY TỔ</label>
+                     <input name="ancestorName" onChange={handleInputChange} required className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none" />
+                   </div>
+                   <div className="md:col-span-2">
+                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">TIỂU SỬ TÓM TẮT THỦY TỔ</label>
+                     <textarea name="ancestorDesc" onChange={handleInputChange} rows="3" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none resize-none" />
+                   </div>
+                   <div>
+                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">NGÀY SINH (HOẶC NĂM)</label>
+                     <input name="birthDate" onChange={handleInputChange} placeholder="VD: 1900" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none" />
+                   </div>
+                   <div>
+                     <div className="flex justify-between items-center mb-1">
+                       <label className="block text-[#3d2611] font-bold text-xs uppercase">Ngày mất</label>
+                       <label className="text-[10px] flex items-center gap-1 cursor-pointer">
+                         <input type="checkbox" checked={isStillAlive} onChange={(e) => setIsStillAlive(e.target.checked)} /> CÒN SỐNG
+                       </label>
+                     </div>
+                     <input name="deathDate" disabled={isStillAlive} onChange={handleInputChange} placeholder={isStillAlive ? "---" : "VD: 1980"} className={`w-full border-2 border-[#5d3a1a] p-2 outline-none ${isStillAlive ? "opacity-30" : "bg-white/50"}`} />
+                   </div>
+                 </div>
+               </div>
+
+               <button type="submit" disabled={isProcessing} className="w-full bg-[#5d3a1a] text-[#f2e2ba] font-bold py-4 hover:bg-[#3d2611] transition-all uppercase flex justify-center items-center gap-2">
+                 {isProcessing && <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>}
+                 Khởi tạo Gia phả
+              </button>
+             </form> */}
           </div>
         </div>
       )}
     </div>
   );
 }
+
+// "use client";
+// import React, { useContext, useEffect, useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { GenealogyContext } from "@/context/GenealogyContext";
+// import ClanListItem from "./Items/ClanListItem";
+// import sweetalert2 from "@/configs/swal";
+
+// export default function ClanListForm({ userWalletAddress }) {
+//   const router = useRouter();
+//   const { getNFTCollection, createClan } = useContext(GenealogyContext);
+//   const [allClanId, setAllClanId] = useState([]);
+//   const [isProcessing, setIsProcessing] = useState(false);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [isStillAlive, setIsStillAlive] = useState(false);
+
+//   const [formData, setFormData] = useState({
+//     clanName: "",
+//     description: "",      // Mô tả dòng tộc
+//     ancestorName: "",     // Tên thủy tổ
+//     ancestorDesc: "",     // Tiểu sử thủy tổ
+//     birthDate: "",
+//     deathDate: "",
+//   });
+
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData({ ...formData, [name]: value });
+//   };
+
+//   const parseDateInput = (dateStr) => {
+//     if (!dateStr || dateStr.trim() === "") return { year: 0, month: 0, day: 0 };
+//     const parts = dateStr.split(/[\/\-.]/);
+//     if (parts.length === 3) {
+//       return { day: parseInt(parts[0]), month: parseInt(parts[1]), year: parseInt(parts[2]) };
+//     }
+//     return { day: 0, month: 0, year: parseInt(dateStr) || 0 };
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setIsProcessing(true);
+
+//     const dataToSend = {
+//       ...formData,
+//       birthDate: parseDateInput(formData.birthDate),
+//       deathDate: isStillAlive ? { year: 0, month: 0, day: 0 } : parseDateInput(formData.deathDate)
+//     };
+
+//     createClan(userWalletAddress, dataToSend, (clanId) => {
+//       setIsProcessing(false);
+//       setIsModalOpen(false);
+//       sweetalert2.success("Khởi tạo thành công!");
+//     }, (title, msg) => {
+//       setIsProcessing(false);
+//       sweetalert2.error(title, msg);
+//     });
+//   };
+
+//   return (
+//     <div className="p-6">
+//       <button 
+//         onClick={() => setIsModalOpen(true)}
+//         className="mb-8 bg-[#5d3a1a] text-white px-6 py-3 rounded shadow-lg hover:bg-[#3d2611] transition-all"
+//       >
+//         + KHAI BÁO GIA TỘC MỚI
+//       </button>
+
+//       {/* MODAL */}
+//       {isModalOpen && (
+//         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+//           <div className="bg-[#fdf8ec] w-full max-w-2xl max-h-[90vh] overflow-y-auto border-4 border-[#5d3a1a] shadow-2xl relative">
+//             <button 
+//                onClick={() => setIsModalOpen(false)}
+//                className="absolute top-4 right-4 text-[#5d3a1a] hover:rotate-90 transition-transform font-bold text-2xl"
+//             >×</button>
+
+//             <form onSubmit={handleSubmit} className="p-8">
+//               <h2 className="text-2xl font-bold text-[#3d2611] text-center mb-8 uppercase tracking-widest border-b-2 border-[#5d3a1a] pb-4">
+//                 Khai báo Gia tộc Phả đồ
+//               </h2>
+
+//               {/* PHẦN 1: DÒNG TỘC */}
+//               <div className="mb-10 space-y-4">
+//                 <div className="flex items-center gap-2 mb-4">
+//                   <span className="bg-[#5d3a1a] text-[#f2e2ba] text-xs px-2 py-1 font-bold">I</span>
+//                   <h3 className="text-[#5d3a1a] font-bold uppercase tracking-wider text-sm">Thông tin dòng tộc</h3>
+//                 </div>
+//                 <div className="grid gap-4">
+//                   <div>
+//                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">TÊN DÒNG TỘC</label>
+//                     <input name="clanName" onChange={handleInputChange} required className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white" />
+//                   </div>
+//                   <div>
+//                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">MÔ TẢ CHUNG DÒNG TỘC</label>
+//                     <textarea name="description" onChange={handleInputChange} rows="2" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white resize-none" />
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* PHẦN 2: THỦY TỔ */}
+//               <div className="mb-8 space-y-4 p-5 bg-[#5d3a1a]/5 border border-[#5d3a1a]/20 rounded">
+//                 <div className="flex items-center gap-2 mb-4">
+//                   <span className="bg-[#8b5a2b] text-white text-xs px-2 py-1 font-bold">II</span>
+//                   <h3 className="text-[#5d3a1a] font-bold uppercase tracking-wider text-sm">Thông tin Thủy tổ (Đời thứ 1)</h3>
+//                 </div>
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                   <div className="md:col-span-2">
+//                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">HỌ VÀ TÊN THỦY TỔ</label>
+//                     <input name="ancestorName" onChange={handleInputChange} required className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none" />
+//                   </div>
+//                   <div className="md:col-span-2">
+//                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">TIỂU SỬ TÓM TẮT THỦY TỔ</label>
+//                     <textarea name="ancestorDesc" onChange={handleInputChange} rows="3" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none resize-none" />
+//                   </div>
+//                   <div>
+//                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">NGÀY SINH (HOẶC NĂM)</label>
+//                     <input name="birthDate" onChange={handleInputChange} placeholder="VD: 1900" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none" />
+//                   </div>
+//                   <div>
+//                     <div className="flex justify-between items-center mb-1">
+//                       <label className="block text-[#3d2611] font-bold text-xs uppercase">Ngày mất</label>
+//                       <label className="text-[10px] flex items-center gap-1 cursor-pointer">
+//                         <input type="checkbox" checked={isStillAlive} onChange={(e) => setIsStillAlive(e.target.checked)} /> CÒN SỐNG
+//                       </label>
+//                     </div>
+//                     <input name="deathDate" disabled={isStillAlive} onChange={handleInputChange} placeholder={isStillAlive ? "---" : "VD: 1980"} className={`w-full border-2 border-[#5d3a1a] p-2 outline-none ${isStillAlive ? "opacity-30" : "bg-white/50"}`} />
+//                   </div>
+//                 </div>
+//               </div>
+
+//               <button type="submit" disabled={isProcessing} className="w-full bg-[#5d3a1a] text-[#f2e2ba] font-bold py-4 hover:bg-[#3d2611] transition-all uppercase flex justify-center items-center gap-2">
+//                 {isProcessing && <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>}
+//                 Khởi tạo Gia phả
+//               </button>
+//             </form>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
