@@ -10,10 +10,10 @@ contract Genealogy {
 
     event ClanCreated(
         address indexed creatorAddress,
-        address indexed nftAddress,
-        string name
+        address indexed nftAddress
     );
     event ClanRemovedFromOwned(address indexed clanId);
+    event ChangeClanOwner(address newOwner, address clanId);
 
     function createClan(
         string memory clanName,
@@ -34,10 +34,10 @@ contract Genealogy {
         address clanId = address(familyNFT);
         _clanIds[msg.sender] = clanId;
         _owners[clanId] = msg.sender;
-        emit ClanCreated(msg.sender, clanId, clanName);
+        emit ClanCreated(msg.sender, clanId);
     }
 
-    event ChangeClanOwner(address newOwner, address clanId);
+
     function changeClanOwner(address newOwner, address clanId) external {
         require(_clanIds[msg.sender] == clanId, "Only owner");
         _clanIds[newOwner] = clanId;

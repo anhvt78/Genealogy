@@ -222,32 +222,35 @@ export const GenealogyProvider = ({ children }) => {
   };
 
   const createClan = async (walletAddress, formData, callBack, handleErr) => {
-    console.log("walletAddress: ", walletAddress, " \ formData: ", formData);
+    try {
+      const contract = await connectingWithSmartContract(
+        genealogyAddress,
+        genealogyABI,
+      );
 
-    // try {
-    //   const contract = await connectingWithSmartContract(
-    //     supplyAddress,
-    //     supplyABI,
-    //   );
+      await contract.createClan(
+        formData.clanName,
+        formData.ancestorName,
+        formData.description,
+        formData.birthDate,
+        formData.deathDate,
+      );
 
-    //   await contract.createClan(
-    //     formData.clanName,
-    //     formData.ancestorName,
-    //     formData.ancestorDesc,
-    //     formData.birthTimestamp,
-    //     formData.deathTimestamp,
-    //   );
+      contract.on("ClanCreated", async (_creatorAddress, clanId) => {
+        console.log(
+          "_creatorAddress = ",
+          _creatorAddress,
+          ", clanId = ",
+          clanId,
+        );
 
-    //   contract.on("ClanCreated", async (_creatorAddress, clanId) => {
-    //     // console.log("_brandAddress = ", _brandAddress, ", newId = ", newId);
-
-    //     if (walletAddress == _creatorAddress) {
-    //       callBack(clanId);
-    //     }
-    //   });
-    // } catch (error) {
-    //   handleErr("Error", error);
-    // }
+        if (walletAddress == _creatorAddress) {
+          callBack(clanId);
+        }
+      });
+    } catch (error) {
+      handleErr("Error", error);
+    }
   };
 
   //---UPLOAD TO IPFS FUNCTION

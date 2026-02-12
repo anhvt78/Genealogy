@@ -34,12 +34,6 @@
 				"internalType": "address",
 				"name": "nftAddress",
 				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
 			}
 		],
 		"name": "ClanCreated",

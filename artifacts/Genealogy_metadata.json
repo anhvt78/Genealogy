@@ -38,12 +38,6 @@
 						"internalType": "address",
 						"name": "nftAddress",
 						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
 					}
 				],
 				"name": "ClanCreated",
@@ -475,11 +469,11 @@
 			]
 		},
 		"contracts/Genealogy/genealogy.sol": {
-			"keccak256": "0x0e0ed587d64224c4708402d7746cd529bf020976f91a3dee338e00cef9360fb0",
+			"keccak256": "0x45c9513c5f97b9bbe50476a4cfc6fcd14d50aa7f71690013e56979e66fde8929",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7fefaef760ebe0246b3aa28711e45eeee874ffe15c03b28a0148e4461237ef1a",
-				"dweb:/ipfs/QmXeGXSJe7zF4Co2pkTUAB23uy9adTwJ7o4CPCpbhbM5vf"
+				"bzz-raw://f0443a9a72299a224638e668c60db4187b1790988fbf4891f3b867b91a197ca5",
+				"dweb:/ipfs/QmQGqbXpSwjbjAbuuZTPXADcz8eqS7Gr9GunHJmm4Ti3VD"
 			]
 		}
 	},
