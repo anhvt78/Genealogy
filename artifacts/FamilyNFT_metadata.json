@@ -23,14 +23,48 @@
 						"type": "string"
 					},
 					{
-						"internalType": "uint256",
-						"name": "birthTimestamp",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "birthDate",
+						"type": "tuple"
 					},
 					{
-						"internalType": "uint256",
-						"name": "deathTimestamp",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "deathDate",
+						"type": "tuple"
 					},
 					{
 						"internalType": "address",
@@ -329,12 +363,6 @@
 						"internalType": "bytes32",
 						"name": "fatherId",
 						"type": "bytes32"
-					},
-					{
-						"indexed": false,
-						"internalType": "enum FamilyTypes.ChildType",
-						"name": "childType",
-						"type": "uint8"
 					}
 				],
 				"name": "ChildAdded",
@@ -476,37 +504,6 @@
 					},
 					{
 						"indexed": false,
-						"internalType": "uint256",
-						"name": "oldBirth",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "newBirth",
-						"type": "uint256"
-					}
-				],
-				"name": "PersonBirthUpdated",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
-						"internalType": "bytes32",
-						"name": "personId",
-						"type": "bytes32"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
-					},
-					{
-						"indexed": false,
 						"internalType": "address",
 						"name": "ownership",
 						"type": "address"
@@ -523,96 +520,9 @@
 						"internalType": "bytes32",
 						"name": "personId",
 						"type": "bytes32"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "oldDeath",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "newDeath",
-						"type": "uint256"
 					}
 				],
-				"name": "PersonDeathUpdated",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
-						"internalType": "bytes32",
-						"name": "personId",
-						"type": "bytes32"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "oldName",
-						"type": "string"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "newName",
-						"type": "string"
-					}
-				],
-				"name": "PersonNameUpdated",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
-						"internalType": "bytes32",
-						"name": "personId",
-						"type": "bytes32"
-					},
-					{
-						"indexed": false,
-						"internalType": "address",
-						"name": "oldOwner",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "address",
-						"name": "newOwner",
-						"type": "address"
-					}
-				],
-				"name": "PersonOwnershipTransferred",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
-						"internalType": "bytes32",
-						"name": "personId",
-						"type": "bytes32"
-					},
-					{
-						"indexed": false,
-						"internalType": "enum FamilyTypes.Sex",
-						"name": "oldSex",
-						"type": "uint8"
-					},
-					{
-						"indexed": false,
-						"internalType": "enum FamilyTypes.Sex",
-						"name": "newSex",
-						"type": "uint8"
-					}
-				],
-				"name": "PersonSexUpdated",
+				"name": "SetDeathDate",
 				"type": "event"
 			},
 			{
@@ -629,12 +539,6 @@
 						"internalType": "bytes32",
 						"name": "spouseId",
 						"type": "bytes32"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "marriedAt",
-						"type": "uint256"
 					}
 				],
 				"name": "SpouseAdded",
@@ -740,7 +644,7 @@
 					},
 					{
 						"internalType": "string",
-						"name": "descShort",
+						"name": "shortDesc",
 						"type": "string"
 					},
 					{
@@ -749,14 +653,48 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint256",
-						"name": "birthTimestamp",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "birthDate",
+						"type": "tuple"
 					},
 					{
-						"internalType": "uint256",
-						"name": "deathTimestamp",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "deathDate",
+						"type": "tuple"
 					},
 					{
 						"internalType": "bytes32",
@@ -770,7 +708,7 @@
 					},
 					{
 						"internalType": "address",
-						"name": "ownership",
+						"name": "owner",
 						"type": "address"
 					},
 					{
@@ -802,24 +740,92 @@
 						"type": "string"
 					},
 					{
-						"internalType": "uint256",
-						"name": "birthTimestamp",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "birthDate",
+						"type": "tuple"
 					},
 					{
-						"internalType": "uint256",
-						"name": "deathTimestamp",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "deathDate",
+						"type": "tuple"
 					},
 					{
-						"internalType": "uint256",
-						"name": "marriedAt",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "marriedDate",
+						"type": "tuple"
 					},
 					{
-						"internalType": "uint256",
-						"name": "divorcedAt",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "divorcedDate",
+						"type": "tuple"
 					},
 					{
 						"internalType": "address",
@@ -1077,11 +1083,6 @@
 						"type": "string"
 					},
 					{
-						"internalType": "address",
-						"name": "ownership",
-						"type": "address"
-					},
-					{
 						"internalType": "bytes32",
 						"name": "fatherId",
 						"type": "bytes32"
@@ -1097,14 +1098,53 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint256",
-						"name": "birthTimestamp",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "birthDate",
+						"type": "tuple"
 					},
 					{
-						"internalType": "uint256",
-						"name": "deathTimestamp",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "deathDate",
+						"type": "tuple"
+					},
+					{
+						"internalType": "string",
+						"name": "shortDesc",
+						"type": "string"
 					}
 				],
 				"stateMutability": "view",
@@ -1259,6 +1299,41 @@
 					}
 				],
 				"name": "setDataForTokenId",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "personId",
+						"type": "bytes32"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "newDeathDate",
+						"type": "tuple"
+					}
+				],
+				"name": "setDeathDate",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -1421,78 +1496,6 @@
 					}
 				],
 				"name": "transferOwnership",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "bytes32",
-						"name": "personId",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "address",
-						"name": "newOwner",
-						"type": "address"
-					}
-				],
-				"name": "transferPersonOwnership",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "bytes32",
-						"name": "personId",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "uint256",
-						"name": "newBirthTimestamp",
-						"type": "uint256"
-					}
-				],
-				"name": "updatePersonBirth",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "bytes32",
-						"name": "personId",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "uint256",
-						"name": "newDeathTimestamp",
-						"type": "uint256"
-					}
-				],
-				"name": "updatePersonDeath",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "bytes32",
-						"name": "personId",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "string",
-						"name": "newName",
-						"type": "string"
-					}
-				],
-				"name": "updatePersonName",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -2183,19 +2186,19 @@
 			]
 		},
 		"contracts/Genealogy/FamilyNFT.sol": {
-			"keccak256": "0xe9b344e19b881f8e0ea43c1e5d54969862fed8dcfdb74ff39bbdbe9f25e9b99f",
+			"keccak256": "0x9bb9b530bfd8f2bacb67a48079376c06d28aac7e2c4ca880d5448520d0b4bdfe",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://795305e5b0f31a787b0523eb1daed50f37957fbf755e9ae099927f6c14b7d9e4",
-				"dweb:/ipfs/QmVVV7yC7mTD9VdThiwAkQyrspf7BGu14D3CExdZ6eP8ym"
+				"bzz-raw://d2baca924267195466cfe06d30b65d1f4976b1b40862d51f37030556f529b559",
+				"dweb:/ipfs/QmWAn1G7D9j441QrrMNnBcKYGSAJ5ga3mAVMh2TzVbdKuE"
 			]
 		},
-		"contracts/Genealogy/types/FamilyTypes.sol": {
-			"keccak256": "0x78fdc6fe9181a2fb257a7e80c23260ed114215ef2ec5697c85a5c5e04723e444",
+		"contracts/Genealogy/FamilyTypes.sol": {
+			"keccak256": "0x6b40f6bbd218f1e71b0a9784bdc04de566a4fb1e671b6cff9d5bef7a7e1ccbaa",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7629fad776f46e275ec8b03369f2d0276aaf8d28ca9d2dc68898b9aa3be1f9d7",
-				"dweb:/ipfs/QmbhYDYg1jnvGSW3QGdvgoawVBpbVxJyx7QJLoCn5Mg6o9"
+				"bzz-raw://81330da63a5e88ca6fbd8722f09ebdd1bb5757fc2d1032065f0b40d45ac14e52",
+				"dweb:/ipfs/QmRVpoFw8c1b6cnauQ4vLwZ8oz3wPGhXS238Q45mUv9ERQ"
 			]
 		}
 	},

@@ -2,20 +2,35 @@
 pragma solidity ^0.8.20;
 
 import {FamilyNFT} from "./familyNFT.sol";
-import {FamilyTypes} from "./types/FamilyTypes.sol";
+import {FamilyTypes} from "./FamilyTypes.sol";
 
 contract Genealogy {
-
     mapping(address => address) private _clanIds;
     mapping(address => address) private _owners;
 
-    event ClanCreated(address indexed creatorAddress, address indexed nftAddress, string name);
+    event ClanCreated(
+        address indexed creatorAddress,
+        address indexed nftAddress,
+        string name
+    );
     event ClanRemovedFromOwned(address indexed clanId);
-    event ClanReconnected(address indexed subCollection, address indexed upperCollection, bytes32 upperId);
 
-    function createClan(string memory clanName, string memory ancestorName, string memory ancestorDesc, string memory birthTimestamp, string memory deathTimestamp) external {
+    function createClan(
+        string memory clanName,
+        string memory ancestorName,
+        string memory ancestorDesc,
+        FamilyTypes.DateInfo memory birthDate,
+        FamilyTypes.DateInfo memory deathDate
+    ) external {
         require(_clanIds[msg.sender] == address(0), "Clan existed");
-        FamilyNFT familyNFT = new FamilyNFT(clanName, ancestorName, ancestorDesc, birthTimestamp, deathTimestamp, msg.sender);
+        FamilyNFT familyNFT = new FamilyNFT(
+            clanName,
+            ancestorName,
+            ancestorDesc,
+            birthDate,
+            deathDate,
+            msg.sender
+        );
         address clanId = address(familyNFT);
         _clanIds[msg.sender] = clanId;
         _owners[clanId] = msg.sender;
@@ -45,5 +60,4 @@ contract Genealogy {
     function getClanOwner(address clanId) external view returns (address) {
         return _owners[clanId];
     }
-
 }

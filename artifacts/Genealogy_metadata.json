@@ -55,31 +55,6 @@
 					{
 						"indexed": true,
 						"internalType": "address",
-						"name": "subCollection",
-						"type": "address"
-					},
-					{
-						"indexed": true,
-						"internalType": "address",
-						"name": "upperCollection",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "bytes32",
-						"name": "upperId",
-						"type": "bytes32"
-					}
-				],
-				"name": "ClanReconnected",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
-						"internalType": "address",
 						"name": "clanId",
 						"type": "address"
 					}
@@ -123,14 +98,48 @@
 						"type": "string"
 					},
 					{
-						"internalType": "uint256",
-						"name": "birthTimestamp",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "birthDate",
+						"type": "tuple"
 					},
 					{
-						"internalType": "uint256",
-						"name": "deathTimestamp",
-						"type": "uint256"
+						"components": [
+							{
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint8",
+								"name": "month",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct FamilyTypes.DateInfo",
+						"name": "deathDate",
+						"type": "tuple"
 					}
 				],
 				"name": "createClan",
@@ -449,28 +458,28 @@
 				"dweb:/ipfs/QmSYuH1AhvJkPK8hNvoPqtExBcgTB42pPRHgTHkS5c5zYW"
 			]
 		},
-		"contracts/Genealogy/familyNFT.sol": {
-			"keccak256": "0xe9b344e19b881f8e0ea43c1e5d54969862fed8dcfdb74ff39bbdbe9f25e9b99f",
+		"contracts/Genealogy/FamilyTypes.sol": {
+			"keccak256": "0x6b40f6bbd218f1e71b0a9784bdc04de566a4fb1e671b6cff9d5bef7a7e1ccbaa",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://795305e5b0f31a787b0523eb1daed50f37957fbf755e9ae099927f6c14b7d9e4",
-				"dweb:/ipfs/QmVVV7yC7mTD9VdThiwAkQyrspf7BGu14D3CExdZ6eP8ym"
+				"bzz-raw://81330da63a5e88ca6fbd8722f09ebdd1bb5757fc2d1032065f0b40d45ac14e52",
+				"dweb:/ipfs/QmRVpoFw8c1b6cnauQ4vLwZ8oz3wPGhXS238Q45mUv9ERQ"
+			]
+		},
+		"contracts/Genealogy/familyNFT.sol": {
+			"keccak256": "0x9bb9b530bfd8f2bacb67a48079376c06d28aac7e2c4ca880d5448520d0b4bdfe",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d2baca924267195466cfe06d30b65d1f4976b1b40862d51f37030556f529b559",
+				"dweb:/ipfs/QmWAn1G7D9j441QrrMNnBcKYGSAJ5ga3mAVMh2TzVbdKuE"
 			]
 		},
 		"contracts/Genealogy/genealogy.sol": {
-			"keccak256": "0x99b78bbdba5ac48550ddb8d4a44f3612b46e136661067af3ba2aefe1a764717e",
+			"keccak256": "0x0e0ed587d64224c4708402d7746cd529bf020976f91a3dee338e00cef9360fb0",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://144bdb3c352005d2164fb434d9655e91283555b3c456db9e06cbce9c1767e92e",
-				"dweb:/ipfs/QmZFQ1Wq8KgSt4vbAU8JCSxVxaHgLuctray69DbZcBiZCH"
-			]
-		},
-		"contracts/Genealogy/types/FamilyTypes.sol": {
-			"keccak256": "0x78fdc6fe9181a2fb257a7e80c23260ed114215ef2ec5697c85a5c5e04723e444",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://7629fad776f46e275ec8b03369f2d0276aaf8d28ca9d2dc68898b9aa3be1f9d7",
-				"dweb:/ipfs/QmbhYDYg1jnvGSW3QGdvgoawVBpbVxJyx7QJLoCn5Mg6o9"
+				"bzz-raw://7fefaef760ebe0246b3aa28711e45eeee874ffe15c03b28a0148e4461237ef1a",
+				"dweb:/ipfs/QmXeGXSJe7zF4Co2pkTUAB23uy9adTwJ7o4CPCpbhbM5vf"
 			]
 		}
 	},

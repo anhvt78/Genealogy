@@ -66,6 +66,6 @@ import genealogyJSON from "@/contracts/ABIs/genealogy.json";
 export const familyNftABI = familyNftJSON.abi;
 
 export const genealogyABI = genealogyJSON.abi;
-export const genealogyAddress = "0x301Da154A8882aC2Db13EDf19952B7B124AE9D21";
+export const genealogyAddress = "0x4B2d256AfEA2E958D331df22C8a694814f603Da5";
 
 //deployAddress: 0x898f4dfd2e5d7e5b733600892116ffd13731db51

@@ -18,7 +18,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/Genealogy/types/FamilyTypes.sol": "FamilyTypes"
+			"contracts/Genealogy/FamilyTypes.sol": "FamilyTypes"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},
@@ -32,12 +32,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/Genealogy/types/FamilyTypes.sol": {
-			"keccak256": "0x029e973bec7931a388f5ffe16ee2e4f8cfb8806d2e12ed7ccfec045e4c724ae9",
+		"contracts/Genealogy/FamilyTypes.sol": {
+			"keccak256": "0x6b40f6bbd218f1e71b0a9784bdc04de566a4fb1e671b6cff9d5bef7a7e1ccbaa",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f79f21dfbd5fbdaca5e72d46aaea58d774acbb6f2c034da092e739d3141aecea",
-				"dweb:/ipfs/QmXXXHc2vxeY8cT1JCZPkntQWyspnVfWdG5wtKQEWkmi4a"
+				"bzz-raw://81330da63a5e88ca6fbd8722f09ebdd1bb5757fc2d1032065f0b40d45ac14e52",
+				"dweb:/ipfs/QmRVpoFw8c1b6cnauQ4vLwZ8oz3wPGhXS238Q45mUv9ERQ"
 			]
 		}
 	},

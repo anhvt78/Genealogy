@@ -28,12 +28,53 @@ export default function ClanListForm({ userWalletAddress }) {
     setFormData({ ...formData, [name]: value });
   };
 
+  const parseDateInput = (dateStr) => {
+    // Nếu trống hoặc "CÒN SỐNG", trả về giá trị 0 mặc định
+    if (!dateStr || dateStr.trim() === "") {
+      return { year: 0, month: 0, day: 0 };
+    }
+
+    // Thử tách chuỗi theo định dạng ngày/tháng/năm
+    const parts = dateStr.split(/[\/\-.]/);
+
+    if (parts.length === 3) {
+      // Trường hợp: DD/MM/YYYY
+      return {
+        day: parseInt(parts[0]) || 0,
+        month: parseInt(parts[1]) || 0,
+        year: parseInt(parts[2]) || 0,
+      };
+    } else if (parts.length === 1) {
+      // Trường hợp: Chỉ nhập YYYY
+      return {
+        day: 0,
+        month: 0,
+        year: parseInt(parts[0]) || 0,
+      };
+    }
+
+    // Mặc định nếu không đúng định dạng
+    return { year: parseInt(dateStr) || 0, month: 0, day: 0 };
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Dữ liệu mới:", formData);
     // Xử lý logic gửi dữ liệu lên blockchain hoặc API ở đây
     setIsProcessing(true);
-    createClan(userWalletAddress, formData, callBack, handleErr);
+
+    // Chuẩn bị dữ liệu theo cấu trúc DateInfo mới
+    const formattedData = {
+      ...formData,
+      birthDate: parseDateInput(formData.birthDate),
+      deathDate: isStillAlive
+        ? { year: 0, month: 0, day: 0 }
+        : parseDateInput(formData.deathDate),
+    };
+
+    console.log("Dữ liệu gửi lên Blockchain:", formattedData);
+
+    createClan(userWalletAddress, formattedData, callBack, handleErr);
   };
 
   const callBack = (clanId) => {
@@ -267,7 +308,11 @@ export default function ClanListForm({ userWalletAddress }) {
                     name="deathDate"
                     disabled={isStillAlive}
                     onChange={handleInputChange}
-                    placeholder={isStillAlive ? "Đang trống..." : "VD: 1980"}
+                    placeholder={
+                      isStillAlive
+                        ? "Đang trống..."
+                        : "VD: 1980 hoặc 30/04/1980"
+                    }
                     className={`w-full border-2 border-[#5d3a1a] p-2 outline-none text-sm transition-all ${isStillAlive ? "bg-gray-300/50 opacity-50 cursor-not-allowed" : "bg-white/50 focus:bg-white"}`}
                   />
                 </div>

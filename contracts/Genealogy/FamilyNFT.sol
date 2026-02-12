@@ -4,7 +4,8 @@ pragma solidity ^0.8.20;
 import {LSP8IdentifiableDigitalAsset} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8IdentifiableDigitalAsset.sol";
 import {_LSP8_TOKENID_FORMAT_NUMBER} from "@lukso/lsp-smart-contracts/contracts/LSP8IdentifiableDigitalAsset/LSP8Constants.sol";
 import {_LSP4_TOKEN_TYPE_COLLECTION} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
-import {FamilyTypes} from "./types/FamilyTypes.sol";
+
+import {FamilyTypes} from "./FamilyTypes.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract FamilyNFT is LSP8IdentifiableDigitalAsset {
@@ -15,15 +16,15 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
 
     address public genealogyAddress;
 
-    event PersonCreated(bytes32 indexed personId, string name, address ownership);
-    event SpouseAdded(bytes32 indexed husbanId, bytes32 indexed spouseId, uint256 marriedAt);
-    event ChildAdded(bytes32 indexed childId, bytes32 indexed fatherId, FamilyTypes.ChildType childType);
+    event PersonCreated(bytes32 indexed personId, address ownership);
+    event SpouseAdded(bytes32 indexed husbanId, bytes32 indexed spouseId);
+    event ChildAdded(bytes32 indexed childId, bytes32 indexed fatherId);
 
-    constructor(string memory clanName,  string memory ancestorName, string memory descShort, string memory birthTimestamp, string memory deathTimestamp, address owner)
+    constructor(string memory clanName,  string memory ancestorName, string memory descShort, FamilyTypes.DateInfo memory birthDate, FamilyTypes.DateInfo memory deathDate, address owner)
         LSP8IdentifiableDigitalAsset(clanName, "FAMILY", owner, _LSP4_TOKEN_TYPE_COLLECTION, _LSP8_TOKENID_FORMAT_NUMBER)
     {
         genealogyAddress = msg.sender;
-        _createNewPerson(ancestorName, descShort, owner, FamilyTypes.Sex.MALE, birthTimestamp, deathTimestamp);
+        _createNewPerson(ancestorName, descShort, owner, FamilyTypes.Sex.MALE, birthDate, deathDate);
     }
 
 
@@ -31,15 +32,15 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         bytes32 husbanId,
         string memory name,
         string memory descShort,
-        string memory birthTimestamp,
-        string memory deathTimestamp,
-        uint256 marriedAt,
-        uint256 divorcedAt,
+        FamilyTypes.DateInfo memory birthDate,
+        FamilyTypes.DateInfo memory deathDate,
+        FamilyTypes.DateInfo memory marriedDate,
+        FamilyTypes.DateInfo memory divorcedDate,
         address ownership
     ) external onlyAuthorized(husbanId) {
-        bytes32 spouseId = _createNewPerson(name, descShort, ownership, FamilyTypes.Sex.FEMALE, birthTimestamp, deathTimestamp);
-        persons[spouseId].spouses.push(FamilyTypes.Spouse({spouseId: spouseId, marriedAt: marriedAt, divorcedAt: divorcedAt}));
-        emit SpouseAdded(husbanId, spouseId, marriedAt);
+        bytes32 spouseId = _createNewPerson(name, descShort, ownership, FamilyTypes.Sex.FEMALE, birthDate, deathDate);
+        persons[spouseId].spouses.push(FamilyTypes.Spouse({spouseId: spouseId, marriedDate: marriedDate, divorcedDate: divorcedDate}));
+        emit SpouseAdded(husbanId, spouseId);
     }
 
     event SpouseRemoved(bytes32 indexed spouseId, bytes32 indexed husbanId);
@@ -51,7 +52,6 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
 
         for (uint256 i = 0; i < husban.spouses.length; i++) {
             if (husban.spouses[i].spouseId == spouseId) {
-                // Swap với phần tử cuối và pop
                 uint256 lastIndex = husban.spouses.length - 1;
                 if (i != lastIndex) {
                     husban.spouses[i] = husban.spouses[lastIndex];
@@ -68,23 +68,24 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
 
     function addChild(
         string memory childName,
-        string memory descShort,
+        string memory shortDesc,
         FamilyTypes.Sex sex,
-        string memory birthTimestamp,
-        string memory deathTimestamp,
+        FamilyTypes.DateInfo memory birthDate,
+        FamilyTypes.DateInfo memory deathDate,
         bytes32 fatherId,
         bytes32 motherId,
-        address ownership,
+        address owner,
         FamilyTypes.ChildType childType
     ) external onlyAuthorized(fatherId){
+    
         FamilyTypes.Person storage father = persons[fatherId];
 
-        bytes32 childId = _createNewPerson(childName, descShort, ownership, sex, birthTimestamp, deathTimestamp);
+        bytes32 childId = _createNewPerson(childName, shortDesc, owner, sex, birthDate, deathDate);
 
         father.children.push(FamilyTypes.Child({childType: childType, childId: childId}));
         persons[childId].fatherId = fatherId;
         persons[childId].motherId = motherId;
-        emit ChildAdded(childId, fatherId, childType);
+        emit ChildAdded(childId, fatherId);
     }
 
     event ChildRemoved(bytes32 indexed childId, bytes32 indexed parentId);
@@ -116,75 +117,36 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
 
     function _createNewPerson(
         string memory name,
-        string memory descShort,
-        address ownership,
+        string memory shortDesc,
+        address owner,
         FamilyTypes.Sex sex,
-        string memory birthTimestamp, 
-        string memory deathTimestamp
+        FamilyTypes.DateInfo memory birthDate, 
+        FamilyTypes.DateInfo memory deathDate
     ) private returns(bytes32 personId) {
         personCount.increment();
         personId = bytes32(personCount.current());
-        _mint(ownership, personId, true, "");
+        _mint(owner, personId, true, "");
 
         FamilyTypes.Person storage p = persons[personId];
-        p.name = name;
-        p.ownership = ownership;
+        p.name =name;
+        p.birthDate = birthDate;
+        p.deathDate = deathDate;
         p.sex = sex;
-        p.birthTimestamp = birthTimestamp;
-        p.deathTimestamp = deathTimestamp;
+        p.shortDesc = shortDesc;
 
-        _setDataForTokenId(personId, keccak256("ClanName"), bytes(name));
-        _setDataForTokenId(personId, keccak256("ClanShortDescription"), bytes(descShort));
-
-        emit PersonCreated(personId, name, ownership);
+        emit PersonCreated(personId, owner);
     }
 
-    event PersonNameUpdated(bytes32 indexed personId, string oldName, string newName);
-    event PersonBirthUpdated(bytes32 indexed personId, uint256 oldBirth, uint256 newBirth);
-    event PersonDeathUpdated(bytes32 indexed personId, uint256 oldDeath, uint256 newDeath);
-    event PersonSexUpdated(bytes32 indexed personId, FamilyTypes.Sex oldSex, FamilyTypes.Sex newSex);
-    event PersonOwnershipTransferred(bytes32 indexed personId, address oldOwner, address newOwner);
+    event SetDeathDate(bytes32 indexed personId);
 
-
-    function updatePersonName(bytes32 personId, string memory newName) 
+    function setDeathDate(bytes32 personId, FamilyTypes.DateInfo memory newDeathDate) 
         external onlyAuthorized(personId) 
     {
         FamilyTypes.Person storage p = persons[personId];
-        string memory oldName = p.name;
-        p.name = newName;
-        emit PersonNameUpdated(personId, oldName, newName);
-    }
+       
+        p.deathDate = newDeathDate;
 
-    function updatePersonBirth(bytes32 personId, uint256 newBirthTimestamp) 
-        external onlyAuthorized(personId) 
-    {
-        require(newBirthTimestamp > 0, "Invalid birth timestamp");
-        FamilyTypes.Person storage p = persons[personId];
-        uint256 old = p.birthTimestamp;
-        p.birthTimestamp = newBirthTimestamp;
-        emit PersonBirthUpdated(personId, old, newBirthTimestamp);
-    }
-
-    function updatePersonDeath(bytes32 personId, uint256 newDeathTimestamp) 
-        external onlyAuthorized(personId) 
-    {
-        FamilyTypes.Person storage p = persons[personId];
-        uint256 old = p.deathTimestamp;
-        p.deathTimestamp = newDeathTimestamp;
-        emit PersonDeathUpdated(personId, old, newDeathTimestamp);
-    }
-
-    function transferPersonOwnership(bytes32 personId, address newOwner) 
-        external onlyAuthorized(personId) 
-    {
-        require(newOwner != address(0), "Invalid new owner");
-        FamilyTypes.Person storage p = persons[personId];
-        address oldOwner = p.ownership;
-
-        _transfer(oldOwner, newOwner, personId, true, "");
-        p.ownership = newOwner;
-
-        emit PersonOwnershipTransferred(personId, oldOwner, newOwner);
+        emit SetDeathDate(personId);
     }
 
     function transferGenealogyOwner(
