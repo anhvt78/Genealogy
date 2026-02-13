@@ -1,6 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import images from "@/app/img";
+import Image from "next/image";
+import { generateMetadataLink } from "@/components/Utils/helpers";
 
 const DATA_DETAIL = {
   title: "NGUYỄN TỘC PHẢ ĐỒ",
@@ -26,20 +30,101 @@ Trải qua nhiều biến cố lịch sử, gia phả vẫn được lưu giữ 
 export default function GenealogyDetailForm({ clanId }) {
   const router = useRouter();
   // Thay vì lưu URL, ta lưu index của ảnh trong mảng gallery
-  const [currentIndex, setCurrentIndex] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const clanInfo = useSelector((state) => state.genealogyReducer.clanInfo);
+
+  console.log("clanInfo: ", clanInfo);
+
+  // const getImage = (images) => {
+  //   const imgList = [];
+  //   images?.map((el, index) => {
+  //     console.log("15. image: ", index);
+
+  //     if (Array.isArray(el) && el.length > 0 && el[0]?.url) {
+  //       // setOriginalImage(generateMetadataLink(el[0]?.url));
+  //       // setThumbnailImage(generateMetadataLink(el[2]?.url));
+  //       const original = generateMetadataLink(el[0]?.url);
+  //       const thumbnail = generateMetadataLink(el[1]?.url);
+  //       const item = {
+  //         original: original,
+  //         thumbnail: thumbnail || original,
+  //         originalHeight: 300,
+  //         originalWidth: 300,
+  //         thumbnailWidth: 300,
+  //         thumbnailHeight: 300,
+  //       };
+  //       imgList.push(item);
+  //     }
+  //   });
+  //   setImageList(imgList);
+  // };
+
+  // useEffect(() => {
+  //   getImage(clanInfo?.images);
+  // }, [clanId]);
 
   // Hàm chuyển ảnh tiếp theo
+
+  // 1. Xóa bỏ useState và useEffect liên quan đến imageList
+  // const [imageList, setImageList] = useState([]);
+
+  // 2. Sử dụng useMemo để tính toán imageList dựa trên clanInfo?.images
+
+  console.log("clanInfo?.images: ", clanInfo?.images);
+  // const imageList = React.useMemo(() => {
+  //   if (!clanInfo?.images) return [];
+
+  //   return clanInfo.images
+  //     .map((el) => {
+  //       if (Array.isArray(el) && el.length > 0 && el[0]?.url) {
+  //         const original = generateMetadataLink(el[0]?.url);
+  //         const thumbnail = generateMetadataLink(el[1]?.url);
+  //         return {
+  //           original: original,
+  //           thumbnail: thumbnail || original,
+  //           originalHeight: 300,
+  //           originalWidth: 300,
+  //           thumbnailWidth: 300,
+  //           thumbnailHeight: 300,
+  //         };
+  //       }
+  //       return null;
+  //     })
+  //     .filter(Boolean); // Loại bỏ các giá trị null nếu có
+  // }, [clanInfo?.images ? clanInfo.images : null]);
+
+  // Tối ưu useMemo: Truy cập thẳng vào images để tránh lỗi Dependency
+  const imageList = React.useMemo(() => {
+    const rawImages = clanInfo?.images;
+    if (!rawImages || !Array.isArray(rawImages)) return [];
+
+    return rawImages
+      .map((el) => {
+        if (Array.isArray(el) && el.length > 0 && el[0]?.url) {
+          const original = generateMetadataLink(el[0]?.url);
+          const thumbnail = generateMetadataLink(el[1]?.url);
+          return {
+            original: original,
+            thumbnail: thumbnail || original,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+  }, [clanInfo?.images]); // Dependency sạch cho React Compiler
+  console.log("imageList: ", imageList);
+
   const nextImage = (e) => {
     e.stopPropagation();
-    setCurrentIndex((prev) => (prev + 1) % DATA_DETAIL.gallery.length);
+    setCurrentIndex((prev) => (prev + 1) % imageList?.length);
   };
 
   // Hàm quay lại ảnh trước
   const prevImage = (e) => {
     e.stopPropagation();
     setCurrentIndex(
-      (prev) =>
-        (prev - 1 + DATA_DETAIL.gallery.length) % DATA_DETAIL.gallery.length,
+      (prev) => (prev - 1 + imageList?.length) % imageList?.length,
     );
   };
 
@@ -90,15 +175,17 @@ export default function GenealogyDetailForm({ clanId }) {
 
           {/* Ảnh hiển thị */}
           <div className="relative max-w-5xl max-h-[85vh] flex items-center justify-center">
-            <img
-              src={DATA_DETAIL.gallery[currentIndex]}
-              className="max-w-full max-h-full object-contain shadow-2xl animate-in fade-in zoom-in duration-300"
+            <Image
+              src={imageList[currentIndex]?.original}
               alt="Full view"
-              onClick={(e) => e.stopPropagation()}
+              fill
+              className="object-contain animate-in fade-in zoom-in duration-300"
+              sizes="(max-width: 1280px) 100vw, 1280px"
+              priority
             />
             {/* Hiển thị số thứ tự ảnh (Ví dụ: 1/8) */}
             <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-white/80 font-sans text-sm tracking-widest">
-              {currentIndex + 1} / {DATA_DETAIL.gallery.length}
+              {currentIndex + 1} / {imageList?.length}
             </div>
           </div>
 
@@ -123,15 +210,18 @@ export default function GenealogyDetailForm({ clanId }) {
       )}
       {/* Banner Header */}
       <div className="w-full h-[40vh] relative border-b-4 border-[#5d3a1a]">
-        <img
-          src={DATA_DETAIL.avatar}
+        <Image
+          src={clanInfo?.clanImage || images.no_image}
+          fill
           className="w-full h-full object-cover opacity-60"
           alt="banner"
+          sizes="100vw"
+          priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#3d2611] to-transparent"></div>
         <div className="absolute bottom-4 left-10 right-10 text-center">
           <h1 className="text-4xl md:text-6xl font-black text-[#f2e2ba] uppercase tracking-[0.2em] drop-shadow-lg">
-            {DATA_DETAIL.title}
+            {clanInfo?.clanName}
           </h1>
         </div>
       </div>
@@ -141,10 +231,10 @@ export default function GenealogyDetailForm({ clanId }) {
         <div className="md:col-span-2 space-y-8">
           <section>
             <h2 className="text-2xl font-bold text-[#3d2611] border-b-2 border-[#5d3a1a] pb-2 mb-4 uppercase tracking-widest">
-              Mô tả ngắn
+              Thông tin sơ lược
             </h2>
             <p className="text-[#5d3a1a] text-lg italic leading-relaxed">
-              {DATA_DETAIL.shortDesc}
+              {clanInfo?.shortDesc}
             </p>
           </section>
 
@@ -153,7 +243,7 @@ export default function GenealogyDetailForm({ clanId }) {
               Lịch sử dòng tộc
             </h2>
             <div className="text-[#3d2611] text-lg leading-loose whitespace-pre-line text-justify">
-              {DATA_DETAIL.fullDesc}
+              {clanInfo?.clanDetail}
             </div>
           </section>
 
@@ -163,16 +253,18 @@ export default function GenealogyDetailForm({ clanId }) {
               Bộ sưu tập hình ảnh
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {DATA_DETAIL.gallery.map((img, index) => (
+              {imageList.map((img, index) => (
                 <div
                   key={index}
                   className="h-40 overflow-hidden border-2 border-[#5d3a1a] shadow-md group"
                   onClick={() => setCurrentIndex(index)} // Truyền index vào state
                 >
-                  <img
-                    src={img}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 cursor-pointer"
+                  <Image
+                    src={img.thumbnail}
                     alt={`gallery-${index}`}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 640px) 50vw, 33vw"
                   />
                 </div>
               ))}

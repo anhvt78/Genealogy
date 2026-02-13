@@ -4,23 +4,62 @@ import React, { useContext, useEffect, useState } from "react";
 import images from "@/app/img";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { generateMetadataLink } from "@/components/Utils/helpers";
+import { useDispatch } from "react-redux";
+import { setClanInfo } from "@/redux/genealogySlide";
 
 const ClanListItem = ({ clanId }) => {
   const router = useRouter();
 
-  const [clanItem, setClanItem] = useState(null);
+  const dispatch = useDispatch();
+
+  const [clanItem, setClanItem] = useState();
   const { getClanInfo } = useContext(GenealogyContext);
 
   useEffect(() => {
     if (!clanId) return;
     getClanInfo(clanId).then((result) => {
       if (result.sts) {
-        console.log("result: ", result.data);
-        setClanItem({ clanName: result.data?.clanName });
+        // console.log("result: ", result.data?.clanMetadata);
+
+        const object = JSON.parse(result.data?.clanMetadata);
+        let imageUrl;
+
+        // console.log("object: ", object.value.LSP4Metadata.images);
+
+        try {
+          if (
+            object?.value?.LSP4Metadata?.images &&
+            Array.isArray(object.value.LSP4Metadata.images) &&
+            object.value.LSP4Metadata.images.length > 0 &&
+            Array.isArray(object.value.LSP4Metadata.images[0]) &&
+            object.value.LSP4Metadata.images[0].length > 0 &&
+            object.value.LSP4Metadata.images[0][0]?.url
+          ) {
+            imageUrl = generateMetadataLink(
+              object?.value?.LSP4Metadata?.images[0][0]?.url,
+            );
+          }
+        } catch (error) {
+          console.error("Error extracting CID:", error);
+        }
+
+        const item = {
+          clanId: clanId,
+          clanName: result.data?.clanName,
+          shortDesc: result.data?.clanDesc,
+          images: object?.value?.LSP4Metadata?.images,
+          clanDetail: object?.value?.LSP4Metadata?.description,
+          clanImage: imageUrl,
+        };
+
+        setClanItem(item);
+
+        dispatch(setClanInfo(item));
       } else {
         sweetalert2.popupAlert({
           title: "Đã xả ra lỗi",
-          text: "Lỗi khi tải thoong tin Gia phả.",
+          text: "Lỗi khi tải thông tin Gia phả.",
         });
       }
     });
@@ -75,7 +114,7 @@ const ClanListItem = ({ clanId }) => {
       {/* Hình ảnh đại diện */}
       <div className="h-48 overflow-hidden border-b-2 border-[#5d3a1a] relative">
         <Image
-          src={clanItem?.image || images.no_image}
+          src={clanItem?.clanImage || images.no_image}
           alt="Hình ảnh dòng họ"
           fill
           sizes="300px"
@@ -90,7 +129,7 @@ const ClanListItem = ({ clanId }) => {
           {clanItem?.clanName}
         </h3>
         <p className="text-[#5d3a1a] text-sm leading-relaxed line-clamp-3">
-          {clanItem?.description}
+          {clanItem?.shortDesc}
         </p>
 
         <div className="mt-6 flex items-center text-[#3d2611] font-bold text-xs uppercase tracking-widest">

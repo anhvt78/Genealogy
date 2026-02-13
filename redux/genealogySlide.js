@@ -5,7 +5,7 @@ const initialState = {
   userInfo: null,
   walletAddress: null,
   buyerTabIndex: 0,
-  // productItemRedux: null,
+  clanInfo: null,
 };
 
 export const genealogySlide = createSlice({
@@ -16,7 +16,7 @@ export const genealogySlide = createSlice({
       const item = state.products.find(
         (item) =>
           item.saleId === action.payload.saleId &&
-          item.productItemId === action.payload.productItemId
+          item.productItemId === action.payload.productItemId,
       );
       if (item) {
         item.quantity += action.payload.quantity;
@@ -28,7 +28,7 @@ export const genealogySlide = createSlice({
       const item = state.products.find(
         (item) =>
           item.saleId === action.payload.saleId &&
-          item.productItemId === action.payload.productItemId
+          item.productItemId === action.payload.productItemId,
       );
       item.quantity = action.payload.quantity;
     },
@@ -36,7 +36,7 @@ export const genealogySlide = createSlice({
       const item = state.products.find(
         (item) =>
           item.saleId === action.payload.saleId &&
-          item.productItemId === action.payload.productItemId
+          item.productItemId === action.payload.productItemId,
       );
       if (item) item.quantity++;
     },
@@ -44,7 +44,7 @@ export const genealogySlide = createSlice({
       const item = state.products.find(
         (item) =>
           item.saleId === action.payload.saleId &&
-          item.productItemId === action.payload.productItemId
+          item.productItemId === action.payload.productItemId,
       );
       if (item && item.quantity > 0) {
         item.quantity--;
@@ -55,7 +55,7 @@ export const genealogySlide = createSlice({
         // (item) => item.saleId !== action.payload
         (item) =>
           item.saleId !== action.payload.saleId &&
-          item.productItemId !== action.payload.productItemId
+          item.productItemId !== action.payload.productItemId,
       );
     },
     resetCart: (state) => {
@@ -76,6 +76,9 @@ export const genealogySlide = createSlice({
     // setProductItemRedux: (state, action) => {
     //   state.productItemRedux = action.payload;
     // },
+    setClanInfo: (state, action) => {
+      state.clanInfo = action.payload;
+    },
   },
 });
 
@@ -90,6 +93,6 @@ export const {
   userSignOut,
   setWalletAddress,
   setBuyerTabIndex,
-  // setProductItemRedux,
+  setClanInfo,
 } = genealogySlide.actions;
 export default genealogySlide.reducer;

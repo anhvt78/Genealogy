@@ -24,11 +24,10 @@ import {
 const projectId = `${process.env.INFURA_API_KEY}`;
 const projectSecretKey = `${process.env.INFURA_API_KEY_SECRET}`;
 
-// const privateKey = `${process.env.PRIVATE_KEY}`;
+const privateKey = `${process.env.PRIVATE_KEY}`;
 
 // console.log("privateKey: ", privateKey);
 
-// "98f893278558ef777032bc95f5f612bb3138e49957926351fb7d48a67acf7860"; // `${process.env.PRIVATE_KEY}`;
 const RPC_URL = "https://rpc.testnet.lukso.network"; // RPC URL cho LUKSO Testnet
 const CHAIN_ID = 4201; // Chain ID của LUKSO Testnet
 
@@ -37,24 +36,10 @@ const auth = `Basic ${Buffer.from(`${projectId}:${projectSecretKey}`).toString(
 )}`;
 
 const providerOfMarket = new ethers.providers.JsonRpcProvider(RPC_URL);
-const walletOfMarket = new ethers.Wallet(
-  "9eb7d6c8b3c04c7ca0eafe20dce86fe055f1dea5f71b651dc63ef2fc404d10ac",
-  providerOfMarket,
-);
+const walletOfMarket = new ethers.Wallet(privateKey, providerOfMarket);
 const signerOrProviderOfMarket = walletOfMarket
   ? walletOfMarket.connect(providerOfMarket)
   : providerOfMarket;
-
-// const subdomain = "https://cwgame.infura-ipfs.io";
-
-// const client = ipfsHttpClient({
-//   host: "infura-ipfs.io",
-//   port: 5001,
-//   protocol: "https",
-//   headers: {
-//     authorization: auth,
-//   },
-// });
 
 import {
   genealogyAddress,
@@ -76,75 +61,15 @@ const fetchContract = (smAddr, smABI, signerOrProvider) =>
 //---CONNECTING WITH SMART CONTRACT
 
 const connectingWithSmartContract = async (smAddr, smABI) => {
-  // try {
 
-  //   const web3Modal = new Web3Modal();
-  //   const connection = await web3Modal.connect();
+  const injectedProvider = window.lukso;
 
-  //   const provider = new ethers.providers.Web3Provider(connection);
-
-  //   const signer = provider.getSigner();
-  //   const contract = fetchContract(smAddr, smABI, signer);
-
-  //   return contract;
-  // } catch (error) {
-  //   console.log(
-  //     "Something went wrong while connecting with contract: " + error,
-  //   );
-  // }
-
-        const injectedProvider = window.lukso;
-        // const isCorrectChain = await checkChainId(injectedProvider);
-  
-        // if (!isCorrectChain) {
-        //   try {
-        //     await injectedProvider.request({
-        //       method: "wallet_switchEthereumChain",
-        //       params: [{ chainId: "0x1069" }],
-        //     });
-        //   } catch (switchError) {
-        //     if (switchError.code === 4902) {
-        //       try {
-        //         await injectedProvider.request({
-        //           method: "wallet_addEthereumChain",
-        //           params: [
-        //             {
-        //               chainId: "0x1069",
-        //               chainName: "LUKSO Testnet",
-        //               nativeCurrency: {
-        //                 name: "Test LYX",
-        //                 symbol: "LYXt",
-        //                 decimals: 18,
-        //               },
-        //               rpcUrls: ["https://rpc.testnet.lukso.network"],
-        //               blockExplorerUrls: [
-        //                 "https://explorer.execution.testnet.lukso.network",
-        //               ],
-        //             },
-        //           ],
-        //         });
-        //       } catch (addError) {
-        //         sweetalert2.popupAlert({
-        //           title: "Error",
-        //           text: "Failed to add LUKSO Testnet.",
-        //         });
-        //         return;
-        //       }
-        //     }
-        //   }
-        // }
-  
-        const provider = new ethers.providers.Web3Provider(injectedProvider);
-        await provider.send("eth_requestAccounts", []);
-        const signer = provider.getSigner();
-        // const walletAddress = await signer.getAddress();
-        const contract = fetchContract(smAddr, smABI, signer);
-        return contract;
-        
-      
+  const provider = new ethers.providers.Web3Provider(injectedProvider);
+  await provider.send("eth_requestAccounts", []);
+  const signer = provider.getSigner();
+  const contract = fetchContract(smAddr, smABI, signer);
+  return contract;
 };
-
-
 
 // Hàm kết nối với smart contract
 const connectingSmartContractByPrivatekey = (contractAddress, contractABI) => {
@@ -240,10 +165,10 @@ export const GenealogyProvider = ({ children }) => {
 
   const getClanInfo = async (clanId) => {
     try {
-      // const contract = connectingSmartContractByPrivatekey(
-      //   clanId,
-      //   familyNftABI,
-      // );
+      const contract = connectingSmartContractByPrivatekey(
+        clanId,
+        familyNftABI,
+      );
 
       const clanMetadata = await fetchContractData(
         clanId,
@@ -256,11 +181,14 @@ export const GenealogyProvider = ({ children }) => {
         "LSP4TokenName",
       );
 
+      const clanDesc = await contract.clanShortDesc();
+
       return {
         sts: true,
         data: {
           clanMetadata: JSON.stringify(clanMetadata, null, 2),
           clanName: clanName.value,
+          clanDesc: clanDesc,
         },
       };
     } catch (error) {
@@ -1807,7 +1735,6 @@ export const GenealogyProvider = ({ children }) => {
 
         createProductInfo,
 
-      
         rejectPartner,
 
         enableProductInfo,
