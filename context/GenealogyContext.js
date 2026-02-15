@@ -35,11 +35,7 @@ const auth = `Basic ${Buffer.from(`${projectId}:${projectSecretKey}`).toString(
   "base64",
 )}`;
 
-const providerOfMarket = new ethers.providers.JsonRpcProvider(RPC_URL);
-const walletOfMarket = new ethers.Wallet(privateKey, providerOfMarket);
-const signerOrProviderOfMarket = walletOfMarket
-  ? walletOfMarket.connect(providerOfMarket)
-  : providerOfMarket;
+
 
 import {
   genealogyAddress,
@@ -75,6 +71,12 @@ const connectingWithSmartContract = async (smAddr, smABI) => {
 const connectingSmartContractByPrivatekey = (contractAddress, contractABI) => {
   try {
     // Tạo instance của smart contract
+    const providerOfMarket = new ethers.providers.JsonRpcProvider(RPC_URL);
+const walletOfMarket = new ethers.Wallet(privateKey, providerOfMarket);
+const signerOrProviderOfMarket = walletOfMarket
+  ? walletOfMarket.connect(providerOfMarket)
+  : providerOfMarket;
+
     const contract = new ethers.Contract(
       contractAddress,
       contractABI,
