@@ -4,16 +4,17 @@ import React, { useContext, useEffect, useState } from "react";
 import images from "@/app/img";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { generateMetadataLink } from "@/components/Utils/helpers";
-import { useDispatch } from "react-redux";
-import { setClanInfo } from "@/redux/genealogySlide";
+// import { generateMetadataLink } from "@/components/Utils/helpers";
+// import { useDispatch } from "react-redux";
+// import { setClanInfo } from "@/redux/genealogySlide";
 
 const ClanListItem = ({ clanId }) => {
   const router = useRouter();
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const [clanItem, setClanItem] = useState();
+  const [clanName, setClanName] = useState();
   const { getClanInfo } = useContext(GenealogyContext);
 
   useEffect(() => {
@@ -22,40 +23,42 @@ const ClanListItem = ({ clanId }) => {
       if (result.sts) {
         // console.log("result: ", result.data?.clanMetadata);
 
-        const object = JSON.parse(result.data?.clanMetadata);
-        let imageUrl;
+        // const object = JSON.parse(result.data?.clanMetadata);
+        // let imageUrl;
 
         // console.log("object: ", object.value.LSP4Metadata.images);
 
-        try {
-          if (
-            object?.value?.LSP4Metadata?.images &&
-            Array.isArray(object.value.LSP4Metadata.images) &&
-            object.value.LSP4Metadata.images.length > 0 &&
-            Array.isArray(object.value.LSP4Metadata.images[0]) &&
-            object.value.LSP4Metadata.images[0].length > 0 &&
-            object.value.LSP4Metadata.images[0][0]?.url
-          ) {
-            imageUrl = generateMetadataLink(
-              object?.value?.LSP4Metadata?.images[0][0]?.url,
-            );
-          }
-        } catch (error) {
-          console.error("Error extracting CID:", error);
-        }
+        // try {
+        //   if (
+        //     object?.value?.LSP4Metadata?.images &&
+        //     Array.isArray(object.value.LSP4Metadata.images) &&
+        //     object.value.LSP4Metadata.images.length > 0 &&
+        //     Array.isArray(object.value.LSP4Metadata.images[0]) &&
+        //     object.value.LSP4Metadata.images[0].length > 0 &&
+        //     object.value.LSP4Metadata.images[0][0]?.url
+        //   ) {
+        //     imageUrl = generateMetadataLink(
+        //       object?.value?.LSP4Metadata?.images[0][0]?.url,
+        //     );
+        //   }
+        // } catch (error) {
+        //   console.error("Error extracting CID:", error);
+        // }
 
-        const item = {
-          clanId: clanId,
-          clanName: result.data?.clanName,
-          shortDesc: result.data?.clanDesc,
-          images: object?.value?.LSP4Metadata?.images,
-          clanDetail: object?.value?.LSP4Metadata?.description,
-          clanImage: imageUrl,
-        };
+        // const item = {
+        //   clanId: clanId,
+        //   clanName: result.data?.clanName,
+        //   shortDesc: result.data?.clanDesc,
+        //   images: object?.value?.LSP4Metadata?.images,
+        //   clanDetail: object?.value?.LSP4Metadata?.description,
+        //   clanImage: imageUrl,
+        // };
 
-        setClanItem(item);
+        // setClanItem(item);
 
-        dispatch(setClanInfo(item));
+        setClanName(result.data?.clanName);
+
+        // dispatch(setClanInfo(item));
       } else {
         sweetalert2.popupAlert({
           title: "Đã xả ra lỗi",
@@ -112,25 +115,25 @@ const ClanListItem = ({ clanId }) => {
       className="group cursor-pointer bg-[#f2e2ba] border-2 border-[#5d3a1a] shadow-[10px_10px_0px_0px_rgba(93,58,26,0.1)] hover:shadow-[15px_15px_0px_0px_rgba(93,58,26,0.2)] hover:-translate-y-2 transition-all duration-300 overflow-hidden"
     >
       {/* Hình ảnh đại diện */}
-      <div className="h-48 overflow-hidden border-b-2 border-[#5d3a1a] relative">
+      {/* <div className="h-48 overflow-hidden border-b-2 border-[#5d3a1a] relative">
         <Image
-          src={clanItem?.clanImage || images.no_image}
+          src={images.tu_duong}
           alt="Hình ảnh dòng họ"
           fill
           sizes="300px"
           className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100"
         />
         <div className="absolute inset-0 bg-[#3d2611]/10 group-hover:bg-transparent transition-colors"></div>
-      </div>
+      </div> */}
 
       {/* Nội dung mô tả */}
       <div className="p-6">
         <h3 className="text-[#3d2611] text-xl font-bold mb-3 uppercase tracking-wider group-hover:text-[#8b5a2b] transition-colors">
-          {clanItem?.clanName}
+          {clanName}
         </h3>
-        <p className="text-[#5d3a1a] text-sm leading-relaxed line-clamp-3">
+        {/* <p className="text-[#5d3a1a] text-sm leading-relaxed line-clamp-3">
           {clanItem?.shortDesc}
-        </p>
+        </p> */}
 
         <div className="mt-6 flex items-center text-[#3d2611] font-bold text-xs uppercase tracking-widest">
           <span>Xem chi tiết</span>

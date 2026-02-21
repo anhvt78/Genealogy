@@ -172,6 +172,40 @@ export const GenealogyProvider = ({ children }) => {
         familyNftABI,
       );
 
+      // const clanMetadata = await fetchContractData(
+      //   clanId,
+      //   lsp4Schema,
+      //   "LSP4Metadata",
+      // );
+      const clanName = await fetchContractData(
+        clanId,
+        lsp4Schema,
+        "LSP4TokenName",
+      );
+
+      // const clanDesc = await contract.clanShortDesc();
+
+      return {
+        sts: true,
+        data: {
+          // clanMetadata: JSON.stringify(clanMetadata, null, 2),
+          clanName: clanName.value,
+          // clanDesc: clanDesc,
+        },
+      };
+    } catch (error) {
+      return { sts: false, data: error };
+      // console.log("error = ", error);
+    }
+  };
+
+    const getClanDetail = async (clanId) => {
+    try {
+      const contract = connectingSmartContractByPrivatekey(
+        clanId,
+        familyNftABI,
+      );
+
       const clanMetadata = await fetchContractData(
         clanId,
         lsp4Schema,
@@ -1731,6 +1765,7 @@ export const GenealogyProvider = ({ children }) => {
         getNFTInfo,
         createClan,
         getClanInfo,
+        getClanDetail,
         uploadToIPFS,
 
         getUserProfile,
