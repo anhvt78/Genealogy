@@ -466,11 +466,11 @@
 			]
 		},
 		"contracts/Genealogy/familyNFT.sol": {
-			"keccak256": "0x97b4e675004eb7a2fb7839372a46acdc69124c36f60973e2546b93a22ec166cb",
+			"keccak256": "0xcbbd6db31453d4d355f406bda154af63644553ffe0d88047079a5f7f615098a6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://775739b6f539c50fe430ad54a531a5344248592cdf5034255fcd7d0f1601e266",
-				"dweb:/ipfs/QmYTDVGjrRYXRYfeboMyaWv8rurcz6b57eLMtDaCkfrZjJ"
+				"bzz-raw://af6b3837fe3d6fc6f58530f09b850a7dc62c590a10135a6b34330bc9a8b18c37",
+				"dweb:/ipfs/QmYFR2G9kQUE7FFXarjxhMHL2GjHAqDFF77qpNGS2Kg1sP"
 			]
 		},
 		"contracts/Genealogy/genealogy.sol": {

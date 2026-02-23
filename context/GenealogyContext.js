@@ -35,8 +35,6 @@ const auth = `Basic ${Buffer.from(`${projectId}:${projectSecretKey}`).toString(
   "base64",
 )}`;
 
-
-
 import {
   genealogyAddress,
   genealogyABI,
@@ -57,7 +55,6 @@ const fetchContract = (smAddr, smABI, signerOrProvider) =>
 //---CONNECTING WITH SMART CONTRACT
 
 const connectingWithSmartContract = async (smAddr, smABI) => {
-
   const injectedProvider = window.lukso;
 
   const provider = new ethers.providers.Web3Provider(injectedProvider);
@@ -72,10 +69,10 @@ const connectingSmartContractByPrivatekey = (contractAddress, contractABI) => {
   try {
     // Tạo instance của smart contract
     const providerOfMarket = new ethers.providers.JsonRpcProvider(RPC_URL);
-const walletOfMarket = new ethers.Wallet(privateKey, providerOfMarket);
-const signerOrProviderOfMarket = walletOfMarket
-  ? walletOfMarket.connect(providerOfMarket)
-  : providerOfMarket;
+    const walletOfMarket = new ethers.Wallet(privateKey, providerOfMarket);
+    const signerOrProviderOfMarket = walletOfMarket
+      ? walletOfMarket.connect(providerOfMarket)
+      : providerOfMarket;
 
     const contract = new ethers.Contract(
       contractAddress,
@@ -108,12 +105,12 @@ export const GenealogyProvider = ({ children }) => {
   const [feeInfo, setFeeInfo] = useState(null);
 
   const updateFeeInfo = async () => {
-    getFeeInfo().then((result) => {
-      if (result.sts) {
-        setFeeInfo(result.data);
-        // console.log("updateFeeInfo = ", result.data);
-      }
-    });
+    // getFeeInfo().then((result) => {
+    //   if (result.sts) {
+    //     setFeeInfo(result.data);
+    //     // console.log("updateFeeInfo = ", result.data);
+    //   }
+    // });
   };
 
   //---CHECK IF WALLET IS CONNECTED
@@ -199,7 +196,7 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-    const getClanDetail = async (clanId) => {
+  const getClanDetail = async (clanId) => {
     try {
       const contract = connectingSmartContractByPrivatekey(
         clanId,
@@ -230,6 +227,24 @@ export const GenealogyProvider = ({ children }) => {
     } catch (error) {
       return { sts: false, data: error };
       // console.log("error = ", error);
+    }
+  };
+
+  const getPersonData = async (clanId, personId) => {
+    try {
+      const contract = connectingSmartContractByPrivatekey(
+        clanId,
+        familyNftABI,
+      );
+
+      const personData = await contract.getPersonInfo(personId);
+
+      return {
+        sts: true,
+        data: personData,
+      };
+    } catch (error) {
+      return { sts: false, data: error };
     }
   };
 
@@ -1766,6 +1781,7 @@ export const GenealogyProvider = ({ children }) => {
         createClan,
         getClanInfo,
         getClanDetail,
+        getPersonData,
         uploadToIPFS,
 
         getUserProfile,

@@ -1051,6 +1051,169 @@
 			{
 				"inputs": [
 					{
+						"internalType": "bytes32",
+						"name": "personId",
+						"type": "bytes32"
+					}
+				],
+				"name": "getPersonInfo",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "fatherId",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "motherId",
+								"type": "bytes32"
+							},
+							{
+								"components": [
+									{
+										"internalType": "enum FamilyTypes.ChildType",
+										"name": "childType",
+										"type": "uint8"
+									},
+									{
+										"internalType": "bytes32",
+										"name": "childId",
+										"type": "bytes32"
+									}
+								],
+								"internalType": "struct FamilyTypes.Child[]",
+								"name": "children",
+								"type": "tuple[]"
+							},
+							{
+								"components": [
+									{
+										"internalType": "bytes32",
+										"name": "spouseId",
+										"type": "bytes32"
+									},
+									{
+										"components": [
+											{
+												"internalType": "uint16",
+												"name": "year",
+												"type": "uint16"
+											},
+											{
+												"internalType": "uint8",
+												"name": "month",
+												"type": "uint8"
+											},
+											{
+												"internalType": "uint8",
+												"name": "day",
+												"type": "uint8"
+											}
+										],
+										"internalType": "struct FamilyTypes.DateInfo",
+										"name": "marriedDate",
+										"type": "tuple"
+									},
+									{
+										"components": [
+											{
+												"internalType": "uint16",
+												"name": "year",
+												"type": "uint16"
+											},
+											{
+												"internalType": "uint8",
+												"name": "month",
+												"type": "uint8"
+											},
+											{
+												"internalType": "uint8",
+												"name": "day",
+												"type": "uint8"
+											}
+										],
+										"internalType": "struct FamilyTypes.DateInfo",
+										"name": "divorcedDate",
+										"type": "tuple"
+									}
+								],
+								"internalType": "struct FamilyTypes.Spouse[]",
+								"name": "spouses",
+								"type": "tuple[]"
+							},
+							{
+								"internalType": "enum FamilyTypes.Sex",
+								"name": "sex",
+								"type": "uint8"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint16",
+										"name": "year",
+										"type": "uint16"
+									},
+									{
+										"internalType": "uint8",
+										"name": "month",
+										"type": "uint8"
+									},
+									{
+										"internalType": "uint8",
+										"name": "day",
+										"type": "uint8"
+									}
+								],
+								"internalType": "struct FamilyTypes.DateInfo",
+								"name": "birthDate",
+								"type": "tuple"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint16",
+										"name": "year",
+										"type": "uint16"
+									},
+									{
+										"internalType": "uint8",
+										"name": "month",
+										"type": "uint8"
+									},
+									{
+										"internalType": "uint8",
+										"name": "day",
+										"type": "uint8"
+									}
+								],
+								"internalType": "struct FamilyTypes.DateInfo",
+								"name": "deathDate",
+								"type": "tuple"
+							},
+							{
+								"internalType": "string",
+								"name": "shortDesc",
+								"type": "string"
+							}
+						],
+						"internalType": "struct FamilyTypes.Person",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "address",
 						"name": "operator",
 						"type": "address"
@@ -1093,89 +1256,6 @@
 						"internalType": "uint256",
 						"name": "_value",
 						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "bytes32",
-						"name": "",
-						"type": "bytes32"
-					}
-				],
-				"name": "persons",
-				"outputs": [
-					{
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "fatherId",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "motherId",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "enum FamilyTypes.Sex",
-						"name": "sex",
-						"type": "uint8"
-					},
-					{
-						"components": [
-							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
-							},
-							{
-								"internalType": "uint8",
-								"name": "month",
-								"type": "uint8"
-							},
-							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
-							}
-						],
-						"internalType": "struct FamilyTypes.DateInfo",
-						"name": "birthDate",
-						"type": "tuple"
-					},
-					{
-						"components": [
-							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
-							},
-							{
-								"internalType": "uint8",
-								"name": "month",
-								"type": "uint8"
-							},
-							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
-							}
-						],
-						"internalType": "struct FamilyTypes.DateInfo",
-						"name": "deathDate",
-						"type": "tuple"
-					},
-					{
-						"internalType": "string",
-						"name": "shortDesc",
-						"type": "string"
 					}
 				],
 				"stateMutability": "view",
@@ -2028,7 +2108,7 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
 		"remappings": []
@@ -2267,11 +2347,11 @@
 			]
 		},
 		"contracts/Genealogy/FamilyNFT.sol": {
-			"keccak256": "0x97b4e675004eb7a2fb7839372a46acdc69124c36f60973e2546b93a22ec166cb",
+			"keccak256": "0xcbbd6db31453d4d355f406bda154af63644553ffe0d88047079a5f7f615098a6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://775739b6f539c50fe430ad54a531a5344248592cdf5034255fcd7d0f1601e266",
-				"dweb:/ipfs/QmYTDVGjrRYXRYfeboMyaWv8rurcz6b57eLMtDaCkfrZjJ"
+				"bzz-raw://af6b3837fe3d6fc6f58530f09b850a7dc62c590a10135a6b34330bc9a8b18c37",
+				"dweb:/ipfs/QmYFR2G9kQUE7FFXarjxhMHL2GjHAqDFF77qpNGS2Kg1sP"
 			]
 		},
 		"contracts/Genealogy/FamilyTypes.sol": {

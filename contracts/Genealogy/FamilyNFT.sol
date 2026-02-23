@@ -12,7 +12,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     using Counters for Counters.Counter;
 
     Counters.Counter public personCount;
-    mapping(bytes32 => FamilyTypes.Person) public persons;
+    mapping(bytes32 => FamilyTypes.Person) private persons;
 
     address public genealogyAddress;
     string public clanShortDesc;
@@ -161,18 +161,6 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         emit PersonCreated(personId, owner);
     }
 
-    // event SetDeathDate(bytes32 indexed personId);
-
-    // function setDeathDate(bytes32 personId, FamilyTypes.DateInfo memory newDeathDate) 
-    //     external onlyAuthorized(personId) 
-    // {
-    //     FamilyTypes.Person storage p = persons[personId];
-       
-    //     p.deathDate = newDeathDate;
-
-    //     emit SetDeathDate(personId);
-    // }
-
     function transferGenealogyOwner(
         address newOwner
         ) public  {
@@ -186,6 +174,20 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         bytes memory dataValue
         ) public virtual override onlyAuthorized(tokenId){
             _setDataForTokenId(tokenId, dataKey, dataValue);
+    }
+
+    // Thêm vào FamilyNFT.sol
+
+    // function getPersonChildren(bytes32 personId) external view returns (FamilyTypes.Child[] memory) {
+    //     return persons[personId].children;
+    // }
+
+    // function getPersonSpouses(bytes32 personId) external view returns (FamilyTypes.Spouse[] memory) {
+    //     return persons[personId].spouses;
+    // }
+
+    function getPersonInfo(bytes32 personId) external view returns (FamilyTypes.Person memory) {
+    return persons[personId];
     }
 
 
