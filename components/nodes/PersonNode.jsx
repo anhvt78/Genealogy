@@ -61,7 +61,7 @@ export default function PersonNode({ data }) {
           <PersonCard
             // data={data}
             person={data}
-            subTitle={isMale ? "Tiên Tổ (Nam)" : "Nội Tộc (Nữ)"}
+            subTitle={isMale ? "Tiên Tổ" : "Nội Tộc"}
             isMain={true}
             onNodeSelect={data.onNodeClick}
           />

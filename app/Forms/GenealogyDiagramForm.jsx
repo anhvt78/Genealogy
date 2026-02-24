@@ -8,12 +8,12 @@ import { toPng } from "html-to-image";
 import PersonNode from "@/components/nodes/PersonNode";
 import AddMemberModal from "@/components/ui/AddMemberModal";
 import DetailSidebar from "@/components/ui/DetailSidebar"; // Bạn cần tạo file này
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+// import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getLayoutedElements } from "@/utils/layoutEngine";
 // import { initialFamilyData } from "@/constants/mockData.js";
 import ClanTitleNode from "@/components/nodes/ClanTitleNode";
 // import { ConnectorModal } from "@/components/Modals/ConnectorModal";
-import { GenealogyContext } from "@/context/GenealogyContext";
+// import { GenealogyContext } from "@/context/GenealogyContext";
 import { useDispatch } from "react-redux";
 import { userSignOut } from "@/redux/genealogySlide";
 import { useRouter } from "next/navigation";
@@ -40,13 +40,17 @@ const getVisibleData = (allData, collapsedList) => {
   return allData.filter((p) => !hiddenIds.has(p.id));
 };
 
-export default function GenealogyDiagramForm({ familyData, setTabIndex }) {
+export default function GenealogyDiagramForm({
+  clanItem,
+  familyData,
+  setTabIndex,
+}) {
   const dispatch = useDispatch();
   const router = useRouter();
   // Thêm vào trong component FamilyTreePage
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showDaughters, setShowDaughters] = useState(true); // State để gạt ẩn/hiện con gái
-  const { getNFTCollection } = useContext(GenealogyContext);
+  // const { getNFTCollection } = useContext(GenealogyContext);
   // const [mounted, setMounted] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   // const [familyData, setFamilyData] = useLocalStorage(
@@ -61,7 +65,7 @@ export default function GenealogyDiagramForm({ familyData, setTabIndex }) {
     targetId: null,
   });
 
-  const [isShowModalConnector, setIsShowModalConnector] = useState(true);
+  // const [isShowModalConnector, setIsShowModalConnector] = useState(true);
 
   //   const userWalletAddress = useSelector(
   //     (state) => state.genealogyReducer.walletAddress,
@@ -88,14 +92,20 @@ export default function GenealogyDiagramForm({ familyData, setTabIndex }) {
 
   // 4. Tính toán Nodes và Edges
   const { nodes, edges } = useMemo(() => {
-    const visibleFamily = getVisibleData(familyData, collapsedIds);
+    const filteredData = showDaughters
+      ? familyData
+      : familyData.filter(
+          (p) => p.gender !== "female" && p.gender !== "FEMALE",
+        );
+
+    const visibleFamily = getVisibleData(filteredData, collapsedIds);
 
     const rawNodes = [
       {
         id: "clan-header-top",
         type: "clanTitle",
         data: {
-          label: "NGUYỄN TỘC PHẢ ĐỒ",
+          label: `${clanItem?.clanName || "DÒNG TỘC"} PHẢ ĐỒ`,
           subTitle: "Uống nước nhớ nguồn - Ăn quả nhớ kẻ trồng cây",
         },
         position: { x: 0, y: 0 },
@@ -107,15 +117,16 @@ export default function GenealogyDiagramForm({ familyData, setTabIndex }) {
           ...p,
           label: p.name,
           isCollapsed: collapsedIds.includes(p.id),
-          hasChildren: familyData.some((child) =>
+          hasChildren: filteredData.some((child) =>
             child.parents?.includes(p.id),
           ),
           onNodeClick: (nodeData) => setSelectedPerson(nodeData),
           wifeNumber: p.wives?.length || 0,
-          onAddChild: (id) =>
-            setModalState({ isOpen: true, type: "child", targetId: id }),
-          onAddSpouse: (id) =>
-            setModalState({ isOpen: true, type: "spouse", targetId: id }),
+          gender: p.gender || "undefined",
+          // onAddChild: (id) =>
+          //   setModalState({ isOpen: true, type: "child", targetId: id }),
+          // onAddSpouse: (id) =>
+          //   setModalState({ isOpen: true, type: "spouse", targetId: id }),
           onToggleCollapse: toggleCollapse,
         },
         position: { x: 0, y: 0 },
@@ -160,7 +171,7 @@ export default function GenealogyDiagramForm({ familyData, setTabIndex }) {
     });
 
     return { nodes: getLayoutedElements(rawNodes, rawEdges), edges: rawEdges };
-  }, [familyData, collapsedIds]);
+  }, [familyData, collapsedIds, clanItem, showDaughters]);
 
   // Hàm xuất ảnh PNG
   const exportImage = () => {
@@ -454,6 +465,7 @@ export default function GenealogyDiagramForm({ familyData, setTabIndex }) {
       {selectedPerson && (
         <DetailSidebar
           person={selectedPerson}
+          clanItem={clanItem}
           onClose={() => setSelectedPerson(null)}
         />
       )}

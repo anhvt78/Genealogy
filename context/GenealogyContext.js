@@ -164,10 +164,10 @@ export const GenealogyProvider = ({ children }) => {
 
   const getClanInfo = async (clanId) => {
     try {
-      const contract = connectingSmartContractByPrivatekey(
-        clanId,
-        familyNftABI,
-      );
+      // const contract = connectingSmartContractByPrivatekey(
+      //   clanId,
+      //   familyNftABI,
+      // );
 
       // const clanMetadata = await fetchContractData(
       //   clanId,
@@ -248,35 +248,22 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const getMemberData = async (tokenId) => {
-    // const tokenMetadata = await fetchContractData(
-    //   tokenId,
-    //   lsp4Schema,
-    //   "ClanShortDescription",
-    // );
-    // console.log("Mô tả của dòng họ này:", tokenMetadata.value);
-    // return tokenMetadata.value;
+  const getOwner = async (clanId, personId) => {
+    try {
+      const familyNFTContract = connectingSmartContractByPrivatekey(
+        clanId,
+        familyNftABI,
+      );
+      const ownerOfToken = await familyNFTContract.tokenOwnerOf(personId);
+      // console.log("tokenIdMetadata: ", tokenIdMetadata);
 
-    const familyNFTContract = connectingSmartContractByPrivatekey(
-      tokenId,
-      familyNftABI,
-    );
-    const tokenIdMetadata = await familyNFTContract.getDataForTokenId(
-      itemId,
-      ERC725YDataKeys.LSP4["ClanShortDescription"],
-    );
-    // console.log("tokenIdMetadata: ", tokenIdMetadata);
-
-    const erc725js = new ERC725(lsp4Schema);
-
-    // Decode the metadata
-    const decodedMetadata = erc725js.decodeData([
-      {
-        keyName: "ClanShortDescription",
-        value: tokenIdMetadata,
-      },
-    ]);
-    return decodedMetadata.value;
+      return {
+        sts: true,
+        data: ownerOfToken,
+      };
+    } catch (error) {
+      return { sts: false, data: error };
+    }
   };
 
   const createClan = async (walletAddress, formData, callBack, handleErr) => {
@@ -1782,6 +1769,7 @@ export const GenealogyProvider = ({ children }) => {
         getClanInfo,
         getClanDetail,
         getPersonData,
+        getOwner,
         uploadToIPFS,
 
         getUserProfile,

@@ -1,11 +1,40 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { formatDate } from "../Utils/helpers";
+import { useSelector } from "react-redux";
+import { GenealogyContext } from "@/context/GenealogyContext";
 
 export default function DetailSidebar({
   person,
+  clanItem,
   onClose,
-  onAddChild,
-  onAddSpouse,
+  // onAddChild,
+  // onAddSpouse,
 }) {
+  console.log("person: ", person);
+
+  const userWalletAddress = useSelector(
+    (state) => state.genealogyReducer.walletAddress,
+  );
+
+  console.log("userWalletAddress: ", userWalletAddress);
+
+  const { getOwner } = useContext(GenealogyContext);
+
+  const [owner, setOwner] = useState("0x");
+
+  useEffect(() => {
+    if (!userWalletAddress) return;
+    getOwner(clanItem?.clanId, person.id).then((result) => {
+      if (result.sts) {
+        setOwner(result.data);
+      }
+    });
+  }, [userWalletAddress]);
+
+  // const getTokenOwner = async () => {
+  //   const result = await getOwner(clanItem?.clanId, person.id);
+  // };
+
   return (
     <div
       className={`fixed top-0 right-0 h-full w-96 bg-[#fdf6e3] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] 
@@ -50,7 +79,7 @@ export default function DetailSidebar({
                       Năm sinh
                     </p>
                     <p className="font-bold text-[#3d2611]">
-                      {person.birthYear || "Không rõ"}
+                      {formatDate(person.birthYear)}
                     </p>
                   </div>
                   <div className="bg-white/50 p-3 rounded border border-[#8b5a2b]/10">
@@ -58,7 +87,7 @@ export default function DetailSidebar({
                       Năm mất
                     </p>
                     <p className="font-bold text-[#3d2611]">
-                      {person.deathYear || "Còn sống"}
+                      {formatDate(person.deathYear)}
                     </p>
                   </div>
                 </div>
@@ -66,7 +95,7 @@ export default function DetailSidebar({
 
               <section>
                 <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest border-b border-[#8b5a2b]/20 pb-1 mb-3">
-                  Tiểu sử thông tin
+                  Thông tin Tiểu sử
                 </h3>
                 <div className="relative">
                   <span className="absolute top-0 left-0 text-4xl text-[#8b5a2b]/20 font-serif">
@@ -85,23 +114,50 @@ export default function DetailSidebar({
           </div>
 
           {/* Cụm nút thao tác ở dưới cùng */}
-          <div className="mt-6 pt-6 border-t-2 border-[#8b5a2b]/20 flex flex-col gap-3">
-            <button
-              onClick={() => onAddChild(person.id)}
-              className="w-full bg-[#5d3a1a] text-[#f2e2ba] py-3 rounded font-bold text-xs hover:bg-black transition-all shadow-md uppercase tracking-wider"
-            >
-              + Thêm con trực hệ
-            </button>
-            <button
-              onClick={() => onAddSpouse(person.id)}
-              className="w-full bg-[#8b5a2b] text-[#f2e2ba] py-3 rounded font-bold text-xs hover:bg-[#3d2611] transition-all shadow-md uppercase tracking-wider"
-            >
-              + Thêm{" "}
-              {person.gender === "male" ? "Phu nhân (Vợ)" : "Phu quân (Chồng)"}
-            </button>
-          </div>
+          {owner == userWalletAddress && (
+            <div className="mt-6 pt-6 border-t-2 border-[#8b5a2b]/20 flex flex-col gap-3">
+              <button
+                onClick={() => onAddChild(person.id)}
+                className="w-full bg-[#5d3a1a] text-[#f2e2ba] py-3 rounded font-bold text-xs hover:bg-black transition-all shadow-md uppercase tracking-wider"
+              >
+                + Thêm con trực hệ
+              </button>
+
+              {person.gender === "male" && (
+                <button
+                  onClick={() => onAddSpouse(person.id)}
+                  className="w-full bg-[#8b5a2b] text-[#f2e2ba] py-3 rounded font-bold text-xs hover:bg-[#3d2611] transition-all shadow-md uppercase tracking-wider"
+                >
+                  + Thêm{" "}
+                  {person.gender === "male"
+                    ? "Phu nhân (Vợ)"
+                    : "Phu quân (Chồng)"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
+
+      {modalState.isOpen && (
+              <AddMemberModal
+                isOpen={modalState.isOpen}
+                onClose={() =>
+                  setModalState({ isOpen: false, type: null, targetId: null })
+                }
+                onAdd={(newData) => {
+                  setFamilyData([
+                    ...familyData,
+                    { ...newData, id: Date.now().toString() },
+                  ]);
+                  setModalState({ isOpen: false, type: null, targetId: null });
+                }}
+                type={modalState.type}
+                targetId={modalState.targetId}
+              />
+            )}
+            
+            
     </div>
   );
 }

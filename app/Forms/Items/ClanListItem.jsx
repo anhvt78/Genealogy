@@ -13,7 +13,7 @@ const ClanListItem = ({ clanId }) => {
 
   // const dispatch = useDispatch();
 
-  const [clanItem, setClanItem] = useState();
+  // const [clanItem, setClanItem] = useState();
   const [clanName, setClanName] = useState();
   const { getClanInfo } = useContext(GenealogyContext);
 

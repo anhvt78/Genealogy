@@ -726,3 +726,24 @@ export const toEthersUsdtDisplay = (amount) => {
   // formatUnits(Giá trị atomic, Số thập phân)
   return ethers.utils.formatUnits(amount, usdtDecimals);
 };
+
+export const formatDate = (dateData) => {
+    if (!dateData) return "Không rõ";
+
+    // Lấy giá trị year, month, day từ object hoặc array
+    // Lưu ý: month trong JS bắt đầu từ 0 (Tháng 1 = 0),
+    // nhưng nếu dữ liệu của bạn trả về 0 nghĩa là chưa có dữ liệu hoặc đã đúng số tháng, hãy kiểm tra lại API.
+    const year = dateData.year || dateData[0];
+    const month = dateData.month || dateData[1];
+    const day = dateData.day || dateData[2];
+
+    // Nếu không có năm thì coi như không rõ
+    if (!year || year === 0) return "Không rõ";
+
+    // Định dạng hiển thị dd/mm/yyyy (Thêm số 0 phía trước nếu < 10)
+    const d = day > 0 ? String(day).padStart(2, "0") : "??";
+    const m = month > 0 ? String(month).padStart(2, "0") : "??";
+    const y = year;
+
+    return `${d}/${m}/${y}`;
+  };

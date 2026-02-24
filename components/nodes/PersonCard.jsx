@@ -1,4 +1,5 @@
 import React from "react";
+import { formatDate } from "../Utils/helpers";
 
 export default function PersonCard({ person, subTitle, isMain, onNodeSelect }) {
   return (
@@ -28,7 +29,7 @@ export default function PersonCard({ person, subTitle, isMain, onNodeSelect }) {
           </div>
         </div>
         <div className="text-[10px] mt-2 opacity-70 font-mono">
-          {person.birthYear || "????"} — {person.deathYear || "..."}
+          {formatDate(person.birthYear)} — {formatDate(person.deathYear)}
         </div>
       </div>
     </div>
