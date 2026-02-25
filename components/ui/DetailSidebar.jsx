@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { formatDate } from "../Utils/helpers";
 import { useSelector } from "react-redux";
 import { GenealogyContext } from "@/context/GenealogyContext";
+import AddSpouseModal from "./AddSpouseModal";
+import AddChildModal from "./AddChildModal";
 
 export default function DetailSidebar({
   person,
@@ -11,6 +13,14 @@ export default function DetailSidebar({
   // onAddSpouse,
 }) {
   console.log("person: ", person);
+
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    type: null,
+    targetId: null,
+  });
+
+  const [modalAddChildState, setModalAddChildState] = useState(false);
 
   const userWalletAddress = useSelector(
     (state) => state.genealogyReducer.walletAddress,
@@ -31,13 +41,17 @@ export default function DetailSidebar({
     });
   }, [userWalletAddress]);
 
-  // const getTokenOwner = async () => {
-  //   const result = await getOwner(clanItem?.clanId, person.id);
+  // const onAddChild = async (id) => {
+  //   setModalState({ isOpen: true, type: "child", targetId: id });
+  // };
+
+  // const onAddSpouse = async (id) => {
+  //   setModalState({ isOpen: true, type: "spouse", targetId: id });
   // };
 
   return (
     <div
-      className={`fixed top-0 right-0 h-full w-96 bg-[#fdf6e3] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] 
+      className={`fixed top-0 right-0 h-full w-[40%] bg-[#fdf6e3] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] 
       border-l-4 border-[#8b5a2b] transition-transform duration-500 ease-in-out z-[1000] font-serif
       ${person ? "translate-x-0" : "translate-x-full"}`}
     >
@@ -117,7 +131,7 @@ export default function DetailSidebar({
           {owner == userWalletAddress && (
             <div className="mt-6 pt-6 border-t-2 border-[#8b5a2b]/20 flex flex-col gap-3">
               <button
-                onClick={() => onAddChild(person.id)}
+                onClick={() => setModalAddChildState(true)}
                 className="w-full bg-[#5d3a1a] text-[#f2e2ba] py-3 rounded font-bold text-xs hover:bg-black transition-all shadow-md uppercase tracking-wider"
               >
                 + Thêm con trực hệ
@@ -125,7 +139,13 @@ export default function DetailSidebar({
 
               {person.gender === "male" && (
                 <button
-                  onClick={() => onAddSpouse(person.id)}
+                  onClick={() =>
+                    setModalState({
+                      isOpen: true,
+                      type: "child",
+                      targetId: person.id,
+                    })
+                  }
                   className="w-full bg-[#8b5a2b] text-[#f2e2ba] py-3 rounded font-bold text-xs hover:bg-[#3d2611] transition-all shadow-md uppercase tracking-wider"
                 >
                   + Thêm{" "}
@@ -140,24 +160,42 @@ export default function DetailSidebar({
       )}
 
       {modalState.isOpen && (
-              <AddMemberModal
-                isOpen={modalState.isOpen}
-                onClose={() =>
-                  setModalState({ isOpen: false, type: null, targetId: null })
-                }
-                onAdd={(newData) => {
-                  setFamilyData([
-                    ...familyData,
-                    { ...newData, id: Date.now().toString() },
-                  ]);
-                  setModalState({ isOpen: false, type: null, targetId: null });
-                }}
-                type={modalState.type}
-                targetId={modalState.targetId}
-              />
-            )}
-            
-            
+        <AddSpouseModal
+          // isOpen={modalState.isOpen}
+          onClose={() =>
+            setModalState({ isOpen: false, type: null, targetId: null })
+          }
+          // onAdd={(newData) => {
+          //   setFamilyData([
+          //     ...familyData,
+          //     { ...newData, id: Date.now().toString() },
+          //   ]);
+          //   setModalState({ isOpen: false, type: null, targetId: null });
+          // }}
+          person={person}
+          clanItem={clanItem}
+          type={modalState.type}
+          // targetId={modalState.targetId}
+        />
+      )}
+
+      {modalAddChildState && (
+        <AddChildModal
+          // isOpen={modalState.isOpen}
+          onClose={() => setModalAddChildState(false)}
+          // onAdd={(newData) => {
+          //   setFamilyData([
+          //     ...familyData,
+          //     { ...newData, id: Date.now().toString() },
+          //   ]);
+          //   setModalState({ isOpen: false, type: null, targetId: null });
+          // }}
+          person={person}
+          clanItem={clanItem}
+          type={modalState.type}
+          // targetId={modalState.targetId}
+        />
+      )}
     </div>
   );
 }

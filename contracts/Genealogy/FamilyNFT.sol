@@ -58,12 +58,15 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         string memory descShort,
         FamilyTypes.DateInfo memory birthDate,
         FamilyTypes.DateInfo memory deathDate,
-        FamilyTypes.DateInfo memory marriedDate,
-        FamilyTypes.DateInfo memory divorcedDate,
+        // FamilyTypes.DateInfo memory marriedDate,
+        // FamilyTypes.DateInfo memory divorcedDate,
         address ownership
     ) external onlyAuthorized(husbanId) {
         bytes32 spouseId = _createNewPerson(name, descShort, ownership, FamilyTypes.Sex.FEMALE, birthDate, deathDate);
-        persons[spouseId].spouses.push(FamilyTypes.Spouse({spouseId: spouseId, marriedDate: marriedDate, divorcedDate: divorcedDate}));
+
+        FamilyTypes.DateInfo memory emptyDate;
+
+        persons[spouseId].spouses.push(FamilyTypes.Spouse({spouseId: spouseId, marriedDate: emptyDate, divorcedDate: emptyDate}));
         emit SpouseAdded(husbanId, spouseId);
     }
 
@@ -97,18 +100,18 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         FamilyTypes.DateInfo memory birthDate,
         FamilyTypes.DateInfo memory deathDate,
         bytes32 fatherId,
-        bytes32 motherId,
-        address owner,
+        // bytes32 motherId,
+        // address owner,
         FamilyTypes.ChildType childType
     ) external onlyAuthorized(fatherId){
     
         FamilyTypes.Person storage father = persons[fatherId];
 
-        bytes32 childId = _createNewPerson(childName, shortDesc, owner, sex, birthDate, deathDate);
+        bytes32 childId = _createNewPerson(childName, shortDesc, msg.sender, sex, birthDate, deathDate);
 
         father.children.push(FamilyTypes.Child({childType: childType, childId: childId}));
         persons[childId].fatherId = fatherId;
-        persons[childId].motherId = motherId;
+        // persons[childId].motherId = motherId;
         emit ChildAdded(childId, fatherId);
     }
 

@@ -6,7 +6,7 @@ import { toPng } from "html-to-image";
 
 // --- IMPORT CÁC COMPONENT ---
 import PersonNode from "@/components/nodes/PersonNode";
-import AddMemberModal from "@/components/ui/AddMemberModal";
+import AddMemberModal from "@/components/ui/AddChildModal";
 import DetailSidebar from "@/components/ui/DetailSidebar"; // Bạn cần tạo file này
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getLayoutedElements } from "@/utils/layoutEngine";

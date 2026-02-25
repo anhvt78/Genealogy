@@ -1,12 +1,12 @@
 "use client";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import ReactFlow, { Background, Controls } from "reactflow";
 import "reactflow/dist/style.css";
 import { toPng } from "html-to-image";
 
 // --- IMPORT CÁC COMPONENT ---
 import PersonNode from "@/components/nodes/PersonNode";
-import AddMemberModal from "@/components/ui/AddMemberModal";
+// import AddMemberModal from "@/components/ui/AddChildModal";
 import DetailSidebar from "@/components/ui/DetailSidebar"; // Bạn cần tạo file này
 // import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getLayoutedElements } from "@/utils/layoutEngine";
@@ -471,7 +471,7 @@ export default function GenealogyDiagramForm({
       )}
 
       {/* Modal thêm thành viên */}
-      {modalState.isOpen && (
+      {/* {modalState.isOpen && (
         <AddMemberModal
           isOpen={modalState.isOpen}
           onClose={() =>
@@ -487,7 +487,7 @@ export default function GenealogyDiagramForm({
           type={modalState.type}
           targetId={modalState.targetId}
         />
-      )}
+      )} */}
       {/* {!userWalletAddress && (
         <ConnectorModal
           isShow={isShowModalConnector}
