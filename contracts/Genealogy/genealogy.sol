@@ -39,7 +39,6 @@ contract Genealogy {
         emit ClanCreated(msg.sender, clanId);
     }
 
-
     function changeClanOwner(address newOwner, address clanId) external {
         require(_clanIds[msg.sender] == clanId, "Only owner");
         _clanIds[newOwner] = clanId;

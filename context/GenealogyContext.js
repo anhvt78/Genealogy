@@ -35,19 +35,7 @@ const auth = `Basic ${Buffer.from(`${projectId}:${projectSecretKey}`).toString(
   "base64",
 )}`;
 
-import {
-  genealogyAddress,
-  genealogyABI,
-  familyNftABI,
-  supplyAddress,
-  supplyABI,
-  marketAddress,
-  marketABI,
-  productAddress,
-  productABI,
-  saleAddress,
-  saleABI,
-} from "./constants";
+import { genealogyAddress, genealogyABI, familyNftABI } from "./constants";
 
 const fetchContract = (smAddr, smABI, signerOrProvider) =>
   new ethers.Contract(smAddr, smABI, signerOrProvider);
@@ -102,17 +90,6 @@ const fetchContractData = async (contractAddress, lspSchema, dataType) => {
 export const GenealogyContext = React.createContext();
 
 export const GenealogyProvider = ({ children }) => {
-  const [feeInfo, setFeeInfo] = useState(null);
-
-  const updateFeeInfo = async () => {
-    // getFeeInfo().then((result) => {
-    //   if (result.sts) {
-    //     setFeeInfo(result.data);
-    //     // console.log("updateFeeInfo = ", result.data);
-    //   }
-    // });
-  };
-
   //---CHECK IF WALLET IS CONNECTED
   const checkIfWalletConnected = async () => {
     try {
@@ -299,17 +276,120 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  //---UPLOAD TO IPFS FUNCTION
-  const uploadToIPFS = async (file) => {
+  const addChild = async (
+    walletAddress,
+    clanId,
+    formData,
+    callBack,
+    handleErr,
+  ) => {
     try {
-      const added = await client.add({ content: file });
-      // console.log("=====>: " + added);
-      const url = `https://ipfs.io/ipfs/${added.path}`;
+      const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      return url;
+      await contract.addChild(
+        formData.fatherId,
+        formData.name,
+        formData.descShort,
+        formData.sex,
+        formData.birthYear,
+        formData.deathYear,
+      );
+
+      contract.on("ChildAdded", async (fatherId, childId) => {
+        if (walletAddress == fatherId) {
+          callBack(childId);
+        }
+      });
     } catch (error) {
-      console.log("Error uploading to IPFS: ", error);
-      // setOpenError(true), setError("Error uploading to IPFS: ", error);
+      handleErr("Error", error);
+    }
+  };
+
+  const removeChild = async (clanId, formData, callBack, handleErr) => {
+    try {
+      const contract = await connectingWithSmartContract(clanId, familyNftABI);
+
+      await contract.removeChild(formData.fatherId, formData.childId);
+
+      contract.on("ChildRemoved", async (fatherId, childId) => {
+        if (formData.childId == childId) {
+          callBack();
+        }
+      });
+    } catch (error) {
+      handleErr("Error", error);
+    }
+  };
+
+  const removeSpouse = async (clanId, formData, callBack, handleErr) => {
+    try {
+      const contract = await connectingWithSmartContract(clanId, familyNftABI);
+
+      await contract.removeSpouse(formData.husbandId, formData.spouseId);
+
+      contract.on("SpouseAdded", async (husbandId, spouseId) => {
+        if (formData.husbandId == husbandId && formData.spouseId == spouseId) {
+          callBack();
+        }
+      });
+    } catch (error) {
+      handleErr("Error", error);
+    }
+  };
+
+  const addSpouse = async (
+    walletAddress,
+    clanId,
+    formData,
+    callBack,
+    handleErr,
+  ) => {
+    try {
+      const contract = await connectingWithSmartContract(clanId, familyNftABI);
+
+      await contract.addSpouse(
+        formData.husbandId,
+        formData.name,
+        formData.descShort,
+        formData.birthYear,
+        formData.deathYear,
+      );
+
+      contract.on("SpouseAdded", async (spouseId, husbandId) => {
+        if (walletAddress == husbandId && spouseId == formData.spouseId) {
+          callBack();
+        }
+      });
+    } catch (error) {
+      handleErr("Error", error);
+    }
+  };
+
+  const updatePersonData = async (
+    walletAddress,
+    clanId,
+    formData,
+    callBack,
+    handleErr,
+  ) => {
+    try {
+      const contract = await connectingWithSmartContract(clanId, familyNftABI);
+
+      await contract.addSpouse(
+        formData.personId,
+        formData.newName,
+        formData.newDescShort,
+        formData.birthYear,
+        formData.deathYear,
+      );
+
+      contract.on("UpdatePersonData", async (personId) => {
+        if (personId == formData.personId) {
+          callBack();
+        }
+      });
+    } catch (error) {
+      handleErr("Error", error);
     }
   };
 
@@ -360,267 +440,6 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const createProductInfo = async (
-    brandAddress,
-    productUri,
-    callBack,
-    handleErr,
-  ) => {
-    if (feeInfo) {
-      const brandFee = feeInfo[2];
-      const value = brandFee;
-      try {
-        const contract = await connectingWithSmartContract(
-          supplyAddress,
-          supplyABI,
-        );
-
-        await contract.createProductInfo(productUri, {
-          value: value.toString(),
-        });
-
-        contract.on("ProductInfoCreated", async (_brandAddress, newId) => {
-          // console.log("_brandAddress = ", _brandAddress, ", newId = ", newId);
-
-          if (brandAddress == _brandAddress) {
-            callBack(newId.toNumber());
-          }
-        });
-      } catch (error) {
-        handleErr("Error", error);
-      }
-
-      // console.log(result);
-    } else {
-      handleErr("Error", "Cannot get brand's fee");
-    }
-  };
-
-  const rejectPartner = async (
-    walletAddress,
-    partnerAddress,
-    callBack,
-    handleErr,
-  ) => {
-    if (feeInfo) {
-      const brandFee = feeInfo[2];
-      const value = brandFee;
-      try {
-        const contract = await connectingWithSmartContract(
-          supplyAddress,
-          supplyABI,
-        );
-
-        await contract.rejectPartner(partnerAddress, {
-          value: value.toString(),
-        });
-
-        contract.on("PartnerRejected", async (supplier, agentAddress) => {
-          // console.log("_brandAddress = ", _brandAddress, ", newId = ", newId);
-
-          if (walletAddress == supplier && partnerAddress == agentAddress) {
-            // updatePartnerInfoDB(
-            //   walletAddress,
-            //   partnerAddress,
-            //   { sts: "refused", timeStamp: new Date().getTime() },
-            //   callBack,
-            //   handleErr,
-            // );
-            callBack();
-          }
-        });
-      } catch (error) {
-        handleErr("Error", error);
-      }
-
-      // console.log(result);
-    } else {
-      handleErr("Error", "Cannot get brand's fee");
-    }
-  };
-
-  const transferOwnershipProduct = async (
-    brandAddress,
-    callBack,
-    handleErr,
-  ) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        productAddress,
-        productABI,
-      );
-
-      await contract.transferOwnership(productAddress);
-
-      contract.on("OwnershipTransferred", async (previousOwner, newOwner) => {
-        // console.log("_brandAddress = ", _brandAddress, ", newId = ", newId);
-
-        if (brandAddress == previousOwner && productAddress == newOwner) {
-          callBack();
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const enableProductInfo = async (
-    brandAddress,
-    productId,
-    callBack,
-    handleErr,
-  ) => {
-    if (feeInfo) {
-      const brandFee = feeInfo[2];
-      const value = brandFee;
-      try {
-        const contract = await connectingWithSmartContract(
-          supplyAddress,
-          supplyABI,
-        );
-
-        await contract.enableProductInfo(productId, {
-          value: value.toString(),
-        });
-
-        contract.on("ProductInfoEnabled", async (_brandAddress, _productId) => {
-          if (brandAddress == _brandAddress && productId == _productId) {
-            // callBack(brandAddress, productId);
-            updateProductInfo(
-              brandAddress,
-              productId,
-              { isActive: true },
-              callBack,
-              handleErr,
-            );
-            // .catch((error) => {
-            //   toast.error("Error, Try Again");
-            // });
-          }
-        });
-      } catch (error) {
-        handleErr("Error", error);
-      }
-      // console.log(result);
-    } else {
-      handleErr("Error", "Cannot get brand's fee");
-    }
-  };
-
-  const disableProductInfo = async (
-    brandAddress,
-    productId,
-    callBack,
-    handleErr,
-  ) => {
-    console.log("661: ", feeInfo);
-
-    if (feeInfo) {
-      const brandFee = feeInfo[2];
-      const value = brandFee;
-      try {
-        const contract = await connectingWithSmartContract(
-          supplyAddress,
-          supplyABI,
-        );
-
-        await contract.disableProductInfo(productId, {
-          value: value.toString(),
-        });
-
-        contract.on(
-          "ProductInfoDisabled",
-          async (_brandAddress, _productId) => {
-            if (brandAddress == _brandAddress && productId == _productId) {
-              updateProductInfo(
-                brandAddress,
-                productId,
-                { isActive: false },
-                callBack,
-                handleErr,
-              );
-            }
-          },
-        );
-      } catch (error) {
-        handleErr("Error", error);
-      }
-    } else {
-      handleErr("Error", "Cannot get brand's fee");
-    }
-  };
-
-  const brandRegister = async (userWalletAddress, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        supplyAddress,
-        supplyABI,
-      );
-
-      await contract.brandRegister();
-      contract.on("BrandRegistered", async (supplierAddress) => {
-        if (userWalletAddress == supplierAddress) {
-          callBack();
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const removeProduct = async (
-    userWalletAddress,
-    productId,
-    callBack,
-    handleErr,
-  ) => {
-    try {
-      console.log(
-        "userWalletAddress: ",
-        userWalletAddress,
-        " | productId: ",
-        productId,
-      );
-
-      const contract = await connectingWithSmartContract(
-        productAddress,
-        productABI,
-      );
-
-      await contract.removeProduct(productId);
-      contract.on("ProductRemoved", async (brand, product) => {
-        if (userWalletAddress == brand && productId == product) {
-          callBack();
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const addProduct = async (
-    userWalletAddress,
-    productId,
-    callBack,
-    handleErr,
-  ) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        productAddress,
-        productABI,
-      );
-
-      await contract.addProduct(productId);
-      contract.on("ProductAdded", async (brand, product) => {
-        if (userWalletAddress == brand && productId == product) {
-          callBack();
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
   const getNFTCollection = async (walletAddress) => {
     try {
       let allNFT = [];
@@ -659,1162 +478,22 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const getNFTInfo = async (nftAddress) => {
-    try {
-      const productContract = connectingSmartContractByPrivatekey(
-        productAddress,
-        productItemABI,
-      );
-      const isLSP8Supported = await productContract.supportsInterface(
-        INTERFACE_IDS.LSP8IdentifiableDigitalAsset,
-      );
-
-      const ownerOfProduct = await productContract.owner();
-
-      // console.log("ownerOfProduct: ", ownerOfProduct);
-
-      const productMetadata = await fetchContractData(
-        productAddress,
-        lsp4Schema,
-        "LSP4Metadata",
-      );
-      const productName = await fetchContractData(
-        productAddress,
-        lsp4Schema,
-        "LSP4TokenName",
-      );
-      const productType = await fetchContractData(
-        productAddress,
-        lsp4Schema,
-        "LSP4TokenType",
-      );
-
-      return {
-        sts: true,
-        data: {
-          isCollection: productType.value == 2 && isLSP8Supported,
-          productMetadata: JSON.stringify(productMetadata, null, 2),
-          productName: productName.value,
-          ownerOfProduct: ownerOfProduct,
-        },
-      };
-    } catch (error) {
-      return { sts: false, data: error };
-      // console.log("error = ", error);
-    }
-  };
-  const getProductItemAmount = async (productAddress) => {
-    try {
-      const productContract = connectingSmartContractByPrivatekey(
-        productAddress,
-        productItemABI,
-      );
-      const amount = await productContract.totalSupply();
-
-      return {
-        sts: true,
-        data: amount.toNumber(),
-      };
-    } catch (error) {
-      return { sts: false, data: error };
-      // console.log("error = ", error);
-    }
-  };
-
-  const getProductCount = async (seller) => {
-    try {
-      const marketContract = connectingSmartContractByPrivatekey(
-        productAddress,
-        productABI,
-      );
-      const amount = await marketContract.getProductCount(seller);
-
-      return {
-        sts: true,
-        data: amount.toNumber(),
-      };
-    } catch (error) {
-      return { sts: false, data: error };
-      // console.log("error = ", error);
-    }
-  };
-
-  const getProductIdBatch = async (seller, index) => {
-    try {
-      const productContract = connectingSmartContractByPrivatekey(
-        productAddress,
-        productABI,
-      );
-      const productIds = await productContract.getProductIdBatch(seller, index);
-
-      return {
-        sts: true,
-        data: productIds,
-      };
-    } catch (error) {
-      return { sts: false, data: error };
-      // console.log("error = ", error);
-    }
-  };
-
-  const getOwnerOfProduct = async (productId) => {
-    try {
-      const productContract = connectingSmartContractByPrivatekey(
-        productAddress,
-        productABI,
-      );
-      const brandId = await productContract.getOwnerOfProduct(productId);
-
-      return {
-        sts: true,
-        data: brandId,
-      };
-    } catch (error) {
-      return { sts: false, data: error };
-      // console.log("error = ", error);
-    }
-  };
-
-  // const fetchTokenIdMetadata()
-
-  const fetchProductItemOfBrand = async (brandId, productId) => {
-    try {
-      const productItemContract = connectingSmartContractByPrivatekey(
-        productId,
-        productItemABI,
-      );
-
-      // const hex = ethers.utils.hexValue(index);
-      // const itemId = ethers.utils.hexZeroPad(hex, 32);
-      // console.log("itemId: ", itemId);
-      const productItemIds = await productItemContract.tokenIdsOf(brandId);
-
-      const productItems = [];
-      await Promise.all(
-        productItemIds.map(async (itemId) => {
-          // const tokenIdMetadata = await productItemContract.getDataForTokenId(
-          //   el,
-          //   ERC725YDataKeys.LSP4["LSP4Metadata"]
-          // );
-          // // console.log("tokenIdMetadata: ", tokenIdMetadata);
-
-          // const erc725js = new ERC725(lsp4Schema);
-
-          // // Decode the metadata
-          // const decodedMetadata = erc725js.decodeData([
-          //   {
-          //     keyName: "LSP4Metadata",
-          //     value: tokenIdMetadata,
-          //   },
-          // ]);
-          // const metadataURL = decodedMetadata[0].value.url;
-
-          // const metadataJsonLink = generateMetadataLink(metadataURL);
-          // // console.log("metadataJsonLink: ", metadataJsonLink);
-          // // Fetch the URL
-          // if (metadataJsonLink) {
-          //   const response = await fetch(metadataJsonLink);
-          //   const jsonMetadata = await response.json();
-          //   // console.log("Metadata Contents: ", jsonMetadata?.LSP4Metadata);
-          //   // return {
-          //   //   sts: true,
-          //   //   data: jsonMetadata?.LSP4Metadata,
-          //   // };
-          //   productItems.push(jsonMetadata?.LSP4Metadata);
-          // }
-          // const productItem = await _getProductItemInfo(productId, itemId);
-
-          const productItem = {
-            ...(await _getProductItemInfo(productId, itemId)),
-            id: itemId,
-          };
-
-          productItems.push(productItem);
-        }),
-      );
-      return { sts: true, data: productItems };
-    } catch (error) {
-      return { sts: false, data: error };
-      // console.log("error = ", error);
-    }
-  };
-
-  const fetchProductOfSeller = async (saleId) => {
-    try {
-      const saleContract = connectingSmartContractByPrivatekey(
-        saleAddress,
-        saleABI,
-      );
-
-      // const hex = ethers.utils.hexValue(index);
-      // const itemId = ethers.utils.hexZeroPad(hex, 32);
-      // console.log("itemId: ", itemId);
-      const saleDetail = await saleContract.getSaleInfo(saleId);
-
-      console.log("saleDetail: ", saleDetail);
-
-      // const productItemContract = connectingSmartContractByPrivatekey(
-      //   saleDetail.productId,
-      //   productItemABI
-      // );
-
-      const productItemIds = await saleContract.getProductItemIds(saleId);
-      const productName = await fetchContractData(
-        saleDetail.productId,
-        lsp4Schema,
-        "LSP4TokenName",
-      );
-
-      const productDetails = [];
-      await Promise.all(
-        productItemIds.map(async (itemId) => {
-          // const tokenIdMetadata = await productItemContract.getDataForTokenId(
-          //   el,
-          //   ERC725YDataKeys.LSP4["LSP4Metadata"]
-          // );
-          // // console.log("tokenIdMetadata: ", tokenIdMetadata);
-
-          // const erc725js = new ERC725(lsp4Schema);
-
-          // // Decode the metadata
-          // const decodedMetadata = erc725js.decodeData([
-          //   {
-          //     keyName: "LSP4Metadata",
-          //     value: tokenIdMetadata,
-          //   },
-          // ]);
-          // const metadataURL = decodedMetadata[0].value.url;
-
-          // const metadataJsonLink = generateMetadataLink(metadataURL);
-          // // console.log("metadataJsonLink: ", metadataJsonLink);
-          // // Fetch the URL
-          // if (metadataJsonLink) {
-          //   const response = await fetch(metadataJsonLink);
-          //   const jsonMetadata = await response.json();
-          //   // console.log("Metadata Contents: ", jsonMetadata?.LSP4Metadata);
-          //   // return {
-          //   //   sts: true,
-          //   //   data: jsonMetadata?.LSP4Metadata,
-          //   // };
-          //   productItem.push(jsonMetadata?.LSP4Metadata);
-          // }
-          const productItem = await _getProductItemInfo(
-            saleDetail.productId,
-            itemId,
-          );
-
-          const productItemInfo = await saleContract.getProductItemInfo(
-            saleId,
-            itemId,
-          );
-
-          const saleInfo = {
-            amount: productItemInfo?.amount.toNumber(),
-            price: toEthersUsdtDisplay(productItemInfo?.price),
-            sold: productItemInfo?.sold.toNumber(),
-          };
-
-          productDetails.push({
-            productItem: productItem,
-            saleInfo: saleInfo,
-          });
-        }),
-      );
-      return {
-        sts: true,
-        data: {
-          productDetails: productDetails,
-          saleDetail: saleDetail,
-          productItemIds: productItemIds,
-          productName: productName?.value,
-        },
-      };
-    } catch (error) {
-      return { sts: false, data: error };
-      // console.log("error = ", error);
-    }
-  };
-
-  const getSaleItem = async (saleId) => {
-    try {
-      const saleContract = connectingSmartContractByPrivatekey(
-        saleAddress,
-        saleABI,
-      );
-
-      const saleDetail = await saleContract.getSaleInfo(saleId);
-
-      const productItemId = await saleContract.getProductItemId(saleId, 1);
-
-      // const productItem = await _getProductItemInfo(
-      //   saleDetail.productId,
-      //   productItemId
-      // );
-
-      const productItemInfo = await saleContract.getProductItemInfo(
-        saleId,
-        productItemId,
-      );
-
-      const saleInfo = {
-        amount: productItemInfo?.amount.toNumber(),
-        // price: ethers.utils.formatUnits(productItemInfo?.price, 18),
-        price: toEthersUsdtDisplay(productItemInfo?.price),
-        sold: productItemInfo?.sold.toNumber(),
-      };
-
-      // const productContract = connectingSmartContractByPrivatekey(
-      //   saleDetail.productId,
-      //   productItemABI
-      // );
-      const productMetadata = await fetchContractData(
-        saleDetail.productId,
-        lsp4Schema,
-        "LSP4Metadata",
-      );
-      const productName = await fetchContractData(
-        saleDetail.productId,
-        lsp4Schema,
-        "LSP4TokenName",
-      );
-
-      return {
-        sts: true,
-        data: {
-          productName: productName?.value,
-          productMetadata: productMetadata,
-          saleDetail: saleDetail,
-          saleInfo: saleInfo,
-          productItemId: productItemId,
-        },
-      };
-    } catch (error) {
-      console.log("error: ", error);
-      return { sts: false, data: error };
-      // console.log("error = ", error);
-    }
-  };
-
-  const _getProductItemInfo = async (productId, itemId) => {
-    const productItemContract = connectingSmartContractByPrivatekey(
-      productId,
-      productItemABI,
-    );
-    const tokenIdMetadata = await productItemContract.getDataForTokenId(
-      itemId,
-      ERC725YDataKeys.LSP4["LSP4Metadata"],
-    );
-    // console.log("tokenIdMetadata: ", tokenIdMetadata);
-
-    const erc725js = new ERC725(lsp4Schema);
-
-    // Decode the metadata
-    const decodedMetadata = erc725js.decodeData([
-      {
-        keyName: "LSP4Metadata",
-        value: tokenIdMetadata,
-      },
-    ]);
-    const metadataURL = decodedMetadata[0].value.url;
-
-    const metadataJsonLink = generateMetadataLink(metadataURL);
-    // console.log("metadataJsonLink: ", metadataJsonLink);
-    // Fetch the URL
-    if (metadataJsonLink) {
-      const response = await fetch(metadataJsonLink);
-      const jsonMetadata = await response.json();
-      // console.log("Metadata Contents: ", jsonMetadata?.LSP4Metadata);
-      // return {
-      //   sts: true,
-      //   data: jsonMetadata?.LSP4Metadata,
-      // };
-      return jsonMetadata?.LSP4Metadata;
-    } else {
-      return null;
-    }
-  };
-  const getProductItemIndex = async (sellerId, productId, productItemId) => {
-    try {
-      const saleContract = connectingSmartContractByPrivatekey(
-        saleAddress,
-        saleABI,
-      );
-
-      // // Tương đương abi.encodePacked(seller, productId)
-      // const encoded = ethers.utils.defaultAbiCoder.encode(
-      //   ["address", "address"], // hoặc "uint256" nếu productId là số
-      //   [sellerId, productId]
-      // );
-
-      // const saleId = ethers.utils.keccak256(encoded);
-
-      const productItemIndex = await saleContract.getProductItemIndex(
-        saleId,
-        productItemId,
-      );
-
-      return {
-        sts: true,
-        data: productItemIndex.toNumber(),
-      };
-    } catch (error) {
-      return { sts: false, data: error };
-      // console.log("error = ", error);
-    }
-  };
-
-  const getProductItemInfo = async (saleId, productItemId) => {
-    try {
-      const saleContract = connectingSmartContractByPrivatekey(
-        saleAddress,
-        saleABI,
-      );
-
-      // // Tương đương abi.encodePacked(seller, productId)
-      // const encoded = ethers.utils.defaultAbiCoder.encode(
-      //   ["address", "address"], // hoặc "uint256" nếu productId là số
-      //   [sellerId, productId]
-      // );
-
-      // const saleId = ethers.utils.solidityKeccak256(
-      //   ["address", "address"], // hoặc "uint256" nếu productId là số
-      //   [sellerId, productId]
-      // );
-
-      // console.log("encoded: ", encoded);
-
-      // const saleId = ethers.utils.keccak256(encoded);
-
-      // console.log("saleId: ", saleId, " | productItemId: ", productItemId);
-
-      const productItemInfo = await saleContract.getProductItemInfo(
-        saleId,
-        productItemId,
-      );
-
-      console.log(
-        "978. productItemInfo: ",
-        toEthersUsdtDisplay(productItemInfo?.price),
-      );
-
-      return {
-        sts: true,
-        data: {
-          amount: productItemInfo?.amount.toNumber(),
-          price: toEthersUsdtDisplay(productItemInfo?.price),
-          sold: productItemInfo?.sold.toNumber(),
-        },
-      };
-    } catch (error) {
-      return { sts: false, data: error };
-      // console.log("error = ", error);
-    }
-  };
-
-  const createSale = async (
-    sellerId,
-    productId,
-    productItemIds,
-    amounts,
-    prices,
-    callBack,
-    handleErr,
-  ) => {
-    console.log("999. sellerId: ", sellerId);
-    console.log("999. productId: ", productId);
-    console.log("999. productItemIds: ", productItemIds);
-    console.log("999. amounts: ", amounts);
-    console.log("999. prices: ", prices);
-
-    try {
-      const saleContract = await connectingWithSmartContract(
-        saleAddress,
-        saleABI,
-      );
-
-      // console.log("marketContract: ", marketContract);
-
-      await saleContract.createSaleItem(
-        productId,
-        productItemIds,
-        amounts,
-        prices,
-      );
-
-      saleContract.on("SaleCreated", async (sellerId_, productId_) => {
-        if (sellerId == sellerId_ && productId == productId_) {
-          callBack();
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const updateSaleItem = async (
-    sellerId,
-    productId,
-    productItemIds,
-    amounts,
-    prices,
-    callBack,
-    handleErr,
-  ) => {
-    try {
-      const contract = await connectingWithSmartContract(saleAddress, saleABI);
-
-      const saleId = ethers.utils.solidityKeccak256(
-        ["address", "address"], // hoặc "uint256" nếu productId là số
-        [sellerId, productId],
-      );
-
-      await contract.updateSaleItem(saleId, productItemIds, amounts, prices);
-      contract.on("UpdateSaleItem", async (saleId_) => {
-        if (saleId == saleId_) {
-          // const postSaleData = {
-          //   qty: amount,
-          //   price: price,
-          // };
-
-          // // const newSalePostKey = push(ref(firebase, "sales")).key;
-
-          // // update(ref(firebase, `sales/${_saleId.toNumber()}`), postSaleData);
-          // updateSaleItemDB(saleId, postSaleData, callBack, handleErr);
-          callBack();
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  // const getSaleCount = async () => {
-  //   try {
-  //     const saleContract = connectingSmartContractByPrivatekey(
-  //       saleAddress,
-  //       saleABI,
-  //     );
-
-  //     const saleCount = await saleContract.getSaleCount();
-
-  //     return {
-  //       sts: true,
-  //       data: saleCount.toNumber(),
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
-
-  // const getSaleIdBatch = async (indexes) => {
-  //   try {
-  //     const saleContract = connectingSmartContractByPrivatekey(
-  //       saleAddress,
-  //       saleABI,
-  //     );
-
-  //     const saleIds = await saleContract.getSaleIdBatch(indexes);
-
-  //     return {
-  //       sts: true,
-  //       data: saleIds,
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
-
-  // const getSaleIndex = async (sellerId, productId) => {
-  //   try {
-  //     const saleContract = connectingSmartContractByPrivatekey(
-  //       saleAddress,
-  //       saleABI,
-  //     );
-
-  //     // // Tương đương abi.encodePacked(seller, productId)
-  //     // const encoded = ethers.utils.defaultAbiCoder.encode(
-  //     //   ["address", "address"], // hoặc "uint256" nếu productId là số
-  //     //   [sellerId, productId]
-  //     // );
-
-  //     // const saleId = ethers.utils.keccak256(encoded);
-  //     // console.log("saleId: ", saleId);
-  //     const saleId = ethers.utils.solidityKeccak256(
-  //       ["address", "address"], // hoặc "uint256" nếu productId là số
-  //       [sellerId, productId],
-  //     );
-
-  //     const saleIndex = await saleContract.getSaleIndex(saleId);
-
-  //     return {
-  //       sts: true,
-  //       data: saleIndex.toNumber(),
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
-
-  // const getSaleOfSellerCount = async (seller) => {
-  //   try {
-  //     const saleContract = connectingSmartContractByPrivatekey(
-  //       saleAddress,
-  //       saleABI,
-  //     );
-  //     const amount = await saleContract.getSaleOfSellerCount(seller);
-
-  //     return {
-  //       sts: true,
-  //       data: amount.toNumber(),
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
-
-  // const getSaleIdOfSeller = async (seller, index) => {
-  //   try {
-  //     const saleContract = connectingSmartContractByPrivatekey(
-  //       saleAddress,
-  //       saleABI,
-  //     );
-  //     const saleId = await saleContract.getSaleIdOfSeller(seller, index);
-
-  //     return {
-  //       sts: true,
-  //       data: saleId,
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
-
-  const approveProduct = async (
-    brand,
-    seller,
-    productId,
-    productItemIds,
-    amounts,
-    callBack,
-    handleErr,
-  ) => {
-    console.log(`brandId: `, brand);
-    console.log(`sellerId: `, seller);
-    console.log(`productId: `, productId);
-    console.log(`Sản phẩm productItemIds: `, productItemIds);
-    console.log(`Sản phẩm amounts: `, amounts);
-    try {
-      const contract = await connectingWithSmartContract(saleAddress, saleABI);
-      // console.log(convertEtherToWei(price.toString()));
-      await contract.approveProduct(seller, productId, productItemIds, amounts);
-      contract.on("ApproveProduct", async (brand_, seller_, productId_) => {
-        if (brand == brand_ && seller == seller_ && productId == productId_) {
-          // const postApproveData = {
-          //   brandId: item.brandId,
-          //   productId: item.productId,
-          //   productName: item?.productName ?? "",
-          //   productTitle: item?.productTitle ?? "n/a",
-          //   categoryId: item.categoryId ?? "root",
-          //   desc: item.desc ?? "n/a",
-          //   image: item.images[0].imageURL,
-          //   isActive: false,
-          //   qty: qty,
-          //   returnDay: returnDay ?? 0,
-          //   // cashOnDelivery: cashOnDelivery ?? true,
-          //   // tokenPay: tokenPay ?? true,
-          //   price: price,
-          //   sellerId: sellerId ?? "",
-          // };
-          // updateAproveDB(
-          //   saleId.toNumber(),
-          //   postApproveData,
-          //   callBack,
-          //   handleErr
-          // );
-          callBack();
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  // const getProductAllowance = async (sellerId, productId, productItemId) => {
-  //   try {
-  //     const saleContract = connectingSmartContractByPrivatekey(
-  //       saleAddress,
-  //       saleABI,
-  //     );
-
-  //     const saleId = ethers.utils.solidityKeccak256(
-  //       ["address", "address"], // hoặc "uint256" nếu productId là số
-  //       [sellerId, productId],
-  //     );
-
-  //     const allowance = await saleContract.getProductAllowance(
-  //       saleId,
-  //       productItemId,
-  //     );
-
-  //     return {
-  //       sts: true,
-  //       data: allowance.toNumber(),
-  //     };
-  //   } catch (error) {
-  //     return { sts: false, data: error };
-  //     // console.log("error = ", error);
-  //   }
-  // };
-
-  const purchaseAccepted = async (item, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      await contract.purchaseAccepted(item.purchaseId);
-      contract.on("EventPurchaseAccepted", async (purchaseId, timeStamp) => {
-        if (item.purchaseId == purchaseId.toNumber()) {
-          updatePurchaseDB(
-            item.id,
-            {
-              currentSTS: SELLER_ACCEPTED,
-              timeStamp: timeStamp,
-            },
-            "Accepted",
-            item.sellerId,
-            item.buyerId,
-            callBack,
-            handleErr,
-          );
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const purchaseShipped = async (item, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      await contract.purchaseShipped(item.purchaseId, item.refData);
-      contract.on("EventPurchaseShipped", async (purchaseId) => {
-        if (item.purchaseId == purchaseId) {
-          updatePurchaseDB(
-            item.id,
-            {
-              currentSTS: SHIPPER_SHIPPED,
-            },
-            "Shipped",
-            item.sellerId,
-            item.buyerId,
-            callBack,
-            handleErr,
-          );
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const buyerCancel = async (item, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      const cancelReason = ethers.utils.formatBytes32String(
-        item.cancelReason || "n/a",
-      );
-
-      await contract.buyerCancel(item.purchaseId, cancelReason);
-      contract.on("EventBuyerCanceled", async (purchaseId) => {
-        if (item.purchaseId == purchaseId) {
-          updatePurchaseDB(
-            item.id,
-            {
-              currentSTS: BUYER_CANCELED,
-              reasonCancel: item.cancelReason || "n/a",
-            },
-            "canceled",
-            item.buyerId,
-            item.sellerId,
-            callBack,
-            handleErr,
-          );
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const sellerCancel = async (item, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      await contract.sellerCancel(item.purchaseId);
-      contract.on("EventSellerCanceled", async (purchaseId) => {
-        if (item.purchaseId == purchaseId) {
-          updatePurchaseDB(
-            item.id,
-            {
-              currentSTS: SELLER_CANCELED,
-              reasonCancel: item.cancelReason,
-            },
-            "Canceled",
-            item.sellerId,
-            item.buyerId,
-            callBack,
-            handleErr,
-          );
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const buyerReceived = async (item, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      await contract.buyerReceived(item.purchaseId);
-      contract.on("EventPurchaseReceived", async (purchaseId) => {
-        if (item.purchaseId == purchaseId) {
-          updatePurchaseDB(
-            item.id,
-            {
-              currentSTS: BUYER_RECEIVED,
-            },
-            "Received",
-            item.buyerId,
-            item.sellerId,
-            callBack,
-            handleErr,
-          );
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const buyerNotReceived = async (item, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      await contract.buyerNotReceived(item.purchaseId, item.refData);
-      contract.on("EventPurchaseNotReceived", async (purchaseId) => {
-        if (item.purchaseId == purchaseId) {
-          updatePurchaseDB(
-            item.id,
-            {
-              currentSTS: BUYER_NOT_RECEIVED,
-              refData: item.refData,
-            },
-            "not_received",
-            item.buyerId,
-            item.sellerId,
-            callBack,
-            handleErr,
-          );
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const purchaseDelivered = async (item, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      await contract.purchaseShipped(item.purchaseId, item.refData);
-      contract.on("EventPurchaseShipped", async (purchaseId) => {
-        if (item.purchaseId == purchaseId) {
-          updatePurchaseDB(
-            item.id,
-            {
-              currentSTS: SHIPPER_DELIVERED,
-            },
-            "Delivered",
-            item.sellerId,
-            item.buyerId,
-            callBack,
-            handleErr,
-          );
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const purchaseDeliveryFailure = async (item, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      await contract.shipperDeliveryFailure(item.purchaseId);
-      contract.on("EventPurchaseShipFailure", async (purchaseId) => {
-        if (item.purchaseId == purchaseId) {
-          updatePurchaseDB(
-            item.id,
-            {
-              currentSTS: SHIPPER_DELIVERY_FAILURE,
-            },
-            "Delivered fail",
-            item.sellerId,
-            item.buyerId,
-            callBack,
-            handleErr,
-          );
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const confirmDeliveryFailure = async (item, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      await contract.confirmDeliveryFailure(item.purchaseId);
-      contract.on("EventConfirmDeliveryFailure", async (purchaseId) => {
-        if (item.purchaseId == purchaseId) {
-          updatePurchaseDB(
-            item.id,
-            {
-              currentSTS: BUYER_CONFIRM_DELIVERY_FAILURE,
-            },
-            "Confirm delivered",
-            item.buyerId,
-            item.sellerId,
-            callBack,
-            handleErr,
-          );
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const confirmNotReceived = async (item, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      await contract.confirmNotReceived(item.purchaseId);
-      contract.on("EventConfirmNotReceived", async (purchaseId) => {
-        if (item.purchaseId == purchaseId) {
-          updatePurchaseDB(
-            item.id,
-            {
-              currentSTS: SELLER_CONFIRM_NOT_RECEIVED,
-            },
-            "confirm_not_received",
-            item.sellerId,
-            item.buyerId,
-            callBack,
-            handleErr,
-          );
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const releaseFunds = async (item, callBack, handleErr) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      await contract.releaseFunds(item.purchaseId);
-      contract.on("EventReleaseFunds", async (id) => {
-        if (purchaseId == id) {
-          callBack();
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const purchaseRating = async (
-    purchaseId,
-    sellerPoint,
-    productIds,
-    points,
-    callBack,
-    handleErr,
-  ) => {
-    console.log(purchaseId, sellerPoint, productIds, points);
-
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-
-      await contract.rateSeller(purchaseId, sellerPoint);
-      contract.on("RateSeller", async (id) => {
-        if (purchaseId == id) {
-          rateProduct(purchaseId, productIds, points, callBack, handleErr);
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
-
-  const getPurchaseInfo = async (purchaseId) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-      const purchaseInfo = await contract.purchases(purchaseId);
-      return { sts: true, data: purchaseInfo };
-    } catch (error) {
-      return { sts: false, data: error };
-    }
-  };
-
-  const getProductRate = async (brandAddress, productId) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-      const result = await contract.productRate(brandAddress, productId);
-      return {
-        sts: true,
-        data: { rate: result.rate.toNumber(), count: result.count.toNumber() },
-      };
-    } catch (error) {
-      return { sts: false, data: error };
-    }
-  };
-
-  const getProductRatePermitted = async (purchaseId) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-      const productRatePermitted =
-        await contract.productRatePermitted(purchaseId);
-      return { sts: true, data: productRatePermitted };
-    } catch (error) {
-      return { sts: false, data: error };
-    }
-  };
-
-  const getSellerRatePermitted = async (purchaseId) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        marketAddress,
-        marketABI,
-      );
-      const sellerRatePermit = await contract.sellerRatePermitted(purchaseId);
-      return { sts: true, data: sellerRatePermit };
-    } catch (error) {
-      return { sts: false, data: error };
-    }
-  };
-
   return (
     <GenealogyContext.Provider
       value={{
         checkIfWalletConnected,
-        getNFTInfo,
         createClan,
         getClanInfo,
         getClanDetail,
         getPersonData,
         getOwner,
-        uploadToIPFS,
-
+        addChild,
+        removeChild,
+        addSpouse,
+        removeSpouse,
+        updatePersonData,
         getUserProfile,
-
-        createProductInfo,
-
-        rejectPartner,
-
-        enableProductInfo,
-        disableProductInfo,
-
-        transferOwnershipProduct,
-
-        addProduct,
-        removeProduct,
         getNFTCollection,
-
-        approveProduct,
-
-        createSale,
-        updateSaleItem,
-
-        brandRegister,
-
-        purchaseAccepted,
-
-        buyerCancel,
-        sellerCancel,
-        buyerReceived,
-        buyerNotReceived,
-        purchaseShipped,
-        purchaseDeliveryFailure,
-        purchaseDelivered,
-        confirmDeliveryFailure,
-        confirmNotReceived,
-        releaseFunds,
-
-        purchaseRating,
-
-        getPurchaseInfo,
-        getProductRate,
-        getProductRatePermitted,
-        getSellerRatePermitted,
-
-        updateFeeInfo,
       }}
     >
       {children}

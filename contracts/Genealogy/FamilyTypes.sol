@@ -2,11 +2,11 @@
 pragma solidity ^0.8.20;
 
 library FamilyTypes {
-    enum ChildType {
-        BIOLOGICAL,
-        ADOPTED,
-        STEP
-    }
+    // enum ChildType {
+    //     BIOLOGICAL,
+    //     ADOPTED,
+    //     STEP
+    // }
     enum Sex {
         MALE,
         FEMALE,
@@ -20,24 +20,24 @@ library FamilyTypes {
         uint8 day;   // 0 nếu không xác định
     }
 
-    struct Child {
-        ChildType childType;
-        bytes32 childId;
-    }
+    // struct Child {
+    //     // ChildType childType;
+    //     bytes32 childId;
+    // }
 
-    struct Spouse {
-        bytes32 spouseId;
-        DateInfo marriedDate;  // Cập nhật sang DateInfo
-        DateInfo divorcedDate; // Cập nhật sang DateInfo
-    }
+    // struct Spouse {
+    //     bytes32 spouseId;
+    //     DateInfo marriedDate;  // Cập nhật sang DateInfo
+    //     DateInfo divorcedDate; // Cập nhật sang DateInfo
+    // }
 
 
     struct Person {
         string name;          
         bytes32 fatherId;
         bytes32 motherId;
-        Child[] children;
-        Spouse[] spouses;
+        bytes32[] children;
+        bytes32[] spouses;
         Sex sex;
         DateInfo birthDate;   
         DateInfo deathDate;    

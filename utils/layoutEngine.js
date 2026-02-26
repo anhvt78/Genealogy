@@ -43,7 +43,7 @@ export const getLayoutedElements = (nodes, edges) => {
     const dagreNode = dagreGraph.node(node.id);
 
     if (node.type === "clanTitle" && ancestorDagre) {
-      return { ...node, position: { x: ancestorDagre.x - 480, y: 20 } };
+      return { ...node, position: { x: ancestorDagre.x - 280, y: 20 } };
     }
 
     // delta += node.data.wifeNumber * 280;

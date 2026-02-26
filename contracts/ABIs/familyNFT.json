@@ -5,251 +5,6 @@
 		"inputs": [
 			{
 				"internalType": "string",
-				"name": "childName",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "shortDesc",
-				"type": "string"
-			},
-			{
-				"internalType": "enum FamilyTypes.Sex",
-				"name": "sex",
-				"type": "uint8"
-			},
-			{
-				"components": [
-					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint8",
-						"name": "month",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct FamilyTypes.DateInfo",
-				"name": "birthDate",
-				"type": "tuple"
-			},
-			{
-				"components": [
-					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint8",
-						"name": "month",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct FamilyTypes.DateInfo",
-				"name": "deathDate",
-				"type": "tuple"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "fatherId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "motherId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"internalType": "enum FamilyTypes.ChildType",
-				"name": "childType",
-				"type": "uint8"
-			}
-		],
-		"name": "addChild",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "husbanId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "descShort",
-				"type": "string"
-			},
-			{
-				"components": [
-					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint8",
-						"name": "month",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct FamilyTypes.DateInfo",
-				"name": "birthDate",
-				"type": "tuple"
-			},
-			{
-				"components": [
-					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint8",
-						"name": "month",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct FamilyTypes.DateInfo",
-				"name": "deathDate",
-				"type": "tuple"
-			},
-			{
-				"components": [
-					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint8",
-						"name": "month",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct FamilyTypes.DateInfo",
-				"name": "marriedDate",
-				"type": "tuple"
-			},
-			{
-				"components": [
-					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint8",
-						"name": "month",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
-					}
-				],
-				"internalType": "struct FamilyTypes.DateInfo",
-				"name": "divorcedDate",
-				"type": "tuple"
-			},
-			{
-				"internalType": "address",
-				"name": "ownership",
-				"type": "address"
-			}
-		],
-		"name": "addSpouse",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "tokenId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes",
-				"name": "operatorNotificationData",
-				"type": "bytes"
-			}
-		],
-		"name": "authorizeOperator",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes[]",
-				"name": "data",
-				"type": "bytes[]"
-			}
-		],
-		"name": "batchCalls",
-		"outputs": [
-			{
-				"internalType": "bytes[]",
-				"name": "results",
-				"type": "bytes[]"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
 				"name": "clanName",
 				"type": "string"
 			},
@@ -601,13 +356,13 @@
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "childId",
+				"name": "fatherId",
 				"type": "bytes32"
 			},
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "fatherId",
+				"name": "childId",
 				"type": "bytes32"
 			}
 		],
@@ -620,13 +375,13 @@
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "childId",
+				"name": "parentId",
 				"type": "bytes32"
 			},
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "parentId",
+				"name": "childId",
 				"type": "bytes32"
 			}
 		],
@@ -772,178 +527,12 @@
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "parentId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "childId",
-				"type": "bytes32"
-			}
-		],
-		"name": "removeChild",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "spouseId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "husbanId",
-				"type": "bytes32"
-			}
-		],
-		"name": "removeSpouse",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "tokenId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bool",
-				"name": "notify",
-				"type": "bool"
-			},
-			{
-				"internalType": "bytes",
-				"name": "operatorNotificationData",
-				"type": "bytes"
-			}
-		],
-		"name": "revokeOperator",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "newClanShortDesc",
-				"type": "string"
-			}
-		],
-		"name": "setClanShortDesc",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "dataKey",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes",
-				"name": "dataValue",
-				"type": "bytes"
-			}
-		],
-		"name": "setData",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes32[]",
-				"name": "dataKeys",
-				"type": "bytes32[]"
-			},
-			{
-				"internalType": "bytes[]",
-				"name": "dataValues",
-				"type": "bytes[]"
-			}
-		],
-		"name": "setDataBatch",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes32[]",
-				"name": "tokenIds",
-				"type": "bytes32[]"
-			},
-			{
-				"internalType": "bytes32[]",
-				"name": "dataKeys",
-				"type": "bytes32[]"
-			},
-			{
-				"internalType": "bytes[]",
-				"name": "dataValues",
-				"type": "bytes[]"
-			}
-		],
-		"name": "setDataBatchForTokenIds",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "tokenId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "dataKey",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes",
-				"name": "dataValue",
-				"type": "bytes"
-			}
-		],
-		"name": "setDataForTokenId",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "husbanId",
+				"name": "husbandId",
 				"type": "bytes32"
 			},
 			{
@@ -962,13 +551,13 @@
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "spouseId",
+				"name": "husbandId",
 				"type": "bytes32"
 			},
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "husbanId",
+				"name": "spouseId",
 				"type": "bytes32"
 			}
 		],
@@ -999,39 +588,6 @@
 		],
 		"name": "TokenIdDataChanged",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "tokenId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bool",
-				"name": "force",
-				"type": "bool"
-			},
-			{
-				"internalType": "bytes",
-				"name": "data",
-				"type": "bytes"
-			}
-		],
-		"name": "transfer",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -1077,65 +633,6 @@
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address[]",
-				"name": "from",
-				"type": "address[]"
-			},
-			{
-				"internalType": "address[]",
-				"name": "to",
-				"type": "address[]"
-			},
-			{
-				"internalType": "bytes32[]",
-				"name": "tokenId",
-				"type": "bytes32[]"
-			},
-			{
-				"internalType": "bool[]",
-				"name": "force",
-				"type": "bool[]"
-			},
-			{
-				"internalType": "bytes[]",
-				"name": "data",
-				"type": "bytes[]"
-			}
-		],
-		"name": "transferBatch",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferGenealogyOwner",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -1156,17 +653,17 @@
 		"inputs": [
 			{
 				"internalType": "bytes32",
-				"name": "personId",
+				"name": "fatherId",
 				"type": "bytes32"
 			},
 			{
 				"internalType": "string",
-				"name": "newName",
+				"name": "childName",
 				"type": "string"
 			},
 			{
 				"internalType": "string",
-				"name": "newDescShort",
+				"name": "shortDesc",
 				"type": "string"
 			},
 			{
@@ -1219,14 +716,100 @@
 				"type": "tuple"
 			}
 		],
-		"name": "updatePersonData",
+		"name": "addChild",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"stateMutability": "payable",
-		"type": "receive"
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "husbandId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "descShort",
+				"type": "string"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint8",
+						"name": "month",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
+					}
+				],
+				"internalType": "struct FamilyTypes.DateInfo",
+				"name": "birthDate",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint8",
+						"name": "month",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
+					}
+				],
+				"internalType": "struct FamilyTypes.DateInfo",
+				"name": "deathDate",
+				"type": "tuple"
+			}
+		],
+		"name": "addSpouse",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "tokenId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes",
+				"name": "operatorNotificationData",
+				"type": "bytes"
+			}
+		],
+		"name": "authorizeOperator",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -1245,6 +828,25 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes[]",
+				"name": "data",
+				"type": "bytes[]"
+			}
+		],
+		"name": "batchCalls",
+		"outputs": [
+			{
+				"internalType": "bytes[]",
+				"name": "results",
+				"type": "bytes[]"
+			}
+		],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -1406,77 +1008,14 @@
 						"type": "bytes32"
 					},
 					{
-						"components": [
-							{
-								"internalType": "enum FamilyTypes.ChildType",
-								"name": "childType",
-								"type": "uint8"
-							},
-							{
-								"internalType": "bytes32",
-								"name": "childId",
-								"type": "bytes32"
-							}
-						],
-						"internalType": "struct FamilyTypes.Child[]",
+						"internalType": "bytes32[]",
 						"name": "children",
-						"type": "tuple[]"
+						"type": "bytes32[]"
 					},
 					{
-						"components": [
-							{
-								"internalType": "bytes32",
-								"name": "spouseId",
-								"type": "bytes32"
-							},
-							{
-								"components": [
-									{
-										"internalType": "uint16",
-										"name": "year",
-										"type": "uint16"
-									},
-									{
-										"internalType": "uint8",
-										"name": "month",
-										"type": "uint8"
-									},
-									{
-										"internalType": "uint8",
-										"name": "day",
-										"type": "uint8"
-									}
-								],
-								"internalType": "struct FamilyTypes.DateInfo",
-								"name": "marriedDate",
-								"type": "tuple"
-							},
-							{
-								"components": [
-									{
-										"internalType": "uint16",
-										"name": "year",
-										"type": "uint16"
-									},
-									{
-										"internalType": "uint8",
-										"name": "month",
-										"type": "uint8"
-									},
-									{
-										"internalType": "uint8",
-										"name": "day",
-										"type": "uint8"
-									}
-								],
-								"internalType": "struct FamilyTypes.DateInfo",
-								"name": "divorcedDate",
-								"type": "tuple"
-							}
-						],
-						"internalType": "struct FamilyTypes.Spouse[]",
+						"internalType": "bytes32[]",
 						"name": "spouses",
-						"type": "tuple[]"
+						"type": "bytes32[]"
 					},
 					{
 						"internalType": "enum FamilyTypes.Sex",
@@ -1594,6 +1133,172 @@
 	{
 		"inputs": [
 			{
+				"internalType": "bytes32",
+				"name": "parentId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "childId",
+				"type": "bytes32"
+			}
+		],
+		"name": "removeChild",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "husbandId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "spouseId",
+				"type": "bytes32"
+			}
+		],
+		"name": "removeSpouse",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "tokenId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bool",
+				"name": "notify",
+				"type": "bool"
+			},
+			{
+				"internalType": "bytes",
+				"name": "operatorNotificationData",
+				"type": "bytes"
+			}
+		],
+		"name": "revokeOperator",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "newClanShortDesc",
+				"type": "string"
+			}
+		],
+		"name": "setClanShortDesc",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "dataKey",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes",
+				"name": "dataValue",
+				"type": "bytes"
+			}
+		],
+		"name": "setData",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32[]",
+				"name": "dataKeys",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "bytes[]",
+				"name": "dataValues",
+				"type": "bytes[]"
+			}
+		],
+		"name": "setDataBatch",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32[]",
+				"name": "tokenIds",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "dataKeys",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "bytes[]",
+				"name": "dataValues",
+				"type": "bytes[]"
+			}
+		],
+		"name": "setDataBatchForTokenIds",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "tokenId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "dataKey",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes",
+				"name": "dataValue",
+				"type": "bytes"
+			}
+		],
+		"name": "setDataForTokenId",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "bytes4",
 				"name": "interfaceId",
 				"type": "bytes4"
@@ -1660,6 +1365,169 @@
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "tokenId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bool",
+				"name": "force",
+				"type": "bool"
+			},
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "transfer",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "from",
+				"type": "address[]"
+			},
+			{
+				"internalType": "address[]",
+				"name": "to",
+				"type": "address[]"
+			},
+			{
+				"internalType": "bytes32[]",
+				"name": "tokenId",
+				"type": "bytes32[]"
+			},
+			{
+				"internalType": "bool[]",
+				"name": "force",
+				"type": "bool[]"
+			},
+			{
+				"internalType": "bytes[]",
+				"name": "data",
+				"type": "bytes[]"
+			}
+		],
+		"name": "transferBatch",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferGenealogyOwner",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "personId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "string",
+				"name": "newName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "newDescShort",
+				"type": "string"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint8",
+						"name": "month",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
+					}
+				],
+				"internalType": "struct FamilyTypes.DateInfo",
+				"name": "birthDate",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint8",
+						"name": "month",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
+					}
+				],
+				"internalType": "struct FamilyTypes.DateInfo",
+				"name": "deathDate",
+				"type": "tuple"
+			}
+		],
+		"name": "updatePersonData",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "receive"
 	}
 ]
 }

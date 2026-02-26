@@ -18,8 +18,8 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     string public clanShortDesc;
 
     event PersonCreated(bytes32 indexed personId, address ownership);
-    event SpouseAdded(bytes32 indexed husbanId, bytes32 indexed spouseId);
-    event ChildAdded(bytes32 indexed childId, bytes32 indexed fatherId);
+    event SpouseAdded(bytes32 indexed husbandId, bytes32 indexed spouseId);
+    event ChildAdded(bytes32 indexed fatherId, bytes32 indexed childId);
     event ClanShortDescChanged(address indexed owner);
     event UpdatePersonData(bytes32 indexed personId);
 
@@ -37,12 +37,11 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         _createNewPerson(ancestorName, ancestorShortDesc, owner, FamilyTypes.Sex.MALE, birthDate, deathDate);
     }
 
-    function updatePersonData (bytes32 personId, string memory newName, string memory newDescShort, FamilyTypes.Sex sex, FamilyTypes.DateInfo memory birthDate, FamilyTypes.DateInfo memory deathDate) external onlyAuthorized(personId) {
+    function updatePersonData (bytes32 personId, string memory newName, string memory newDescShort, FamilyTypes.DateInfo memory birthDate, FamilyTypes.DateInfo memory deathDate) external onlyAuthorized(personId) {
         FamilyTypes.Person storage p = persons[personId];
         p.name =newName;
         p.birthDate = birthDate;
         p.deathDate = deathDate;
-        p.sex = sex;
         p.shortDesc = newDescShort;
         emit UpdatePersonData(personId);
     }
@@ -53,39 +52,33 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     }
 
     function addSpouse(
-        bytes32 husbanId,
+        bytes32 husbandId,
         string memory name,
         string memory descShort,
         FamilyTypes.DateInfo memory birthDate,
-        FamilyTypes.DateInfo memory deathDate,
-        // FamilyTypes.DateInfo memory marriedDate,
-        // FamilyTypes.DateInfo memory divorcedDate,
-        address ownership
-    ) external onlyAuthorized(husbanId) {
-        bytes32 spouseId = _createNewPerson(name, descShort, ownership, FamilyTypes.Sex.FEMALE, birthDate, deathDate);
+        FamilyTypes.DateInfo memory deathDate
+    ) external onlyAuthorized(husbandId) {
+        bytes32 spouseId = _createNewPerson(name, descShort, msg.sender, FamilyTypes.Sex.FEMALE, birthDate, deathDate);
 
-        FamilyTypes.DateInfo memory emptyDate;
-
-        persons[spouseId].spouses.push(FamilyTypes.Spouse({spouseId: spouseId, marriedDate: emptyDate, divorcedDate: emptyDate}));
-        emit SpouseAdded(husbanId, spouseId);
+        persons[spouseId].spouses.push(spouseId);
+        emit SpouseAdded(husbandId, spouseId);
     }
 
-    event SpouseRemoved(bytes32 indexed spouseId, bytes32 indexed husbanId);
+    event SpouseRemoved(bytes32 indexed husbandId, bytes32 indexed spouseId);
     function removeSpouse(
-        bytes32 spouseId,
-        bytes32 husbanId
-    ) external onlyAuthorized(husbanId) {
-        FamilyTypes.Person storage husban = persons[husbanId];
+        bytes32 husbandId, bytes32 spouseId
+    ) external onlyAuthorized(husbandId) {
+        FamilyTypes.Person storage husban = persons[husbandId];
 
         for (uint256 i = 0; i < husban.spouses.length; i++) {
-            if (husban.spouses[i].spouseId == spouseId) {
+            if (husban.spouses[i] == spouseId) {
                 uint256 lastIndex = husban.spouses.length - 1;
                 if (i != lastIndex) {
                     husban.spouses[i] = husban.spouses[lastIndex];
                 }
                 husban.spouses.pop();
 
-                emit SpouseRemoved(spouseId, husbanId);
+                emit SpouseRemoved(husbandId, spouseId);
                 return;
             }
         }
@@ -94,28 +87,25 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     }
 
     function addChild(
+        bytes32 fatherId,
         string memory childName,
         string memory shortDesc,
         FamilyTypes.Sex sex,
         FamilyTypes.DateInfo memory birthDate,
-        FamilyTypes.DateInfo memory deathDate,
-        bytes32 fatherId,
-        // bytes32 motherId,
-        // address owner,
-        FamilyTypes.ChildType childType
+        FamilyTypes.DateInfo memory deathDate
+        
     ) external onlyAuthorized(fatherId){
     
         FamilyTypes.Person storage father = persons[fatherId];
 
         bytes32 childId = _createNewPerson(childName, shortDesc, msg.sender, sex, birthDate, deathDate);
 
-        father.children.push(FamilyTypes.Child({childType: childType, childId: childId}));
+        father.children.push(childId);
         persons[childId].fatherId = fatherId;
-        // persons[childId].motherId = motherId;
-        emit ChildAdded(childId, fatherId);
+        emit ChildAdded(fatherId, childId);
     }
 
-    event ChildRemoved(bytes32 indexed childId, bytes32 indexed parentId);
+    event ChildRemoved(bytes32 indexed parentId, bytes32 indexed childId);
     function removeChild(
         bytes32 parentId,
         bytes32 childId
@@ -125,7 +115,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
 
         require(child.fatherId == parentId, "Not child of this person");
         for (uint256 i = 0; i < parent.children.length; i++) {
-            if (parent.children[i].childId == childId) {
+            if (parent.children[i] == childId) {
                 // Swap với phần tử cuối và pop
                 uint256 lastIndex = parent.children.length - 1;
                 if (i != lastIndex) {
@@ -134,7 +124,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
                 parent.children.pop();
                 child.fatherId = bytes32(0);
 
-                emit ChildRemoved(childId, parentId);
+                emit ChildRemoved(parentId, childId);
                 return;
             }
         }
@@ -179,15 +169,6 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
             _setDataForTokenId(tokenId, dataKey, dataValue);
     }
 
-    // Thêm vào FamilyNFT.sol
-
-    // function getPersonChildren(bytes32 personId) external view returns (FamilyTypes.Child[] memory) {
-    //     return persons[personId].children;
-    // }
-
-    // function getPersonSpouses(bytes32 personId) external view returns (FamilyTypes.Spouse[] memory) {
-    //     return persons[personId].spouses;
-    // }
 
     function getPersonInfo(bytes32 personId) external view returns (FamilyTypes.Person memory) {
     return persons[personId];
