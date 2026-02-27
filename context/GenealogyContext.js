@@ -277,7 +277,7 @@ export const GenealogyProvider = ({ children }) => {
   };
 
   const addChild = async (
-    walletAddress,
+    // walletAddress,
     clanId,
     formData,
     callBack,
@@ -286,17 +286,19 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
+      console.log("Dữ liệu AddChild: ", formData);
+
       await contract.addChild(
         formData.fatherId,
         formData.name,
-        formData.descShort,
-        formData.sex,
-        formData.birthYear,
-        formData.deathYear,
+        formData.shortDesc,
+        formData.gender,
+        formData.birthDate,
+        formData.deathDate,
       );
 
       contract.on("ChildAdded", async (fatherId, childId) => {
-        if (walletAddress == fatherId) {
+        if (formData.fatherId == fatherId) {
           callBack(childId);
         }
       });

@@ -15,9 +15,10 @@ library FamilyTypes {
 
         // Cấu trúc mới để lưu ngày tháng linh hoạt
     struct DateInfo {
-        uint16 year;
+        uint8 day; 
         uint8 month; // 0 nếu không xác định
-        uint8 day;   // 0 nếu không xác định
+          // 0 nếu không xác định
+        uint16 year;
     }
 
     // struct Child {

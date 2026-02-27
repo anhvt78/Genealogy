@@ -152,82 +152,15 @@ export default function GenealogyDetail() {
     }
   };
 
-  // const fetchDataDialog = async (personId) => {
-  //   setLoadingClanDialog(true);
-  //   const tempList = [];
-
-  //   try {
-  //     // const ancestorId = numberToByte32(1);
-
-  //     const result = await getPersonData(clanId, personId);
-
-  //     console.log("result: ", result);
-
-  //     if (result.sts) {
-  //       let spouses = [];
-  //       result.data.spouses.map(async (el) => {
-  //         const spouseResult = await getPersonData(clanId, el.spouseId);
-  //         if (spouseResult.sts) {
-  //           let spouseItem = {
-  //             id: el.spouseId,
-  //             name: spouseResult.data.name,
-  //             birthYear: spouseResult.data.birthDate,
-  //             deathYear: spouseResult.data.deathDate,
-  //             bio: result.data.shortDesc,
-  //           };
-  //           spouses.push(spouseItem);
-  //         }
-  //       });
-
-  //       let item = {
-  //         id: personId,
-  //         name: result.data.name,
-  //         gender: result.data.sex,
-  //         birthYear: result.data.birthDate,
-  //         deathYear: result.data.deathDate,
-  //         bio: result.data.shortDesc,
-  //         parents:
-  //           result.data.fatherId != NONE_ID ? [result.data.fatherId] : [],
-  //         // Danh sách các phu nhân được gom vào đây
-  //         wives: spouses,
-  //         // [
-  //         //   {
-  //         //     id: "2",
-  //         //     name: "Lê Thị Tổ",
-  //         //     birthYear: "1905",
-  //         //     deathYear: "1980",
-  //         //     bio: "Mẫu nghi chính thất, thục đức vẹn toàn.",
-  //         //   },
-  //         // ],
-  //       };
-  //       familyDataList.push(item);
-
-  //       result.data.children.map((el) => {
-  //         fetchDataDialog(el.childId);
-  //       });
-
-  //       setFamilyData(familyDataList);
-
-  //       console.log("item___: ", item);
-  //     } else {
-  //       sweetalert2.popupAlert({
-  //         title: "Đã xảy ra lỗi",
-  //         text: "Lỗi khi tải thông tin Gia phả.",
-  //       });
-  //     }
-  //   } catch (err) {
-  //     console.error("Fetch error:", err);
-  //   } finally {
-  //     // Tắt loading sau khi kết thúc (dù thành công hay thất bại)
-  //     setLoadingClanDialog(false);
-  //   }
-  // };
-
   const fetchDataDialog = async (rootPersonId) => {
     setLoadingClanDialog(true);
     const tempList = [];
 
+    console.log("159. rootPersonId: ", rootPersonId);
+
     const traverse = async (personId) => {
+      console.log("231. personId: ", personId);
+
       try {
         const result = await getPersonData(clanId, personId);
 
@@ -273,11 +206,11 @@ export default function GenealogyDetail() {
 
         tempList.push(item);
 
+        console.log("159. data.children: ", data.children);
+
         // Đệ quy lấy dữ liệu con cái
         if (data.children && data.children.length > 0) {
-          await Promise.all(
-            data.children.map((child) => traverse(child.childId)),
-          );
+          await Promise.all(data.children.map((childId) => traverse(childId)));
         }
       } catch (err) {
         // Đẩy lỗi lên cấp cao hơn để dừng toàn bộ quá trình

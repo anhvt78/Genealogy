@@ -15,7 +15,7 @@ export default function AddSpouseModal({ person, clanItem, onClose, onSave }) {
 
   // Hàm bóc tách ngày tháng năm linh hoạt
   const parseDateInput = (dateStr) => {
-    if (!dateStr || dateStr.trim() === "") return { year: 0, month: 0, day: 0 };
+    if (!dateStr || dateStr.trim() === "") return { day: 0, month: 0, year: 0 };
     const parts = dateStr.split(/[\/\-.]/);
     if (parts.length === 3) {
       return {
@@ -37,7 +37,7 @@ export default function AddSpouseModal({ person, clanItem, onClose, onSave }) {
       ...formData,
       birthDate: parseDateInput(formData.birthDate),
       deathDate: isStillAlive
-        ? { year: 0, month: 0, day: 0 }
+        ? { day: 0, month: 0, year: 0 }
         : parseDateInput(formData.deathDate),
     };
 

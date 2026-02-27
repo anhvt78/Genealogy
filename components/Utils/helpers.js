@@ -96,7 +96,7 @@ export const convertMilliseconds = (sc) => {
   const days = Math.floor(sc / millisecondsInADay);
   const hours = Math.floor((sc % millisecondsInADay) / millisecondsInAnHour);
   const minutes = Math.floor(
-    (sc % millisecondsInAnHour) / millisecondsInAMinute
+    (sc % millisecondsInAnHour) / millisecondsInAMinute,
   );
   const seconds = Math.floor(sc % millisecondsInAMinute);
 
@@ -149,11 +149,7 @@ export const convertETHToUSD = (value, rate) => {
 };
 
 export const randomUUID = () => {
-  return (
-    Math.random()
-      .toString(36)
-      .substring(2) + Date.now().toString(36)
-  );
+  return Math.random().toString(36).substring(2) + Date.now().toString(36);
 };
 
 export const date = (value) => dayjs(value);
@@ -290,7 +286,7 @@ export const handleKeyDownNumberInputWithoutDecimal = (event) => {
 
 export const handleKeyDownNumberInputWithoutDecimalMaxValue = (
   event,
-  maxValue
+  maxValue,
 ) => {
   // Allow navigation keys: backspace, delete, tab, escape, enter
   const navigationKeys = ["Backspace", "Delete", "Tab", "Escape", "Enter"];
@@ -331,12 +327,12 @@ export const handleKeyDownNumberInputWithoutDecimalMaxValue = (
 export function isValidUrl(str) {
   const pattern = new RegExp(
     "^([a-zA-Z]+:\\/\\/)?" + // protocol
-    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-    "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR IP (v4) address
-    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-    "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR IP (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
       "(\\#[-a-z\\d_]*)?$", // fragment locator
-    "i"
+    "i",
   );
   return pattern.test(str);
 }
@@ -503,7 +499,7 @@ export function toEnglishCharacters(str) {
     Ÿ: "Y",
   };
 
-  return str.replace(/[^\u0000-\u007E]/g, function(char) {
+  return str.replace(/[^\u0000-\u007E]/g, function (char) {
     return charMap[char] || char;
   });
 }
@@ -716,7 +712,7 @@ export const toEthersUsdtAtomic = (amountString) => {
     "amountString: ",
     amountString,
     " | usdtDecimals =  ",
-    usdtDecimals
+    usdtDecimals,
   );
 
   return ethers.utils.parseUnits(amountString, usdtDecimals);
@@ -728,22 +724,22 @@ export const toEthersUsdtDisplay = (amount) => {
 };
 
 export const formatDate = (dateData) => {
-    if (!dateData) return "Không rõ";
+  if (!dateData) return "Không rõ";
 
-    // Lấy giá trị year, month, day từ object hoặc array
-    // Lưu ý: month trong JS bắt đầu từ 0 (Tháng 1 = 0),
-    // nhưng nếu dữ liệu của bạn trả về 0 nghĩa là chưa có dữ liệu hoặc đã đúng số tháng, hãy kiểm tra lại API.
-    const year = dateData.year || dateData[0];
-    const month = dateData.month || dateData[1];
-    const day = dateData.day || dateData[2];
+  // Lấy giá trị year, month, day từ object hoặc array
+  // Lưu ý: month trong JS bắt đầu từ 0 (Tháng 1 = 0),
+  // nhưng nếu dữ liệu của bạn trả về 0 nghĩa là chưa có dữ liệu hoặc đã đúng số tháng, hãy kiểm tra lại API.
+  const day = dateData.day || dateData[0];
+  const month = dateData.month || dateData[1];
+  const year = dateData.year || dateData[2];
 
-    // Nếu không có năm thì coi như không rõ
-    if (!year || year === 0) return "Không rõ";
+  // Nếu không có năm thì coi như không rõ
+  if (!year || year === 0) return "Không rõ";
 
-    // Định dạng hiển thị dd/mm/yyyy (Thêm số 0 phía trước nếu < 10)
-    const d = day > 0 ? String(day).padStart(2, "0") : "??";
-    const m = month > 0 ? String(month).padStart(2, "0") : "??";
-    const y = year;
+  // Định dạng hiển thị dd/mm/yyyy (Thêm số 0 phía trước nếu < 10)
+  const d = day > 0 ? String(day).padStart(2, "0") : "??";
+  const m = month > 0 ? String(month).padStart(2, "0") : "??";
+  const y = year;
 
-    return `${d}/${m}/${y}`;
-  };
+  return `${d}/${m}/${y}`;
+};

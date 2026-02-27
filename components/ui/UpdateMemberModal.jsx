@@ -9,21 +9,21 @@ export default function UpdateMemberModal({
   onSave,
 }) {
   const [isStillAlive, setIsStillAlive] = useState(
-    person?.deathYear?.year === 0,
+    person?.deathDate?.year === 0,
   );
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [formData, setFormData] = useState({
     name: person?.name || "",
     // gender: "male",
-    birthYear: person?.birthYear,
-    deathYear: person?.deathYear,
+    birthDate: `${person?.birthDate?.day}/${person?.birthDate?.month}/${person?.birthDate?.year}`,
+    deathDate: `${person?.deathDate?.day}/${person?.deathDate?.month}/${person?.deathDate?.year}`,
     bio: person?.bio,
   });
 
   // Hàm bóc tách ngày tháng năm từ chuỗi nhập vào giống ClanListForm
   const parseDateInput = (dateStr) => {
-    if (!dateStr || dateStr.trim() === "") return { year: 0, month: 0, day: 0 };
+    if (!dateStr || dateStr.trim() === "") return { day: 0, month: 0, year: 0 };
     const parts = dateStr.split(/[\/\-.]/);
     if (parts.length === 3) {
       return {
@@ -44,10 +44,10 @@ export default function UpdateMemberModal({
 
     const formattedData = {
       ...formData,
-      birthYear: parseDateInput(formData.birthYear),
-      deathYear: isStillAlive
-        ? { year: 0, month: 0, day: 0 }
-        : parseDateInput(formData.deathYear),
+      birthDate: parseDateInput(formData.birthDate),
+      deathDate: isStillAlive
+        ? { day: 0, month: 0, year: 0 }
+        : parseDateInput(formData.deathDate),
     };
 
     try {
@@ -110,9 +110,9 @@ export default function UpdateMemberModal({
                 disabled={isProcessing}
                 className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 outline-none text-[#3d2611] disabled:opacity-50"
                 placeholder="VD: 1990 hoặc 01/01/1990"
-                value={formatDate(formData.birthYear)}
+                value={formatDate(formData.birthDate)}
                 onChange={(e) =>
-                  setFormData({ ...formData, birthYear: e.target.value })
+                  setFormData({ ...formData, birthDate: e.target.value })
                 }
               />
             </div>
@@ -141,9 +141,9 @@ export default function UpdateMemberModal({
                   isStillAlive ? "bg-stone-200 opacity-50" : "bg-[#f4ece1]"
                 }`}
                 placeholder={isStillAlive ? "---" : "VD: 2020 hoặc 15/05/2020"}
-                value={isStillAlive ? "" : formatDate(formData.deathYear)}
+                value={isStillAlive ? "" : formatDate(formData.deathDate)}
                 onChange={(e) =>
-                  setFormData({ ...formData, deathYear: e.target.value })
+                  setFormData({ ...formData, deathDate: e.target.value })
                 }
               />
             </div>

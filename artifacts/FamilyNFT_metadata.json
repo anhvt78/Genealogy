@@ -30,9 +30,9 @@
 					{
 						"components": [
 							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
 							},
 							{
 								"internalType": "uint8",
@@ -40,9 +40,9 @@
 								"type": "uint8"
 							},
 							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
 							}
 						],
 						"internalType": "struct FamilyTypes.DateInfo",
@@ -52,9 +52,9 @@
 					{
 						"components": [
 							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
 							},
 							{
 								"internalType": "uint8",
@@ -62,9 +62,9 @@
 								"type": "uint8"
 							},
 							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
 							}
 						],
 						"internalType": "struct FamilyTypes.DateInfo",
@@ -678,9 +678,9 @@
 					{
 						"components": [
 							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
 							},
 							{
 								"internalType": "uint8",
@@ -688,9 +688,9 @@
 								"type": "uint8"
 							},
 							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
 							}
 						],
 						"internalType": "struct FamilyTypes.DateInfo",
@@ -700,9 +700,9 @@
 					{
 						"components": [
 							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
 							},
 							{
 								"internalType": "uint8",
@@ -710,9 +710,9 @@
 								"type": "uint8"
 							},
 							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
 							}
 						],
 						"internalType": "struct FamilyTypes.DateInfo",
@@ -745,9 +745,9 @@
 					{
 						"components": [
 							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
 							},
 							{
 								"internalType": "uint8",
@@ -755,9 +755,9 @@
 								"type": "uint8"
 							},
 							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
 							}
 						],
 						"internalType": "struct FamilyTypes.DateInfo",
@@ -767,9 +767,9 @@
 					{
 						"components": [
 							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
 							},
 							{
 								"internalType": "uint8",
@@ -777,9 +777,9 @@
 								"type": "uint8"
 							},
 							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
 							}
 						],
 						"internalType": "struct FamilyTypes.DateInfo",
@@ -1029,9 +1029,9 @@
 							{
 								"components": [
 									{
-										"internalType": "uint16",
-										"name": "year",
-										"type": "uint16"
+										"internalType": "uint8",
+										"name": "day",
+										"type": "uint8"
 									},
 									{
 										"internalType": "uint8",
@@ -1039,9 +1039,9 @@
 										"type": "uint8"
 									},
 									{
-										"internalType": "uint8",
-										"name": "day",
-										"type": "uint8"
+										"internalType": "uint16",
+										"name": "year",
+										"type": "uint16"
 									}
 								],
 								"internalType": "struct FamilyTypes.DateInfo",
@@ -1051,9 +1051,9 @@
 							{
 								"components": [
 									{
-										"internalType": "uint16",
-										"name": "year",
-										"type": "uint16"
+										"internalType": "uint8",
+										"name": "day",
+										"type": "uint8"
 									},
 									{
 										"internalType": "uint8",
@@ -1061,9 +1061,9 @@
 										"type": "uint8"
 									},
 									{
-										"internalType": "uint8",
-										"name": "day",
-										"type": "uint8"
+										"internalType": "uint16",
+										"name": "year",
+										"type": "uint16"
 									}
 								],
 								"internalType": "struct FamilyTypes.DateInfo",
@@ -1482,9 +1482,9 @@
 					{
 						"components": [
 							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
 							},
 							{
 								"internalType": "uint8",
@@ -1492,9 +1492,9 @@
 								"type": "uint8"
 							},
 							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
 							}
 						],
 						"internalType": "struct FamilyTypes.DateInfo",
@@ -1504,9 +1504,9 @@
 					{
 						"components": [
 							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
 							},
 							{
 								"internalType": "uint8",
@@ -1514,9 +1514,9 @@
 								"type": "uint8"
 							},
 							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
 							}
 						],
 						"internalType": "struct FamilyTypes.DateInfo",
@@ -2215,19 +2215,19 @@
 			]
 		},
 		"contracts/Genealogy/FamilyNFT.sol": {
-			"keccak256": "0x49435c610d0d654528b309e8ce0447befd030d6aee7025dadfccc520f3eaa7ae",
+			"keccak256": "0xa23043580d325ce2c9d129df5d1dbcd18363021f26b96fd8e30302d7e88ca843",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://fc146e826ed92a8c8351d0d483e4c757c8fe4663c59947cc2724f8ce38f2a0b8",
-				"dweb:/ipfs/QmdtPEPiyr45nEaddGzjz5TAUjNBPAjW4oBrrSpVwjjAt1"
+				"bzz-raw://e378dd7347bbe64f0ff0921d3c644f6920e824e4783706224e65cebc33db9616",
+				"dweb:/ipfs/QmeMTx9jN25ihzbmU1T6uJrB7F9NtyZhwrXW9pQ5tvHBha"
 			]
 		},
 		"contracts/Genealogy/FamilyTypes.sol": {
-			"keccak256": "0xc92d6a50774f164fb6a402248babe3fe98227e9e2eb9635da0c540c72109451a",
+			"keccak256": "0x7dc67ace35acbb9498c07a82d82d9623d4fdc0d92f982d3257f339ded1853bd2",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b3c9795c862372d85fa6b2017d403fb26f28ac611c74f64bc45fc0cf4f491539",
-				"dweb:/ipfs/QmRTkYkgS7QWtjprm3BvyoccdLaWS8Y2k5x5so33rJqdAj"
+				"bzz-raw://d8572f6986c15dc28843921fe322f1e506db69e06b3719c5783019351cabf491",
+				"dweb:/ipfs/QmRBdxqM7eg8BehFfaP9Chm1kVS4oDziRscW2CDETQRyXL"
 			]
 		}
 	},

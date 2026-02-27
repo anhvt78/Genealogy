@@ -68,15 +68,15 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     function removeSpouse(
         bytes32 husbandId, bytes32 spouseId
     ) external onlyAuthorized(husbandId) {
-        FamilyTypes.Person storage husban = persons[husbandId];
+        FamilyTypes.Person storage husband = persons[husbandId];
 
-        for (uint256 i = 0; i < husban.spouses.length; i++) {
-            if (husban.spouses[i] == spouseId) {
-                uint256 lastIndex = husban.spouses.length - 1;
+        for (uint256 i = 0; i < husband.spouses.length; i++) {
+            if (husband.spouses[i] == spouseId) {
+                uint256 lastIndex = husband.spouses.length - 1;
                 if (i != lastIndex) {
-                    husban.spouses[i] = husban.spouses[lastIndex];
+                    husband.spouses[i] = husband.spouses[lastIndex];
                 }
-                husban.spouses.pop();
+                husband.spouses.pop();
 
                 emit SpouseRemoved(husbandId, spouseId);
                 return;

@@ -26,9 +26,9 @@
 			{
 				"components": [
 					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
 					},
 					{
 						"internalType": "uint8",
@@ -36,9 +36,9 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
 					}
 				],
 				"internalType": "struct FamilyTypes.DateInfo",
@@ -48,9 +48,9 @@
 			{
 				"components": [
 					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
 					},
 					{
 						"internalType": "uint8",
@@ -58,9 +58,9 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
 					}
 				],
 				"internalType": "struct FamilyTypes.DateInfo",
@@ -674,9 +674,9 @@
 			{
 				"components": [
 					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
 					},
 					{
 						"internalType": "uint8",
@@ -684,9 +684,9 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
 					}
 				],
 				"internalType": "struct FamilyTypes.DateInfo",
@@ -696,9 +696,9 @@
 			{
 				"components": [
 					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
 					},
 					{
 						"internalType": "uint8",
@@ -706,9 +706,9 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
 					}
 				],
 				"internalType": "struct FamilyTypes.DateInfo",
@@ -741,9 +741,9 @@
 			{
 				"components": [
 					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
 					},
 					{
 						"internalType": "uint8",
@@ -751,9 +751,9 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
 					}
 				],
 				"internalType": "struct FamilyTypes.DateInfo",
@@ -763,9 +763,9 @@
 			{
 				"components": [
 					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
 					},
 					{
 						"internalType": "uint8",
@@ -773,9 +773,9 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
 					}
 				],
 				"internalType": "struct FamilyTypes.DateInfo",
@@ -1025,9 +1025,9 @@
 					{
 						"components": [
 							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
 							},
 							{
 								"internalType": "uint8",
@@ -1035,9 +1035,9 @@
 								"type": "uint8"
 							},
 							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
 							}
 						],
 						"internalType": "struct FamilyTypes.DateInfo",
@@ -1047,9 +1047,9 @@
 					{
 						"components": [
 							{
-								"internalType": "uint16",
-								"name": "year",
-								"type": "uint16"
+								"internalType": "uint8",
+								"name": "day",
+								"type": "uint8"
 							},
 							{
 								"internalType": "uint8",
@@ -1057,9 +1057,9 @@
 								"type": "uint8"
 							},
 							{
-								"internalType": "uint8",
-								"name": "day",
-								"type": "uint8"
+								"internalType": "uint16",
+								"name": "year",
+								"type": "uint16"
 							}
 						],
 						"internalType": "struct FamilyTypes.DateInfo",
@@ -1478,9 +1478,9 @@
 			{
 				"components": [
 					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
 					},
 					{
 						"internalType": "uint8",
@@ -1488,9 +1488,9 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
 					}
 				],
 				"internalType": "struct FamilyTypes.DateInfo",
@@ -1500,9 +1500,9 @@
 			{
 				"components": [
 					{
-						"internalType": "uint16",
-						"name": "year",
-						"type": "uint16"
+						"internalType": "uint8",
+						"name": "day",
+						"type": "uint8"
 					},
 					{
 						"internalType": "uint8",
@@ -1510,9 +1510,9 @@
 						"type": "uint8"
 					},
 					{
-						"internalType": "uint8",
-						"name": "day",
-						"type": "uint8"
+						"internalType": "uint16",
+						"name": "year",
+						"type": "uint16"
 					}
 				],
 				"internalType": "struct FamilyTypes.DateInfo",

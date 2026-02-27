@@ -1,21 +1,27 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
+import { GenealogyContext } from "@/context/GenealogyContext";
+import sweetalert2 from "@/configs/swal";
 
-export default function AddChildModal({ person, clanItem, onClose, onSave }) {
+export default function AddChildModal({ person, clanItem, onClose }) {
   const [isStillAlive, setIsStillAlive] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
+    fatherId: person.id,
     name: "",
-    gender: "male",
+    shortDesc: "",
+    gender: 0,
     birthDate: "",
     deathDate: "",
-    bio: "",
   });
+
+  const { addChild } = useContext(GenealogyContext);
 
   // Hàm bóc tách ngày tháng năm từ chuỗi nhập vào giống ClanListForm
   const parseDateInput = (dateStr) => {
-    if (!dateStr || dateStr.trim() === "") return { year: 0, month: 0, day: 0 };
+    if (!dateStr || dateStr.trim() === "") return { day: 0, month: 0, year: 0 };
     const parts = dateStr.split(/[\/\-.]/);
     if (parts.length === 3) {
       return {
@@ -30,27 +36,68 @@ export default function AddChildModal({ person, clanItem, onClose, onSave }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name) return alert("Xin vui lòng nhập danh tánh!");
+    const newErrors = {};
+    // Kiểm tra các trường bắt buộc
+    if (!formData.name.trim()) newErrors.name = "Danh tánh không được để trống";
+    if (!formData.birthDate.trim())
+      newErrors.birthDate = "Xin ghi rõ năm sinh hoặc ngày sinh";
 
+    // Nếu có lỗi, cập nhật state và dừng xử lý
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({}); // Xóa sạch lỗi cũ nếu mọi thứ ổn
     setIsProcessing(true); // Bắt đầu trạng thái chờ giống ClanListForm
 
     const formattedData = {
       ...formData,
+      gender: formData.gender,
       birthDate: parseDateInput(formData.birthDate),
       deathDate: isStillAlive
-        ? { year: 0, month: 0, day: 0 }
+        ? { day: 0, month: 0, year: 0 }
         : parseDateInput(formData.deathDate),
     };
 
-    try {
-      // Gọi hàm onSave được truyền từ props
-      await onSave(formattedData);
-    } catch (error) {
-      console.error("Lỗi khi lưu:", error);
-    } finally {
-      setIsProcessing(false); // Kết thúc trạng thái chờ
-    }
+    console.log(
+      "Dữ liệu gửi lên Blockchain:",
+      formattedData,
+      " | clanItem: ",
+      clanItem,
+    );
+
+    addChild(
+      clanItem.clanId,
+      formattedData,
+      callBack,
+      handleErr,
+    );
   };
+
+  const callBack = (newChildId) => {
+    console.log("newChildId: ", newChildId);
+    onClose();
+    setIsProcessing(false);
+    // router.push(`/pages/detail/${clanId}`);
+  };
+
+  const handleErr = (title, error) => {
+    setIsProcessing(false);
+    onClose();
+    sweetalert2.popupAlert({
+      title: title,
+      text: error,
+    });
+  };
+
+  // Hàm hiển thị dòng lỗi nhỏ dưới mỗi ô
+  const renderError = (fieldName) =>
+    errors[fieldName] ? (
+      <p className="text-red-600 text-[10px] font-bold mt-1 uppercase italic tracking-tighter">
+        * {errors[fieldName]}
+      </p>
+    ) : null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-[100]">
@@ -85,10 +132,12 @@ export default function AddChildModal({ person, clanItem, onClose, onSave }) {
               className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 focus:border-[#3d2611] outline-none text-[#3d2611] transition-all disabled:opacity-50"
               placeholder="Ví dụ: Nguyễn Văn A"
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
+              onChange={(e) => {
+                setFormData({ ...formData, name: e.target.value });
+                if (errors.name) setErrors({ ...errors, name: null });
+              }}
             />
+            {renderError("name")}
           </div>
 
           {/* Giới tính */}
@@ -101,11 +150,11 @@ export default function AddChildModal({ person, clanItem, onClose, onSave }) {
               className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 outline-none text-[#3d2611] disabled:opacity-50"
               value={formData.gender}
               onChange={(e) =>
-                setFormData({ ...formData, gender: e.target.value })
+                setFormData({ ...formData, gender: parseInt(e.target.value) })
               }
             >
-              <option value="male">Nam</option>
-              <option value="female">Nữ</option>
+              <option value={0}>Nam</option>
+              <option value={1}>Nữ</option>
             </select>
           </div>
 
@@ -121,10 +170,13 @@ export default function AddChildModal({ person, clanItem, onClose, onSave }) {
                 className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 outline-none text-[#3d2611] disabled:opacity-50"
                 placeholder="VD: 1990 hoặc 01/01/1990"
                 value={formData.birthDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, birthDate: e.target.value })
-                }
+                onChange={(e) => {
+                  setFormData({ ...formData, birthDate: e.target.value });
+                  if (errors.birthDate)
+                    setErrors({ ...errors, birthDate: null });
+                }}
               />
+              {renderError("birthDate")}
             </div>
 
             {/* Ngày mất (Tương tự ClanListForm) */}
@@ -169,9 +221,9 @@ export default function AddChildModal({ person, clanItem, onClose, onSave }) {
               className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 outline-none text-[#3d2611] text-sm italic disabled:opacity-50"
               placeholder="Ghi chú về học vấn, sự nghiệp..."
               rows="2"
-              value={formData.bio}
+              value={formData.shortDesc}
               onChange={(e) =>
-                setFormData({ ...formData, bio: e.target.value })
+                setFormData({ ...formData, shortDesc: e.target.value })
               }
             />
           </div>
