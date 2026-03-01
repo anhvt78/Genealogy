@@ -1,30 +1,35 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
-import { formatDate } from "../Utils/helpers";
+import { formatDisplayDate } from "../Utils/helpers";
+import sweetalert2 from "@/configs/swal";
+import { GenealogyContext } from "@/context/GenealogyContext";
 
-export default function UpdateMemberModal({
-  person,
-  clanItem,
-  onClose,
-  onSave,
-}) {
+export default function UpdateMemberModal({ person, clanItem, onClose }) {
   const [isStillAlive, setIsStillAlive] = useState(
     person?.deathDate?.year === 0,
   );
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
+    personId: person.id,
     name: person?.name || "",
-    // gender: "male",
-    birthDate: `${person?.birthDate?.day}/${person?.birthDate?.month}/${person?.birthDate?.year}`,
-    deathDate: `${person?.deathDate?.day}/${person?.deathDate?.month}/${person?.deathDate?.year}`,
+    // Chuyển object ngày tháng thành chuỗi DD/MM/YYYY ngay khi khởi tạo
+    birthYear: formatDisplayDate(person?.birthYear),
+    deathYear: formatDisplayDate(person?.deathYear),
     bio: person?.bio,
   });
 
-  // Hàm bóc tách ngày tháng năm từ chuỗi nhập vào giống ClanListForm
+  const { updatePersonData } = useContext(GenealogyContext);
+
   const parseDateInput = (dateStr) => {
-    if (!dateStr || dateStr.trim() === "") return { day: 0, month: 0, year: 0 };
-    const parts = dateStr.split(/[\/\-.]/);
+    console.log("dateStr: ", dateStr);
+
+    // Ép kiểu về string và kiểm tra nếu không phải chuỗi hợp lệ
+    const str = String(dateStr || "").trim();
+    if (!str || str === "0/0/0") return { day: 0, month: 0, year: 0 };
+
+    const parts = str.split(/[\/\-.]/);
     if (parts.length === 3) {
       return {
         day: parseInt(parts[0]) || 0,
@@ -32,33 +37,68 @@ export default function UpdateMemberModal({
         year: parseInt(parts[2]) || 0,
       };
     }
-    // Nếu chỉ nhập 1 phần thì mặc định là năm
-    return { day: 0, month: 0, year: parseInt(dateStr) || 0 };
+    // Nếu chỉ nhập năm hoặc dữ liệu không đủ 3 phần
+    const yearOnly = parseInt(str.split(/[\/\-.]/).pop());
+    return { day: 0, month: 0, year: yearOnly || 0 };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name) return alert("Xin vui lòng nhập danh tánh!");
+    const newErrors = {};
+    // Kiểm tra các trường bắt buộc
+    if (!formData.name.trim()) newErrors.name = "Danh tánh không được để trống";
+    if (!formData.birthYear.trim())
+      newErrors.birthYear = "Xin ghi rõ năm sinh hoặc ngày sinh";
+
+    // Nếu có lỗi, cập nhật state và dừng xử lý
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({}); // Xóa sạch lỗi cũ nếu mọi thứ ổn
 
     setIsProcessing(true); // Bắt đầu trạng thái chờ giống ClanListForm
+    // console.log("formData.birthYear: ", formData.birthYear);
+    // console.log(
+    //   "parseDateInput(formData.birthYear): ",
+    //   parseDateInput(formData.birthYear),
+    // );
 
     const formattedData = {
       ...formData,
-      birthDate: parseDateInput(formData.birthDate),
-      deathDate: isStillAlive
+      birthYear: parseDateInput(formData.birthYear),
+      deathYear: isStillAlive
         ? { day: 0, month: 0, year: 0 }
-        : parseDateInput(formData.deathDate),
+        : parseDateInput(formData.deathYear),
     };
 
-    try {
-      // Gọi hàm onSave được truyền từ props
-      await onSave(formattedData);
-    } catch (error) {
-      console.error("Lỗi khi lưu:", error);
-    } finally {
-      setIsProcessing(false); // Kết thúc trạng thái chờ
-    }
+    updatePersonData(clanItem.clanId, formattedData, callBack, handleErr);
   };
+
+  const callBack = (newChildId) => {
+    // console.log("newChildId: ", newChildId);
+    onClose();
+    setIsProcessing(false);
+    // router.push(`/pages/detail/${clanId}`);
+  };
+
+  const handleErr = (title, error) => {
+    setIsProcessing(false);
+    onClose();
+    sweetalert2.popupAlert({
+      title: title,
+      text: error,
+    });
+  };
+
+  // Hàm hiển thị dòng lỗi nhỏ dưới mỗi ô
+  const renderError = (fieldName) =>
+    errors[fieldName] ? (
+      <p className="text-red-600 text-[10px] font-bold mt-1 uppercase italic tracking-tighter">
+        * {errors[fieldName]}
+      </p>
+    ) : null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-[100]">
@@ -93,10 +133,12 @@ export default function UpdateMemberModal({
               className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 focus:border-[#3d2611] outline-none text-[#3d2611] transition-all disabled:opacity-50"
               placeholder="Ví dụ: Nguyễn Văn A"
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
+              onChange={(e) => {
+                setFormData({ ...formData, name: e.target.value });
+                if (errors.name) setErrors({ ...errors, name: null });
+              }}
             />
+            {renderError("name")}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -110,11 +152,14 @@ export default function UpdateMemberModal({
                 disabled={isProcessing}
                 className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 outline-none text-[#3d2611] disabled:opacity-50"
                 placeholder="VD: 1990 hoặc 01/01/1990"
-                value={formatDate(formData.birthDate)}
-                onChange={(e) =>
-                  setFormData({ ...formData, birthDate: e.target.value })
-                }
+                value={formData.birthYear}
+                onChange={(e) => {
+                  setFormData({ ...formData, birthYear: e.target.value });
+                  if (errors.birthYear)
+                    setErrors({ ...errors, birthYear: null });
+                }}
               />
+              {renderError("birthYear")}
             </div>
 
             {/* Ngày mất (Tương tự ClanListForm) */}
@@ -141,9 +186,9 @@ export default function UpdateMemberModal({
                   isStillAlive ? "bg-stone-200 opacity-50" : "bg-[#f4ece1]"
                 }`}
                 placeholder={isStillAlive ? "---" : "VD: 2020 hoặc 15/05/2020"}
-                value={isStillAlive ? "" : formatDate(formData.deathDate)}
+                value={isStillAlive ? "" : formData.deathYear}
                 onChange={(e) =>
-                  setFormData({ ...formData, deathDate: e.target.value })
+                  setFormData({ ...formData, deathYear: e.target.value })
                 }
               />
             </div>

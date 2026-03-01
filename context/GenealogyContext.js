@@ -367,20 +367,14 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const updatePersonData = async (
-    walletAddress,
-    clanId,
-    formData,
-    callBack,
-    handleErr,
-  ) => {
+  const updatePersonData = async (clanId, formData, callBack, handleErr) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
-
-      await contract.addSpouse(
+      console.log("382: formData: ", formData);
+      await contract.updatePersonData(
         formData.personId,
-        formData.newName,
-        formData.newDescShort,
+        formData.name,
+        formData.bio,
         formData.birthYear,
         formData.deathYear,
       );

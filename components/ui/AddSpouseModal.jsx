@@ -1,17 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
+import { GenealogyContext } from "@/context/GenealogyContext";
+import sweetalert2 from "@/configs/swal";
 
-export default function AddSpouseModal({ person, clanItem, onClose, onSave }) {
+export default function AddSpouseModal({ person, clanItem, onClose }) {
   const [isStillAlive, setIsStillAlive] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
+    fatherId: person.id,
     name: "",
-    gender: person?.gender === "male" ? "female" : "male", // Tự động set giới tính ngược với người hiện tại
+    shortDesc: "",
     birthDate: "",
     deathDate: "",
-    bio: "",
   });
+
+  const { addSpouse } = useContext(GenealogyContext);
 
   // Hàm bóc tách ngày tháng năm linh hoạt
   const parseDateInput = (dateStr) => {
@@ -29,7 +34,19 @@ export default function AddSpouseModal({ person, clanItem, onClose, onSave }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name) return alert("Xin vui lòng nhập danh tánh!");
+    const newErrors = {};
+    // Kiểm tra các trường bắt buộc
+    if (!formData.name.trim()) newErrors.name = "Danh tánh không được để trống";
+    if (!formData.birthDate.trim())
+      newErrors.birthDate = "Xin ghi rõ năm sinh hoặc ngày sinh";
+
+    // Nếu có lỗi, cập nhật state và dừng xử lý
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({}); // Xóa sạch lỗi cũ nếu mọi thứ ổn
 
     setIsProcessing(true);
 
@@ -41,14 +58,31 @@ export default function AddSpouseModal({ person, clanItem, onClose, onSave }) {
         : parseDateInput(formData.deathDate),
     };
 
-    try {
-      // await onSave(formattedData);
-    } catch (error) {
-      console.error("Lỗi khi lưu:", error);
-    } finally {
-      setIsProcessing(false);
-    }
+    addSpouse(clanItem.clanId, formattedData, callBack, handleErr);
   };
+
+  const callBack = (newSpouseId) => {
+    console.log("newSpouseId: ", newSpouseId);
+    onClose();
+    setIsProcessing(false);
+    // router.push(`/pages/detail/${clanId}`);
+  };
+
+  const handleErr = (title, error) => {
+    setIsProcessing(false);
+    onClose();
+    sweetalert2.popupAlert({
+      title: title,
+      text: error,
+    });
+  };
+
+  const renderError = (fieldName) =>
+    errors[fieldName] ? (
+      <p className="text-red-600 text-[10px] font-bold mt-1 uppercase italic tracking-tighter">
+        * {errors[fieldName]}
+      </p>
+    ) : null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-[100]">
@@ -83,10 +117,12 @@ export default function AddSpouseModal({ person, clanItem, onClose, onSave }) {
                 className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 focus:border-[#3d2611] outline-none text-[#3d2611] transition-all disabled:opacity-50"
                 placeholder="Ví dụ: Nguyễn Thị B"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value });
+                  if (errors.name) setErrors({ ...errors, name: null });
+                }}
               />
+              {renderError("name")}
             </div>
             {/* <div>
               <label className="block text-xs font-bold text-[#5d3a1a] uppercase tracking-widest mb-1">
@@ -118,10 +154,13 @@ export default function AddSpouseModal({ person, clanItem, onClose, onSave }) {
                 className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 outline-none text-[#3d2611] disabled:opacity-50"
                 placeholder="VD: 2020 hoặc 15/05/2020"
                 value={formData.birthDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, birthDate: e.target.value })
-                }
+                onChange={(e) => {
+                  setFormData({ ...formData, birthDate: e.target.value });
+                  if (errors.birthDate)
+                    setErrors({ ...errors, birthDate: null });
+                }}
               />
+              {renderError("birthDate")}
             </div>
             <div>
               <div className="flex justify-between items-center mb-1">
@@ -164,9 +203,9 @@ export default function AddSpouseModal({ person, clanItem, onClose, onSave }) {
               className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 outline-none text-[#3d2611] text-sm italic disabled:opacity-50"
               placeholder="Ghi chú tóm tắt..."
               rows="2"
-              value={formData.bio}
+              value={formData.shortDesc}
               onChange={(e) =>
-                setFormData({ ...formData, bio: e.target.value })
+                setFormData({ ...formData, shortDesc: e.target.value })
               }
             />
           </div>

@@ -724,6 +724,8 @@ export const toEthersUsdtDisplay = (amount) => {
 };
 
 export const formatDate = (dateData) => {
+  console.log("dateData: ", dateData);
+
   if (!dateData) return "Không rõ";
 
   // Lấy giá trị year, month, day từ object hoặc array
@@ -742,4 +744,16 @@ export const formatDate = (dateData) => {
   const y = year;
 
   return `${d}/${m}/${y}`;
+};
+
+export const formatDisplayDate = (dateObj) => {
+  if (!dateObj) return "";
+
+  // Nếu tất cả đều là 0, có thể trả về chuỗi trống hoặc "??/??/????" tùy bạn
+  // Ở đây tôi xử lý từng thành phần:
+  const day = dateObj.day === 0 ? "??" : dateObj.day;
+  const month = dateObj.month === 0 ? "??" : dateObj.month;
+  const year = dateObj.year === 0 ? "????" : dateObj.year;
+
+  return `${day}/${month}/${year}`;
 };
