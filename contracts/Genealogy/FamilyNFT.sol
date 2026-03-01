@@ -60,7 +60,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     ) external onlyAuthorized(husbandId) {
         bytes32 spouseId = _createNewPerson(name, descShort, msg.sender, FamilyTypes.Sex.FEMALE, birthDate, deathDate);
 
-        persons[spouseId].spouses.push(spouseId);
+        persons[husbandId].spouses.push(spouseId);
         emit SpouseAdded(husbandId, spouseId);
     }
 

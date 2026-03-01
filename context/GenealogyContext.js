@@ -340,7 +340,7 @@ export const GenealogyProvider = ({ children }) => {
   };
 
   const addSpouse = async (
-    walletAddress,
+    // walletAddress,
     clanId,
     formData,
     callBack,
@@ -349,17 +349,19 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
+      console.log("formData = ", formData, " | clanId: ", clanId);
+
       await contract.addSpouse(
         formData.husbandId,
         formData.name,
-        formData.descShort,
-        formData.birthYear,
-        formData.deathYear,
+        formData.shortDesc,
+        formData.birthDate,
+        formData.deathDate,
       );
 
-      contract.on("SpouseAdded", async (spouseId, husbandId) => {
-        if (walletAddress == husbandId && spouseId == formData.spouseId) {
-          callBack();
+      contract.on("SpouseAdded", async (husbandId, spouseId) => {
+        if (husbandId == formData.husbandId) {
+          callBack(spouseId);
         }
       });
     } catch (error) {

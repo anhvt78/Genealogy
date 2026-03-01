@@ -1976,7 +1976,7 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
 		"remappings": []
@@ -2215,11 +2215,11 @@
 			]
 		},
 		"contracts/Genealogy/FamilyNFT.sol": {
-			"keccak256": "0xa23043580d325ce2c9d129df5d1dbcd18363021f26b96fd8e30302d7e88ca843",
+			"keccak256": "0xca3460f73bb865a162d390ecde738c7237db66a7140873383aa788b146cce426",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e378dd7347bbe64f0ff0921d3c644f6920e824e4783706224e65cebc33db9616",
-				"dweb:/ipfs/QmeMTx9jN25ihzbmU1T6uJrB7F9NtyZhwrXW9pQ5tvHBha"
+				"bzz-raw://b358a0d87b151db8e144a5228508fefb3f5d0b30c9aed98cebc829840d0ce039",
+				"dweb:/ipfs/QmUBnfYcAAhEgQVPZitxU44uvjX2EGYv6Euo42uTWkordM"
 			]
 		},
 		"contracts/Genealogy/FamilyTypes.sol": {

@@ -164,6 +164,8 @@ export default function GenealogyDetail() {
       try {
         const result = await getPersonData(clanId, personId);
 
+        console.log("167. result: ", result);
+
         // Nếu API trả về thất bại ở bất kỳ mắt xích nào
         if (!result.sts) {
           throw new Error(
@@ -192,6 +194,8 @@ export default function GenealogyDetail() {
             };
           }),
         );
+
+        console.log("198. spousesDetails: ", spousesDetails);
 
         const item = {
           id: personId,

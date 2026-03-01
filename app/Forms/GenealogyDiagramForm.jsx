@@ -49,7 +49,7 @@ export default function GenealogyDiagramForm({
   const router = useRouter();
   // Thêm vào trong component FamilyTreePage
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showDaughters, setShowDaughters] = useState(true); // State để gạt ẩn/hiện con gái
+  const [showDaughters, setShowDaughters] = useState(false); // State để gạt ẩn/hiện con gái
   // const { getNFTCollection } = useContext(GenealogyContext);
   // const [mounted, setMounted] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
@@ -292,21 +292,9 @@ export default function GenealogyDiagramForm({
 
             {/* Nút Gạt Ẩn/Hiện Con Gái (Đã thêm Icon Con mắt) */}
             <div className="flex items-center justify-between px-4 py-3 bg-[#5d3a1a] rounded-md text-sm font-semibold">
-              <div className="flex items-center gap-3">
-                {/* <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg> */}
-                {showDaughters ? (
-                  /* Icon Con mắt mở (Khi đang HIỆN) */
+              {showDaughters ? (
+                /* Icon Con mắt mở (Khi đang HIỆN) */
+                <div className="flex items-center gap-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="18"
@@ -320,8 +308,11 @@ export default function GenealogyDiagramForm({
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
-                ) : (
-                  /* Icon Con mắt gạch chéo (Khi đang ẨN) */
+                  <span>Hiện nữ giới</span>
+                </div>
+              ) : (
+                /* Icon Con mắt gạch chéo (Khi đang ẨN) */
+                <div className="flex items-center gap-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="18"
@@ -335,9 +326,11 @@ export default function GenealogyDiagramForm({
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
                     <line x1="1" y1="1" x2="23" y2="23"></line>
                   </svg>
-                )}
-                <span>Ẩn nữ giới</span>
-              </div>
+                  <span>Ẩn nữ giới</span>
+                </div>
+              )}
+              {/* <span>Ẩn nữ giới</span> */}
+
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"

@@ -9,7 +9,7 @@ export default function AddSpouseModal({ person, clanItem, onClose }) {
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
-    fatherId: person.id,
+    husbandId: person.id,
     name: "",
     shortDesc: "",
     birthDate: "",
