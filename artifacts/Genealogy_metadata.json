@@ -75,6 +75,19 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "clanCounter",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "_value",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "string",
@@ -466,19 +479,19 @@
 			]
 		},
 		"contracts/Genealogy/familyNFT.sol": {
-			"keccak256": "0xa23043580d325ce2c9d129df5d1dbcd18363021f26b96fd8e30302d7e88ca843",
+			"keccak256": "0xa3708b81eafbecb6e1311bd4aa85a542d88f57ff581be0d4e98c15c280de73cc",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e378dd7347bbe64f0ff0921d3c644f6920e824e4783706224e65cebc33db9616",
-				"dweb:/ipfs/QmeMTx9jN25ihzbmU1T6uJrB7F9NtyZhwrXW9pQ5tvHBha"
+				"bzz-raw://4cbacc4e45fdf5e463444db3f03d9d61fd62449259a4e02dd4218fb6adf8daa8",
+				"dweb:/ipfs/QmNLshXYmzS4bDhqRJU67c6VvMERzB29ANHPbrLPa4QZBq"
 			]
 		},
 		"contracts/Genealogy/genealogy.sol": {
-			"keccak256": "0x705f8934b312bd94ff36fe4c314db6c244801f0609394e37ceabbd7d89efc1cd",
+			"keccak256": "0x39fb6482297ecb6ed047f13853119a2547d6b05e47efbc138fd48591bd1401ac",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f10a6ba03779849482c81287db95f09cb6c4a89997971d5c16233028bc3d8af6",
-				"dweb:/ipfs/QmajpfhNpnhpoaRkU4iNKoacnqsY4Vvpif2kSeS9YvBP7n"
+				"bzz-raw://3d114d495e59d9d27cf390f05625fd5eb3c561876da0d94e7e685149176d051c",
+				"dweb:/ipfs/QmdMVj57jcDyUjbwhE3qqkKw7F6xk4GKMiiMyoBSmX3gn3"
 			]
 		}
 	},

@@ -358,6 +358,12 @@
 				"anonymous": false,
 				"inputs": [
 					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					},
+					{
 						"indexed": true,
 						"internalType": "bytes32",
 						"name": "fatherId",
@@ -377,10 +383,10 @@
 				"anonymous": false,
 				"inputs": [
 					{
-						"indexed": true,
-						"internalType": "bytes32",
-						"name": "parentId",
-						"type": "bytes32"
+						"indexed": false,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
 					},
 					{
 						"indexed": true,
@@ -534,6 +540,12 @@
 				"anonymous": false,
 				"inputs": [
 					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					},
+					{
 						"indexed": true,
 						"internalType": "bytes32",
 						"name": "husbandId",
@@ -552,6 +564,12 @@
 			{
 				"anonymous": false,
 				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					},
 					{
 						"indexed": true,
 						"internalType": "bytes32",
@@ -639,6 +657,31 @@
 			{
 				"anonymous": false,
 				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "TransferGenealogyOwner",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					},
 					{
 						"indexed": true,
 						"internalType": "bytes32",
@@ -2215,11 +2258,11 @@
 			]
 		},
 		"contracts/Genealogy/FamilyNFT.sol": {
-			"keccak256": "0xca3460f73bb865a162d390ecde738c7237db66a7140873383aa788b146cce426",
+			"keccak256": "0xa3708b81eafbecb6e1311bd4aa85a542d88f57ff581be0d4e98c15c280de73cc",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b358a0d87b151db8e144a5228508fefb3f5d0b30c9aed98cebc829840d0ce039",
-				"dweb:/ipfs/QmUBnfYcAAhEgQVPZitxU44uvjX2EGYv6Euo42uTWkordM"
+				"bzz-raw://4cbacc4e45fdf5e463444db3f03d9d61fd62449259a4e02dd4218fb6adf8daa8",
+				"dweb:/ipfs/QmNLshXYmzS4bDhqRJU67c6VvMERzB29ANHPbrLPa4QZBq"
 			]
 		},
 		"contracts/Genealogy/FamilyTypes.sol": {

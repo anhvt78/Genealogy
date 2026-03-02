@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 import {FamilyNFT} from "./familyNFT.sol";
 import {FamilyTypes} from "./FamilyTypes.sol";
 
 contract Genealogy {
+    using Counters for Counters.Counter;
     mapping(address => address) private _clanIds;
     mapping(address => address) private _owners;
-
+    Counters.Counter public clanCounter;
     event ClanCreated(
         address indexed creatorAddress,
         address indexed nftAddress
@@ -36,6 +38,7 @@ contract Genealogy {
         address clanId = address(familyNFT);
         _clanIds[msg.sender] = clanId;
         _owners[clanId] = msg.sender;
+        clanCounter.increment();
         emit ClanCreated(msg.sender, clanId);
     }
 
@@ -51,6 +54,7 @@ contract Genealogy {
     function removeClanFromOwned(address clanId) external {
         require(_clanIds[msg.sender] == clanId, "Not the owner");
         _clanIds[msg.sender] = address(0);
+        clanCounter.decrement();
         emit ClanRemovedFromOwned(clanId);
     }
 

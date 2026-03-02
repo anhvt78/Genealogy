@@ -18,10 +18,10 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     string public clanShortDesc;
 
     event PersonCreated(bytes32 indexed personId, address ownership);
-    event SpouseAdded(bytes32 indexed husbandId, bytes32 indexed spouseId);
-    event ChildAdded(bytes32 indexed fatherId, bytes32 indexed childId);
+    event SpouseAdded(address sender, bytes32 indexed husbandId, bytes32 indexed spouseId);
+    event ChildAdded(address sender, bytes32 indexed fatherId, bytes32 indexed childId);
     event ClanShortDescChanged(address indexed owner);
-    event UpdatePersonData(bytes32 indexed personId);
+    event UpdatePersonData(address sender, bytes32 indexed personId);
 
     constructor(string memory clanName, 
             string memory clanDesc,
@@ -43,12 +43,12 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         p.birthDate = birthDate;
         p.deathDate = deathDate;
         p.shortDesc = newDescShort;
-        emit UpdatePersonData(personId);
+        emit UpdatePersonData(msg.sender, personId);
     }
 
-    function setClanShortDesc ( string memory newClanShortDesc ) external onlyOwner {
+    function setClanShortDesc (string memory newClanShortDesc ) external onlyOwner {
         clanShortDesc = newClanShortDesc;
-        emit ClanShortDescChanged(owner());
+        emit ClanShortDescChanged(msg.sender);
     }
 
     function addSpouse(
@@ -59,17 +59,15 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         FamilyTypes.DateInfo memory deathDate
     ) external onlyAuthorized(husbandId) {
         bytes32 spouseId = _createNewPerson(name, descShort, msg.sender, FamilyTypes.Sex.FEMALE, birthDate, deathDate);
-
         persons[husbandId].spouses.push(spouseId);
-        emit SpouseAdded(husbandId, spouseId);
+        emit SpouseAdded(msg.sender, husbandId, spouseId);
     }
 
-    event SpouseRemoved(bytes32 indexed husbandId, bytes32 indexed spouseId);
+    event SpouseRemoved(address sender, bytes32 indexed husbandId, bytes32 indexed spouseId);
     function removeSpouse(
         bytes32 husbandId, bytes32 spouseId
     ) external onlyAuthorized(husbandId) {
         FamilyTypes.Person storage husband = persons[husbandId];
-
         for (uint256 i = 0; i < husband.spouses.length; i++) {
             if (husband.spouses[i] == spouseId) {
                 uint256 lastIndex = husband.spouses.length - 1;
@@ -78,7 +76,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
                 }
                 husband.spouses.pop();
 
-                emit SpouseRemoved(husbandId, spouseId);
+                emit SpouseRemoved(msg.sender, husbandId, spouseId);
                 return;
             }
         }
@@ -102,10 +100,10 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
 
         father.children.push(childId);
         persons[childId].fatherId = fatherId;
-        emit ChildAdded(fatherId, childId);
+        emit ChildAdded(msg.sender, fatherId, childId);
     }
 
-    event ChildRemoved(bytes32 indexed parentId, bytes32 indexed childId);
+    event ChildRemoved(address sender, bytes32 indexed childId);
     function removeChild(
         bytes32 parentId,
         bytes32 childId
@@ -124,7 +122,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
                 parent.children.pop();
                 child.fatherId = bytes32(0);
 
-                emit ChildRemoved(parentId, childId);
+                emit ChildRemoved(msg.sender, childId);
                 return;
             }
         }
@@ -154,11 +152,13 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         emit PersonCreated(personId, owner);
     }
 
+    event TransferGenealogyOwner(address owner, address newOwner);
     function transferGenealogyOwner(
         address newOwner
         ) public  {
             require(msg.sender == genealogyAddress, "Not permit");
             _transferOwnership(newOwner);
+            emit TransferGenealogyOwner(msg.sender, newOwner);
     }
 
     function setDataForTokenId(

@@ -277,7 +277,7 @@ export const GenealogyProvider = ({ children }) => {
   };
 
   const addChild = async (
-    // walletAddress,
+    walletAddress,
     clanId,
     formData,
     callBack,
@@ -297,9 +297,9 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathDate,
       );
 
-      contract.on("ChildAdded", async (fatherId, childId) => {
-        if (formData.fatherId == fatherId) {
-          callBack(childId);
+      contract.on("ChildAdded", async (sender, fatherId, newChildId) => {
+        if (walletAddress == sender && formData.fatherId == fatherId) {
+          callBack(newChildId);
         }
       });
     } catch (error) {
@@ -307,14 +307,20 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const removeChild = async (clanId, formData, callBack, handleErr) => {
+  const removeChild = async (
+    walletAddress,
+    clanId,
+    formData,
+    callBack,
+    handleErr,
+  ) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
       await contract.removeChild(formData.fatherId, formData.childId);
 
-      contract.on("ChildRemoved", async (fatherId, childId) => {
-        if (formData.childId == childId) {
+      contract.on("ChildRemoved", async (sender, childId) => {
+        if (walletAddress == sender && formData.childId == childId) {
           callBack();
         }
       });
@@ -323,14 +329,20 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const removeSpouse = async (clanId, formData, callBack, handleErr) => {
+  const removeSpouse = async (
+    walletAddress,
+    clanId,
+    formData,
+    callBack,
+    handleErr,
+  ) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
       await contract.removeSpouse(formData.husbandId, formData.spouseId);
 
-      contract.on("SpouseAdded", async (husbandId, spouseId) => {
-        if (formData.husbandId == husbandId && formData.spouseId == spouseId) {
+      contract.on("SpouseRemoved", async (sender, husbandId, spouseId) => {
+        if (walletAddress == sender && formData.spouseId == spouseId) {
           callBack();
         }
       });
@@ -340,7 +352,7 @@ export const GenealogyProvider = ({ children }) => {
   };
 
   const addSpouse = async (
-    // walletAddress,
+    walletAddress,
     clanId,
     formData,
     callBack,
@@ -359,9 +371,9 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathDate,
       );
 
-      contract.on("SpouseAdded", async (husbandId, spouseId) => {
-        if (husbandId == formData.husbandId) {
-          callBack(spouseId);
+      contract.on("SpouseAdded", async (sender, husbandId, newSpouseId) => {
+        if (sender == walletAddress && husbandId == formData.husbandId) {
+          callBack(newSpouseId);
         }
       });
     } catch (error) {
@@ -369,7 +381,13 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const updatePersonData = async (clanId, formData, callBack, handleErr) => {
+  const updatePersonData = async (
+    walletAddress,
+    clanId,
+    formData,
+    callBack,
+    handleErr,
+  ) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
       console.log("382: formData: ", formData);
@@ -381,8 +399,8 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathYear,
       );
 
-      contract.on("UpdatePersonData", async (personId) => {
-        if (personId == formData.personId) {
+      contract.on("UpdatePersonData", async (sender, personId) => {
+        if (walletAddress == sender && personId == formData.personId) {
           callBack();
         }
       });

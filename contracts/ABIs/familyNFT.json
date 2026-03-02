@@ -354,6 +354,12 @@
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
+			{
 				"indexed": true,
 				"internalType": "bytes32",
 				"name": "fatherId",
@@ -373,10 +379,10 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
-				"internalType": "bytes32",
-				"name": "parentId",
-				"type": "bytes32"
+				"indexed": false,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
 			},
 			{
 				"indexed": true,
@@ -530,6 +536,12 @@
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
+			{
 				"indexed": true,
 				"internalType": "bytes32",
 				"name": "husbandId",
@@ -548,6 +560,12 @@
 	{
 		"anonymous": false,
 		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
 			{
 				"indexed": true,
 				"internalType": "bytes32",
@@ -635,6 +653,31 @@
 	{
 		"anonymous": false,
 		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "TransferGenealogyOwner",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
 			{
 				"indexed": true,
 				"internalType": "bytes32",
