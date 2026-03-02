@@ -469,7 +469,7 @@ export default function DetailSidebar({
                       href={`https://universaleverything.io/asset/${clanItem.clanId}/tokenId/${person.id}?network=testnet`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center text-[#8b5a2b] hover:opacity-70 transition-opacity"
+                      className="flex border border-[#8b5a2b]/10 size-10 items-center justify-center rounded-full transition-all duration-300 bg-neutral-97 cursor-pointer hover:scale-105 hover:bg-neutral-95"
                       title="Cập nhật thông tin chi tiết trên Blockchain"
                     >
                       {/* <svg
