@@ -362,13 +362,13 @@
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "fatherId",
+				"name": "parentId",
 				"type": "bytes32"
 			},
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "childId",
+				"name": "newChildId",
 				"type": "bytes32"
 			}
 		],
@@ -544,13 +544,13 @@
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "husbandId",
+				"name": "personId",
 				"type": "bytes32"
 			},
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "spouseId",
+				"name": "newSpouseId",
 				"type": "bytes32"
 			}
 		],
@@ -569,7 +569,7 @@
 			{
 				"indexed": true,
 				"internalType": "bytes32",
-				"name": "husbandId",
+				"name": "personId",
 				"type": "bytes32"
 			},
 			{
@@ -696,7 +696,7 @@
 		"inputs": [
 			{
 				"internalType": "bytes32",
-				"name": "fatherId",
+				"name": "parentId",
 				"type": "bytes32"
 			},
 			{
@@ -768,7 +768,7 @@
 		"inputs": [
 			{
 				"internalType": "bytes32",
-				"name": "husbandId",
+				"name": "personId",
 				"type": "bytes32"
 			},
 			{
@@ -1042,12 +1042,7 @@
 					},
 					{
 						"internalType": "bytes32",
-						"name": "fatherId",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "motherId",
+						"name": "parentId",
 						"type": "bytes32"
 					},
 					{
@@ -1195,7 +1190,7 @@
 		"inputs": [
 			{
 				"internalType": "bytes32",
-				"name": "husbandId",
+				"name": "personId",
 				"type": "bytes32"
 			},
 			{

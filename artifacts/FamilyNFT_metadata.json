@@ -366,13 +366,13 @@
 					{
 						"indexed": true,
 						"internalType": "bytes32",
-						"name": "fatherId",
+						"name": "parentId",
 						"type": "bytes32"
 					},
 					{
 						"indexed": true,
 						"internalType": "bytes32",
-						"name": "childId",
+						"name": "newChildId",
 						"type": "bytes32"
 					}
 				],
@@ -548,13 +548,13 @@
 					{
 						"indexed": true,
 						"internalType": "bytes32",
-						"name": "husbandId",
+						"name": "personId",
 						"type": "bytes32"
 					},
 					{
 						"indexed": true,
 						"internalType": "bytes32",
-						"name": "spouseId",
+						"name": "newSpouseId",
 						"type": "bytes32"
 					}
 				],
@@ -573,7 +573,7 @@
 					{
 						"indexed": true,
 						"internalType": "bytes32",
-						"name": "husbandId",
+						"name": "personId",
 						"type": "bytes32"
 					},
 					{
@@ -700,7 +700,7 @@
 				"inputs": [
 					{
 						"internalType": "bytes32",
-						"name": "fatherId",
+						"name": "parentId",
 						"type": "bytes32"
 					},
 					{
@@ -772,7 +772,7 @@
 				"inputs": [
 					{
 						"internalType": "bytes32",
-						"name": "husbandId",
+						"name": "personId",
 						"type": "bytes32"
 					},
 					{
@@ -1046,12 +1046,7 @@
 							},
 							{
 								"internalType": "bytes32",
-								"name": "fatherId",
-								"type": "bytes32"
-							},
-							{
-								"internalType": "bytes32",
-								"name": "motherId",
+								"name": "parentId",
 								"type": "bytes32"
 							},
 							{
@@ -1199,7 +1194,7 @@
 				"inputs": [
 					{
 						"internalType": "bytes32",
-						"name": "husbandId",
+						"name": "personId",
 						"type": "bytes32"
 					},
 					{
@@ -2258,19 +2253,19 @@
 			]
 		},
 		"contracts/Genealogy/FamilyNFT.sol": {
-			"keccak256": "0xa3708b81eafbecb6e1311bd4aa85a542d88f57ff581be0d4e98c15c280de73cc",
+			"keccak256": "0x6bf70d54f0d0654508b95197cab25685e69fd1661ba35854b906ed89ed37fd29",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4cbacc4e45fdf5e463444db3f03d9d61fd62449259a4e02dd4218fb6adf8daa8",
-				"dweb:/ipfs/QmNLshXYmzS4bDhqRJU67c6VvMERzB29ANHPbrLPa4QZBq"
+				"bzz-raw://30a1c2a50c9e580556088a534053aa951f97d91ffad763e5fea409308886b279",
+				"dweb:/ipfs/QmNwRBNJvAiqy9jqDvw9cr9rqFH4aYmKvJBoRzLYNPVE5w"
 			]
 		},
 		"contracts/Genealogy/FamilyTypes.sol": {
-			"keccak256": "0x7dc67ace35acbb9498c07a82d82d9623d4fdc0d92f982d3257f339ded1853bd2",
+			"keccak256": "0x9adf6e6810c68e273e688e5d2e74f68c60e8d3d985f1ef99ccacb66a1e5bfd7f",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://d8572f6986c15dc28843921fe322f1e506db69e06b3719c5783019351cabf491",
-				"dweb:/ipfs/QmRBdxqM7eg8BehFfaP9Chm1kVS4oDziRscW2CDETQRyXL"
+				"bzz-raw://65a439ea4484c6ee9b495182604494e8ac103a2f2fdaf4f15b38d5da3a268074",
+				"dweb:/ipfs/Qme7a9ysqCBKQE7HXxs3u4xgQNxr2xuUyCXdY5TB1DjxZK"
 			]
 		}
 	},

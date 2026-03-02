@@ -45,7 +45,7 @@ export default function ClanDiagram({ clanId }) {
   const router = useRouter();
   // Thêm vào trong component FamilyTreePage
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showDaughters, setShowDaughters] = useState(true); // State để gạt ẩn/hiện con gái
+  const [showFemales, setShowFemales] = useState(true); // State để gạt ẩn/hiện con gái
   const { getNFTCollection } = useContext(GenealogyContext);
   // const [mounted, setMounted] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
@@ -111,7 +111,7 @@ export default function ClanDiagram({ clanId }) {
             child.parents?.includes(p.id),
           ),
           onNodeClick: (nodeData) => setSelectedPerson(nodeData),
-          wifeNumber: p.wives?.length || 0,
+          spouseNumber: p.spouses?.length || 0,
           onAddChild: (id) =>
             setModalState({ isOpen: true, type: "child", targetId: id }),
           onAddSpouse: (id) =>
@@ -269,8 +269,8 @@ export default function ClanDiagram({ clanId }) {
                 <input
                   type="checkbox"
                   className="sr-only peer"
-                  checked={showDaughters}
-                  onChange={() => setShowDaughters(!showDaughters)}
+                  checked={showFemales}
+                  onChange={() => setShowFemales(!showFemales)}
                 />
                 <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
               </label>
@@ -291,7 +291,7 @@ export default function ClanDiagram({ clanId }) {
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                   <circle cx="12" cy="12" r="3" />
                 </svg> */}
-                {showDaughters ? (
+                {showFemales ? (
                   /* Icon Con mắt mở (Khi đang HIỆN) */
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -328,8 +328,8 @@ export default function ClanDiagram({ clanId }) {
                 <input
                   type="checkbox"
                   className="sr-only peer"
-                  checked={showDaughters}
-                  onChange={() => setShowDaughters(!showDaughters)}
+                  checked={showFemales}
+                  onChange={() => setShowFemales(!showFemales)}
                 />
                 <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
               </label>

@@ -18,8 +18,8 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     string public clanShortDesc;
 
     event PersonCreated(bytes32 indexed personId, address ownership);
-    event SpouseAdded(address sender, bytes32 indexed husbandId, bytes32 indexed spouseId);
-    event ChildAdded(address sender, bytes32 indexed fatherId, bytes32 indexed childId);
+    event SpouseAdded(address sender, bytes32 indexed personId, bytes32 indexed newSpouseId);
+    event ChildAdded(address sender, bytes32 indexed parentId, bytes32 indexed newChildId);
     event ClanShortDescChanged(address indexed owner);
     event UpdatePersonData(address sender, bytes32 indexed personId);
 
@@ -52,31 +52,34 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     }
 
     function addSpouse(
-        bytes32 husbandId,
+        bytes32 personId,
         string memory name,
         string memory descShort,
         FamilyTypes.DateInfo memory birthDate,
         FamilyTypes.DateInfo memory deathDate
-    ) external onlyAuthorized(husbandId) {
-        bytes32 spouseId = _createNewPerson(name, descShort, msg.sender, FamilyTypes.Sex.FEMALE, birthDate, deathDate);
-        persons[husbandId].spouses.push(spouseId);
-        emit SpouseAdded(msg.sender, husbandId, spouseId);
+    ) external onlyAuthorized(personId) {
+        FamilyTypes.Sex sex = (persons[personId].sex == FamilyTypes.Sex.MALE) 
+        ? FamilyTypes.Sex.FEMALE 
+        : FamilyTypes.Sex.MALE;
+        bytes32 spouseId = _createNewPerson(name, descShort, msg.sender, sex, birthDate, deathDate);
+        persons[personId].spouses.push(spouseId);
+        emit SpouseAdded(msg.sender, personId, spouseId);
     }
 
-    event SpouseRemoved(address sender, bytes32 indexed husbandId, bytes32 indexed spouseId);
+    event SpouseRemoved(address sender, bytes32 indexed personId, bytes32 indexed spouseId);
     function removeSpouse(
-        bytes32 husbandId, bytes32 spouseId
-    ) external onlyAuthorized(husbandId) {
-        FamilyTypes.Person storage husband = persons[husbandId];
-        for (uint256 i = 0; i < husband.spouses.length; i++) {
-            if (husband.spouses[i] == spouseId) {
-                uint256 lastIndex = husband.spouses.length - 1;
+        bytes32 personId, bytes32 spouseId
+    ) external onlyAuthorized(personId) {
+        FamilyTypes.Person storage person = persons[personId];
+        for (uint256 i = 0; i < person.spouses.length; i++) {
+            if (person.spouses[i] == spouseId) {
+                uint256 lastIndex = person.spouses.length - 1;
                 if (i != lastIndex) {
-                    husband.spouses[i] = husband.spouses[lastIndex];
+                    person.spouses[i] = person.spouses[lastIndex];
                 }
-                husband.spouses.pop();
+                person.spouses.pop();
 
-                emit SpouseRemoved(msg.sender, husbandId, spouseId);
+                emit SpouseRemoved(msg.sender, personId, spouseId);
                 return;
             }
         }
@@ -85,22 +88,22 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
     }
 
     function addChild(
-        bytes32 fatherId,
+        bytes32 parentId,
         string memory childName,
         string memory shortDesc,
         FamilyTypes.Sex sex,
         FamilyTypes.DateInfo memory birthDate,
         FamilyTypes.DateInfo memory deathDate
         
-    ) external onlyAuthorized(fatherId){
+    ) external onlyAuthorized(parentId){
     
-        FamilyTypes.Person storage father = persons[fatherId];
+        FamilyTypes.Person storage person = persons[parentId];
 
         bytes32 childId = _createNewPerson(childName, shortDesc, msg.sender, sex, birthDate, deathDate);
 
-        father.children.push(childId);
-        persons[childId].fatherId = fatherId;
-        emit ChildAdded(msg.sender, fatherId, childId);
+        person.children.push(childId);
+        persons[childId].parentId = parentId;
+        emit ChildAdded(msg.sender, parentId, childId);
     }
 
     event ChildRemoved(address sender, bytes32 indexed childId);
@@ -111,7 +114,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
         FamilyTypes.Person storage parent = persons[parentId];
         FamilyTypes.Person storage child = persons[childId];
 
-        require(child.fatherId == parentId, "Not child of this person");
+        require(child.parentId == parentId, "Not child of this person");
         for (uint256 i = 0; i < parent.children.length; i++) {
             if (parent.children[i] == childId) {
                 // Swap với phần tử cuối và pop
@@ -120,7 +123,7 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
                     parent.children[i] = parent.children[lastIndex];
                 }
                 parent.children.pop();
-                child.fatherId = bytes32(0);
+                child.parentId = bytes32(0);
 
                 emit ChildRemoved(msg.sender, childId);
                 return;

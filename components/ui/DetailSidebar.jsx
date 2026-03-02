@@ -11,6 +11,7 @@ import { GenealogyContext } from "@/context/GenealogyContext";
 import AddSpouseModal from "./AddSpouseModal";
 import AddChildModal from "./AddChildModal";
 import UpdateMemberModal from "./UpdateMemberModal";
+import { useSelector } from "react-redux";
 
 const ANCESTOR_ID =
   "0x0000000000000000000000000000000000000000000000000000000000000001";
@@ -21,6 +22,7 @@ export default function DetailSidebar({
   onClose,
   // onAddChild,
   // onAddSpouse,
+  fetchDataDialog,
 }) {
   console.log("21. person: ", person);
 
@@ -104,11 +106,11 @@ export default function DetailSidebar({
   const [modalAddChildState, setModalAddChildState] = useState(false);
   const [modalUpdateState, setModalUpdateState] = useState(false);
 
-  // const userWalletAddress = useSelector(
-  //   (state) => state.genealogyReducer.walletAddress,
-  // );
+  const userWalletAddress = useSelector(
+    (state) => state.genealogyReducer.walletAddress,
+  );
 
-  const userWalletAddress = "0x7D351Aad461ea7FE599Ba572eFEf0d8bF8c0B9cC";
+  // const userWalletAddress = "0x7D351Aad461ea7FE599Ba572eFEf0d8bF8c0B9cC";
 
   console.log("userWalletAddress: ", userWalletAddress);
 
@@ -179,33 +181,52 @@ export default function DetailSidebar({
 
                 <div className="absolute left-0 mt-2 w-56 bg-white border border-[#8b5a2b]/20 shadow-xl rounded-md overflow-hidden animate-in fade-in zoom-in duration-200">
                   {/* Nhóm: Thêm mới */}
-                  <div className="bg-[#fdf8e9]/50 px-3 py-1 text-[10px] font-bold text-[#8b5a2b] uppercase border-b border-[#8b5a2b]/10">
-                    Thêm thành viên
-                  </div>
-                  <button
-                    onClick={() => {
-                      setModalAddChildState(true);
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-3 text-xs font-semibold text-[#3d2611] hover:bg-[#fdf8e9] transition-colors flex items-center gap-2"
-                  >
-                    <span className="text-lg">+</span> Thêm con trực hệ
-                  </button>
+                  {!person.isSpouse && (
+                    <>
+                      <div className="bg-[#fdf8e9]/50 px-3 py-1 text-[10px] font-bold text-[#8b5a2b] uppercase border-b border-[#8b5a2b]/10">
+                        Thêm thành viên
+                      </div>
+                      <button
+                        onClick={() => {
+                          setModalAddChildState(true);
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-3 text-xs font-semibold text-[#3d2611] hover:bg-[#fdf8e9] transition-colors flex items-center gap-2"
+                      >
+                        <span className="text-lg">+</span> Thêm con cái
+                      </button>
 
-                  {person.gender === "male" && (
-                    <button
-                      onClick={() => {
-                        setModalState({
-                          isOpen: true,
-                          type: "spouse",
-                          targetId: person.id,
-                        });
-                        setIsMenuOpen(false);
-                      }}
-                      className="w-full text-left px-4 py-3 text-xs font-semibold text-[#3d2611] hover:bg-[#fdf8e9] transition-colors flex items-center gap-2"
-                    >
-                      <span className="text-lg">+</span> Thêm Phu nhân (Vợ)
-                    </button>
+                      {person.gender === "male" ? (
+                        <button
+                          onClick={() => {
+                            setModalState({
+                              isOpen: true,
+                              type: "spouse",
+                              targetId: person.id,
+                            });
+                            setIsMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-3 text-xs font-semibold text-[#3d2611] hover:bg-[#fdf8e9] transition-colors flex items-center gap-2"
+                        >
+                          <span className="text-lg">+</span> Thêm Phu nhân (Vợ)
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setModalState({
+                              isOpen: true,
+                              type: "spouse",
+                              targetId: person.id,
+                            });
+                            setIsMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-3 text-xs font-semibold text-[#3d2611] hover:bg-[#fdf8e9] transition-colors flex items-center gap-2"
+                        >
+                          <span className="text-lg">+</span> Thêm Phu Quân
+                          (Chồng)
+                        </button>
+                      )}
+                    </>
                   )}
 
                   {/* Nhóm: Chỉnh sửa */}
@@ -238,7 +259,7 @@ export default function DetailSidebar({
                     </svg>
                     Cập nhật thông tin
                   </button>
-                  {person?.hasChildren && person?.id != ANCESTOR_ID && (
+                  {!person?.hasChildren && person?.id != ANCESTOR_ID && (
                     <button
                       onClick={() => {
                         if (
@@ -421,7 +442,7 @@ export default function DetailSidebar({
                       “
                     </span>
                     <p className="text-[#3d2611] italic leading-relaxed pt-4 px-4 text-sm">
-                      {person.bio ||
+                      {person.shortDesc ||
                         "Chưa có dữ liệu tiểu sử ghi chép cho thành viên này."}
                     </p>
                     <span className="absolute bottom-0 right-0 text-4xl text-[#8b5a2b]/20 font-serif">
@@ -480,6 +501,7 @@ export default function DetailSidebar({
             person={person}
             clanItem={clanItem}
             type={modalState.type}
+            fetchDataDialog={fetchDataDialog}
             // targetId={modalState.targetId}
           />
         )}
@@ -498,6 +520,7 @@ export default function DetailSidebar({
             person={person}
             clanItem={clanItem}
             type={modalState.type}
+            fetchDataDialog={fetchDataDialog}
             // targetId={modalState.targetId}
           />
         )}
@@ -506,6 +529,7 @@ export default function DetailSidebar({
             onClose={() => setModalUpdateState(false)}
             person={person}
             clanItem={clanItem}
+            fetchDataDialog={fetchDataDialog}
           />
         )}
       </div>

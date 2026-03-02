@@ -724,7 +724,7 @@ export const toEthersUsdtDisplay = (amount) => {
 };
 
 export const formatDate = (dateData) => {
-  console.log("dateData: ", dateData);
+  // console.log("dateData: ", dateData);
 
   if (!dateData) return "Không rõ";
 

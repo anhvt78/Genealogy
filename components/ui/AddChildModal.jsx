@@ -2,14 +2,20 @@ import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import { GenealogyContext } from "@/context/GenealogyContext";
 import sweetalert2 from "@/configs/swal";
+import { useSelector } from "react-redux";
 
-export default function AddChildModal({ person, clanItem, onClose }) {
+export default function AddChildModal({
+  person,
+  clanItem,
+  onClose,
+  fetchDataDialog,
+}) {
   const [isStillAlive, setIsStillAlive] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
-    fatherId: person.id,
+    parentId: person.id,
     name: "",
     shortDesc: "",
     gender: 0,
@@ -18,6 +24,10 @@ export default function AddChildModal({ person, clanItem, onClose }) {
   });
 
   const { addChild } = useContext(GenealogyContext);
+
+  const userWalletAddress = useSelector(
+    (state) => state.genealogyReducer.walletAddress,
+  );
 
   // Hàm bóc tách ngày tháng năm từ chuỗi nhập vào giống ClanListForm
   const parseDateInput = (dateStr) => {
@@ -68,6 +78,7 @@ export default function AddChildModal({ person, clanItem, onClose }) {
     );
 
     addChild(
+      userWalletAddress,
       clanItem.clanId,
       formattedData,
       callBack,
@@ -79,6 +90,7 @@ export default function AddChildModal({ person, clanItem, onClose }) {
     console.log("newChildId: ", newChildId);
     onClose();
     setIsProcessing(false);
+    fetchDataDialog();
     // router.push(`/pages/detail/${clanId}`);
   };
 

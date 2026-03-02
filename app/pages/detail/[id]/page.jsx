@@ -94,11 +94,7 @@ export default function GenealogyDetail() {
 
     fetchDataDetail();
 
-    const ancestorId = numberToByte32(1);
-
-    console.log("ancestorId: ", ancestorId);
-
-    fetchDataDialog(ancestorId);
+    fetchDataDialog();
   }, [clanId]);
 
   const fetchDataDetail = async () => {
@@ -152,11 +148,14 @@ export default function GenealogyDetail() {
     }
   };
 
-  const fetchDataDialog = async (rootPersonId) => {
+  const fetchDataDialog = async () => {
     setLoadingClanDialog(true);
+    const ancestorId = numberToByte32(1);
+
+    console.log("ancestorId: ", ancestorId);
     const tempList = [];
 
-    console.log("159. rootPersonId: ", rootPersonId);
+    console.log("159. ancestorId: ", ancestorId);
 
     const traverse = async (personId) => {
       console.log("231. personId: ", personId);
@@ -178,19 +177,20 @@ export default function GenealogyDetail() {
         // Xử lý Spouses
         const spousesDetails = await Promise.all(
           data.spouses.map(async (el) => {
-            const spouseResult = await getPersonData(clanId, el.spouseId);
+            const spouseResult = await getPersonData(clanId, el);
             if (!spouseResult.sts) {
               throw new Error(
                 `Lỗi khi tải thông tin vợ/chồng của ${data.name}`,
               );
             }
             return {
-              id: el.spouseId,
+              id: el,
               name: spouseResult.data.name,
               birthYear: spouseResult.data.birthDate,
               deathYear: spouseResult.data.deathDate,
-              bio: spouseResult.data.shortDesc,
+              shortDesc: spouseResult.data.shortDesc,
               gender: GENDER_MAP[spouseResult.data.sex] || "undefined",
+              isSpouse: true,
             };
           }),
         );
@@ -203,9 +203,9 @@ export default function GenealogyDetail() {
           gender: GENDER_MAP[data.sex] || "undefined",
           birthYear: data.birthDate,
           deathYear: data.deathDate,
-          bio: data.shortDesc,
-          parents: data.fatherId !== NONE_ID ? [data.fatherId] : [],
-          wives: spousesDetails,
+          shortDesc: data.shortDesc,
+          parents: data.parentId !== NONE_ID ? [data.parentId] : [],
+          spouses: spousesDetails,
         };
 
         tempList.push(item);
@@ -224,7 +224,7 @@ export default function GenealogyDetail() {
 
     try {
       // Bắt đầu quá trình đệ quy
-      await traverse(rootPersonId);
+      await traverse(ancestorId);
 
       // Nếu thành công hết mới cập nhật State
       setFamilyData(tempList);
@@ -272,6 +272,7 @@ export default function GenealogyDetail() {
               clanItem={clanItem}
               familyData={familyData}
               setTabIndex={setTabIndex}
+              fetchDataDialog={fetchDataDialog}
             />
           ) : (
             <div className="flex-1 flex items-center justify-center font-serif">

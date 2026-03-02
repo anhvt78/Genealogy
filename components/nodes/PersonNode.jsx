@@ -25,7 +25,7 @@ import PersonCard from "@/components/nodes/PersonCard";
 //       </div>
 //       <div className="mt-2 flex items-center justify-center h-[32px]">
 //         <div className="text-[10px] italic text-[#5d3a1a]/80 text-center leading-[16px] max-w-[180px] line-clamp-2 overflow-hidden">
-//           {person.bio}
+//           {person.shortDesc}
 //         </div>
 //       </div>
 //       <div className="text-[10px] mt-2 opacity-70 font-mono">
@@ -36,6 +36,8 @@ import PersonCard from "@/components/nodes/PersonCard";
 // );
 
 export default function PersonNode({ data }) {
+  console.log("39. data = ", data);
+
   const isMale = data.gender === "male";
 
   return (
@@ -96,16 +98,18 @@ export default function PersonNode({ data }) {
         </div>
 
         {/* Danh sách vợ */}
-        {data.wives && data.wives.length > 0 && (
+        {data.showFemales && data.spouses && data.spouses.length > 0 && (
           <div className="flex flex-row items-center animate-in fade-in slide-in-from-left-5 duration-300">
-            {data.wives.map((wife, index) => (
+            {data.spouses.map((spouse, index) => (
               <div key={index} className="flex flex-row items-center">
                 <div className="w-2 border-t-2 border-dashed border-[#8b5a2b]/40"></div>
                 <div className="relative">
                   <PersonCard
                     data={data}
-                    person={wife}
-                    subTitle={isMale ? `Vợ ${index + 1}` : `Phu Quân`}
+                    person={spouse}
+                    subTitle={
+                      isMale ? `Vợ ${index + 1}` : `Phu Quân ${index + 1}`
+                    }
                     isMain={false}
                     onNodeSelect={data.onNodeClick}
                   />

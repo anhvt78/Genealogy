@@ -15,7 +15,7 @@ export const getLayoutedElements = (nodes, edges) => {
 
   nodes.forEach((node) => {
     const width =
-      node.type === "clanTitle" ? 500 : 220 + node.data.wifeNumber * 220;
+      node.type === "clanTitle" ? 500 : 220 + node.data.spouseNumber * 220;
     const height = node.type === "clanTitle" ? 150 : 150;
     dagreGraph.setNode(node.id, { width, height });
   });
@@ -46,9 +46,9 @@ export const getLayoutedElements = (nodes, edges) => {
       return { ...node, position: { x: ancestorDagre.x - 280, y: 20 } };
     }
 
-    // delta += node.data.wifeNumber * 280;
+    // delta += node.data.spouseNumber * 280;
 
-    // console.log("node = ", node.data.wifeNumber, " | dagreNode = ", dagreNode);
+    // console.log("node = ", node.data.spouseNumber, " | dagreNode = ", dagreNode);
 
     return {
       ...node,

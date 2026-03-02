@@ -3,8 +3,14 @@ import { motion } from "framer-motion";
 import { formatDisplayDate } from "../Utils/helpers";
 import sweetalert2 from "@/configs/swal";
 import { GenealogyContext } from "@/context/GenealogyContext";
+import { useSelector } from "react-redux";
 
-export default function UpdateMemberModal({ person, clanItem, onClose }) {
+export default function UpdateMemberModal({
+  person,
+  clanItem,
+  onClose,
+  fetchDataDialog,
+}) {
   const [isStillAlive, setIsStillAlive] = useState(
     person?.deathDate?.year === 0,
   );
@@ -17,10 +23,14 @@ export default function UpdateMemberModal({ person, clanItem, onClose }) {
     // Chuyển object ngày tháng thành chuỗi DD/MM/YYYY ngay khi khởi tạo
     birthYear: formatDisplayDate(person?.birthYear),
     deathYear: formatDisplayDate(person?.deathYear),
-    bio: person?.bio,
+    shortDesc: person?.shortDesc,
   });
 
   const { updatePersonData } = useContext(GenealogyContext);
+
+  const userWalletAddress = useSelector(
+    (state) => state.genealogyReducer.walletAddress,
+  );
 
   const parseDateInput = (dateStr) => {
     console.log("dateStr: ", dateStr);
@@ -73,13 +83,20 @@ export default function UpdateMemberModal({ person, clanItem, onClose }) {
         : parseDateInput(formData.deathYear),
     };
 
-    updatePersonData(clanItem.clanId, formattedData, callBack, handleErr);
+    updatePersonData(
+      userWalletAddress,
+      clanItem.clanId,
+      formattedData,
+      callBack,
+      handleErr,
+    );
   };
 
   const callBack = (newChildId) => {
     // console.log("newChildId: ", newChildId);
     onClose();
     setIsProcessing(false);
+    fetchDataDialog();
     // router.push(`/pages/detail/${clanId}`);
   };
 
@@ -204,9 +221,9 @@ export default function UpdateMemberModal({ person, clanItem, onClose }) {
               className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 outline-none text-[#3d2611] text-sm italic disabled:opacity-50"
               placeholder="Ghi chú về học vấn, sự nghiệp..."
               rows="2"
-              value={formData.bio}
+              value={formData.shortDesc}
               onChange={(e) =>
-                setFormData({ ...formData, bio: e.target.value })
+                setFormData({ ...formData, shortDesc: e.target.value })
               }
             />
           </div>

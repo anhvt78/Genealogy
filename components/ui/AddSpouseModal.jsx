@@ -2,14 +2,20 @@ import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import { GenealogyContext } from "@/context/GenealogyContext";
 import sweetalert2 from "@/configs/swal";
+import { useSelector } from "react-redux";
 
-export default function AddSpouseModal({ person, clanItem, onClose }) {
+export default function AddSpouseModal({
+  person,
+  clanItem,
+  onClose,
+  fetchDataDialog,
+}) {
   const [isStillAlive, setIsStillAlive] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
-    husbandId: person.id,
+    personId: person.id,
     name: "",
     shortDesc: "",
     birthDate: "",
@@ -17,6 +23,10 @@ export default function AddSpouseModal({ person, clanItem, onClose }) {
   });
 
   const { addSpouse } = useContext(GenealogyContext);
+
+  const userWalletAddress = useSelector(
+    (state) => state.genealogyReducer.walletAddress,
+  );
 
   // Hàm bóc tách ngày tháng năm linh hoạt
   const parseDateInput = (dateStr) => {
@@ -58,13 +68,20 @@ export default function AddSpouseModal({ person, clanItem, onClose }) {
         : parseDateInput(formData.deathDate),
     };
 
-    addSpouse(clanItem.clanId, formattedData, callBack, handleErr);
+    addSpouse(
+      userWalletAddress,
+      clanItem.clanId,
+      formattedData,
+      callBack,
+      handleErr,
+    );
   };
 
   const callBack = (newSpouseId) => {
     console.log("newSpouseId: ", newSpouseId);
     onClose();
     setIsProcessing(false);
+    fetchDataDialog();
     // router.push(`/pages/detail/${clanId}`);
   };
 

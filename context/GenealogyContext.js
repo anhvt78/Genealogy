@@ -289,7 +289,7 @@ export const GenealogyProvider = ({ children }) => {
       console.log("Dữ liệu AddChild: ", formData);
 
       await contract.addChild(
-        formData.fatherId,
+        formData.parentId,
         formData.name,
         formData.shortDesc,
         formData.gender,
@@ -297,8 +297,8 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathDate,
       );
 
-      contract.on("ChildAdded", async (sender, fatherId, newChildId) => {
-        if (walletAddress == sender && formData.fatherId == fatherId) {
+      contract.on("ChildAdded", async (sender, parentId, newChildId) => {
+        if (walletAddress == sender && formData.parentId == parentId) {
           callBack(newChildId);
         }
       });
@@ -317,7 +317,7 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      await contract.removeChild(formData.fatherId, formData.childId);
+      await contract.removeChild(formData.parentId, formData.childId);
 
       contract.on("ChildRemoved", async (sender, childId) => {
         if (walletAddress == sender && formData.childId == childId) {
@@ -339,10 +339,10 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      await contract.removeSpouse(formData.husbandId, formData.spouseId);
+      await contract.removeSpouse(formData.personId, formData.spouseId);
 
-      contract.on("SpouseRemoved", async (sender, husbandId, spouseId) => {
-        if (walletAddress == sender && formData.spouseId == spouseId) {
+      contract.on("SpouseRemoved", async (sender, personId, spouseId) => {
+        if (walletAddress == sender && formData.personId == spouseId) {
           callBack();
         }
       });
@@ -364,15 +364,15 @@ export const GenealogyProvider = ({ children }) => {
       console.log("formData = ", formData, " | clanId: ", clanId);
 
       await contract.addSpouse(
-        formData.husbandId,
+        formData.personId,
         formData.name,
         formData.shortDesc,
         formData.birthDate,
         formData.deathDate,
       );
 
-      contract.on("SpouseAdded", async (sender, husbandId, newSpouseId) => {
-        if (sender == walletAddress && husbandId == formData.husbandId) {
+      contract.on("SpouseAdded", async (sender, personId, newSpouseId) => {
+        if (sender == walletAddress && personId == formData.personId) {
           callBack(newSpouseId);
         }
       });
@@ -394,7 +394,7 @@ export const GenealogyProvider = ({ children }) => {
       await contract.updatePersonData(
         formData.personId,
         formData.name,
-        formData.bio,
+        formData.shortDesc,
         formData.birthYear,
         formData.deathYear,
       );

@@ -35,8 +35,8 @@ library FamilyTypes {
 
     struct Person {
         string name;          
-        bytes32 fatherId;
-        bytes32 motherId;
+        bytes32 parentId;
+        // bytes32 motherId;
         bytes32[] children;
         bytes32[] spouses;
         Sex sex;

@@ -6,16 +6,16 @@ export const initialFamilyData = [
     gender: "male",
     birthYear: "1900",
     deathYear: "1975",
-    bio: "Khởi tổ dòng họ, khai hoang lập ấp tại vùng đất phía Nam.",
+    shortDesc: "Khởi tổ dòng họ, khai hoang lập ấp tại vùng đất phía Nam.",
     parents: [],
     // Danh sách các phu nhân được gom vào đây
-    wives: [
+    spouses: [
       {
         id: "2",
         name: "Lê Thị Tổ",
         birthYear: "1905",
         deathYear: "1980",
-        bio: "Mẫu nghi chính thất, thục đức vẹn toàn.",
+        shortDesc: "Mẫu nghi chính thất, thục đức vẹn toàn.",
       },
     ],
   },
@@ -26,22 +26,22 @@ export const initialFamilyData = [
     gender: "male",
     birthYear: "1925",
     deathYear: "1990",
-    bio: "Trưởng tộc đời thứ 2, Lương y nổi tiếng vùng kinh kỳ.",
+    shortDesc: "Trưởng tộc đời thứ 2, Lương y nổi tiếng vùng kinh kỳ.",
     parents: ["1"], // Nối trực tiếp từ mã ID của cha
-    wives: [
+    spouses: [
       {
         id: "4",
         name: "Trần Thị Dâu",
         birthYear: "1928",
         deathYear: "1995",
-        bio: "Phụ giúp chồng bốc thuốc cứu người.",
+        shortDesc: "Phụ giúp chồng bốc thuốc cứu người.",
       },
       {
         id: "4",
         name: "Trần Thị Dâu 2",
         birthYear: "1928",
         deathYear: "1995",
-        bio: "Phụ giúp chồng bốc thuốc cứu người.",
+        shortDesc: "Phụ giúp chồng bốc thuốc cứu người.",
       },
     ],
   },
@@ -51,15 +51,15 @@ export const initialFamilyData = [
     gender: "male",
     birthYear: "1928",
     deathYear: "2000",
-    bio: "Kiến trúc sư tài ba.",
+    shortDesc: "Kiến trúc sư tài ba.",
     parents: ["1"],
-    wives: [
+    spouses: [
       {
         id: "6",
         name: "Nguyễn Thị Thứ",
         birthYear: "1930",
         deathYear: "2005",
-        bio: "Định cư tại nước ngoài.",
+        shortDesc: "Định cư tại nước ngoài.",
       },
     ],
   },
@@ -69,14 +69,14 @@ export const initialFamilyData = [
     name: "Nguyễn Đích Tôn",
     gender: "male",
     birthYear: "1955",
-    bio: "Giáo sư sử học, đương kim Trưởng tộc.",
+    shortDesc: "Giáo sư sử học, đương kim Trưởng tộc.",
     parents: ["3"],
-    wives: [
+    spouses: [
       {
         id: "8",
         name: "Phạm Thị Hiền",
         birthYear: "1960",
-        bio: "Giáo viên ưu tú.",
+        shortDesc: "Giáo viên ưu tú.",
       },
     ],
   },
@@ -100,7 +100,7 @@ export const initialFamilyData = [
     name: "Nguyễn Văn Chắt Trai",
     gender: "male",
     birthYear: "1985",
-    bio: "Kỹ sư phần mềm (Người tạo ra bản số hóa này).",
+    shortDesc: "Kỹ sư phần mềm (Người tạo ra bản số hóa này).",
     parents: ["7"],
   },
   {
