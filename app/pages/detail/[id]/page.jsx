@@ -191,6 +191,7 @@ export default function GenealogyDetail() {
               shortDesc: spouseResult.data.shortDesc,
               gender: GENDER_MAP[spouseResult.data.sex] || "undefined",
               isSpouse: true,
+              spouseId: personId,
             };
           }),
         );

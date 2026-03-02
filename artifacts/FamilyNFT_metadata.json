@@ -1176,11 +1176,6 @@
 				"inputs": [
 					{
 						"internalType": "bytes32",
-						"name": "parentId",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "bytes32",
 						"name": "childId",
 						"type": "bytes32"
 					}
@@ -2253,11 +2248,11 @@
 			]
 		},
 		"contracts/Genealogy/FamilyNFT.sol": {
-			"keccak256": "0x6bf70d54f0d0654508b95197cab25685e69fd1661ba35854b906ed89ed37fd29",
+			"keccak256": "0xf2d97f15f2c2e2e9705b5e3c14de5ce352a057b7e2d3c682396730e71560f85b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://30a1c2a50c9e580556088a534053aa951f97d91ffad763e5fea409308886b279",
-				"dweb:/ipfs/QmNwRBNJvAiqy9jqDvw9cr9rqFH4aYmKvJBoRzLYNPVE5w"
+				"bzz-raw://4c4a43625b85a6805d8a6765066c2711f3a9c1e706a1ad03abbc04122919550c",
+				"dweb:/ipfs/QmYhA3VbtnWc5vxEEX2AeQ59ymNzRkeyBhPMVHfS8z641f"
 			]
 		},
 		"contracts/Genealogy/FamilyTypes.sol": {

@@ -14,7 +14,7 @@ contract Genealogy {
         address indexed creatorAddress,
         address indexed nftAddress
     );
-    event ClanRemovedFromOwned(address indexed clanId);
+    event ClanRemovedFromOwned(address sender, address indexed clanId);
     event ChangeClanOwner(address newOwner, address clanId);
 
     function createClan(
@@ -55,7 +55,7 @@ contract Genealogy {
         require(_clanIds[msg.sender] == clanId, "Not the owner");
         _clanIds[msg.sender] = address(0);
         clanCounter.decrement();
-        emit ClanRemovedFromOwned(clanId);
+        emit ClanRemovedFromOwned(msg.sender, clanId);
     }
 
     function getClanId(address owner) external view returns (address) {

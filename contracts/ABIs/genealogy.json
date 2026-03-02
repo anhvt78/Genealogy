@@ -43,6 +43,12 @@
 		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
+			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "clanId",

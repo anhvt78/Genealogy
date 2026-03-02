@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import ReactFlow, { Background, Controls } from "reactflow";
 import "reactflow/dist/style.css";
 import { toPng } from "html-to-image";
@@ -14,9 +14,13 @@ import { getLayoutedElements } from "@/utils/layoutEngine";
 import ClanTitleNode from "@/components/nodes/ClanTitleNode";
 // import { ConnectorModal } from "@/components/Modals/ConnectorModal";
 // import { GenealogyContext } from "@/context/GenealogyContext";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { userSignOut } from "@/redux/genealogySlide";
 import { useRouter } from "next/navigation";
+
+import sweetalert2 from "@/configs/swal";
+import Swal from "sweetalert2";
+import { GenealogyContext } from "@/context/GenealogyContext";
 
 // Đăng ký loại node tùy chỉnh
 const nodeTypes = {
@@ -66,11 +70,13 @@ export default function GenealogyDiagramForm({
     targetId: null,
   });
 
+  const { removeClanFromOwned } = useContext(GenealogyContext);
+
   // const [isShowModalConnector, setIsShowModalConnector] = useState(true);
 
-  //   const userWalletAddress = useSelector(
-  //     (state) => state.genealogyReducer.walletAddress,
-  //   );
+  const userWalletAddress = useSelector(
+    (state) => state.genealogyReducer.walletAddress,
+  );
 
   // useEffect(() => {
   //   getNFTCollection(clanId).then((result) => {
@@ -188,6 +194,79 @@ export default function GenealogyDiagramForm({
     }
   };
 
+  const handleDelete = async () => {
+    Swal.fire({
+      title: "Xác nhận xóa?",
+      text: `Bạn có chắc chắn muốn xóa ${
+        clanItem.clanName
+      } phả đồ khỏi danh sách quản lý? Hành động này không thể hoàn tác.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33", // Màu đỏ cho nút xóa
+      cancelButtonColor: "#3085d6", // Màu xanh cho nút hủy
+      confirmButtonText: "Đồng ý",
+      cancelButtonText: "Huỷ",
+      reverseButtons: true, // Đưa nút Huỷ sang bên phải cho tự nhiên
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Đang xử lý...",
+          text: "Vui lòng chờ trong giây lát",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading(); // Hiển thị biểu tượng quay (spinner)
+          },
+        });
+        // try {
+        // setIsProcessing(true); // Bật trạng thái đang xử lý
+
+        // --- CHỖ NÀY: Gọi hàm xóa từ Context hoặc API của bạn ---
+        // Ví dụ: const res = await deleteMember(clanItem.clanId, person.id);
+        removeClanFromOwned(
+          userWalletAddress,
+          clanItem.clanId,
+          callBack,
+          handleErr,
+        );
+
+        // Giả lập xử lý thành công:
+        //   setTimeout(() => {
+        //     Swal.fire(
+        //       "Đã xóa!",
+        //       "Thành viên đã được loại bỏ khỏi gia phả.",
+        //       "success",
+        //     );
+
+        //     // Gọi callback để load lại dữ liệu và đóng sidebar
+        //     callBack();
+        //   }, 2000);
+        // } catch (error) {
+        //   handleErr("Lỗi khi xóa", error.message);
+        // } finally {
+        //   setIsProcessing(false);
+        // }
+      }
+    });
+  };
+
+  const callBack = () => {
+    // console.log("newChildId: ", newChildId);
+    // onClose();
+    // setIsProcessing(false);
+    Swal.fire("Đã xóa!", "Gia phả đã không còn trong danh mục quản lý của bạn.", "success");
+    router.push("/");
+    // router.push(`/pages/detail/${clanId}`);
+  };
+
+  const handleErr = (title, error) => {
+    // setIsProcessing(false);
+    // onClose();
+    sweetalert2.popupAlert({
+      title: title,
+      text: error,
+    });
+  };
+
   return (
     <div className="w-full h-screen bg-[#e8d5b5] flex overflow-hidden">
       {/* SIDEBAR BÊN TRÁI */}
@@ -249,34 +328,36 @@ export default function GenealogyDiagramForm({
               Xem chi tiết
             </button>
             {/* NÚT XOÁ GIA PHẢ - MỚI THÊM */}
-            <button
-              onClick={() => {
-                if (
-                  confirm(
-                    "CẢNH BÁO: Hành động này sẽ xoá sạch toàn bộ dữ liệu gia phả của bạn và không thể hoàn tác. Bạn có chắc chắn?",
-                  )
-                ) {
-                  localStorage.removeItem("family-tree-v1"); // Xoá cứng trong LocalStorage
-                  window.location.reload(); // Reload trang để reset state về mặc định
-                }
-              }}
-              //   className="flex items-center gap-3 px-4 py-3 bg-red-700/20 hover:bg-red-700 transition-colors rounded-md text-sm font-semibold text-red-400 border border-red-700/50"
-              className="flex items-center gap-3 px-4 py-3 bg-[#5d3a1a] hover:bg-[#8b5a2b] transition-colors rounded-md text-sm font-semibold"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
+            {userWalletAddress && (
+              <button
+                onClick={() => {
+                  // if (
+                  //   confirm(
+                  //     "CẢNH BÁO: Hành động này sẽ xoá sạch toàn bộ dữ liệu gia phả của bạn và không thể hoàn tác. Bạn có chắc chắn?",
+                  //   )
+                  // ) {
+                  //   localStorage.removeItem("family-tree-v1"); // Xoá cứng trong LocalStorage
+                  //   window.location.reload(); // Reload trang để reset state về mặc định
+                  // }
+                  handleDelete();
+                }}
+                //   className="flex items-center gap-3 px-4 py-3 bg-red-700/20 hover:bg-red-700 transition-colors rounded-md text-sm font-semibold text-red-400 border border-red-700/50"
+                className="flex items-center gap-3 px-4 py-3 bg-[#5d3a1a] hover:bg-[#8b5a2b] transition-colors rounded-md text-sm font-semibold"
               >
-                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
-              </svg>
-              Xoá gia phả
-            </button>
-
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+                </svg>
+                Xoá gia phả
+              </button>
+            )}
             {/* Nút Gạt Ẩn/Hiện Con Gái */}
             {/* <div className="flex items-center justify-between px-4 py-3 bg-[#5d3a1a] rounded-md text-sm font-semibold">
               <span>Hiện con gái</span>

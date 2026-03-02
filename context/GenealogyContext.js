@@ -310,17 +310,17 @@ export const GenealogyProvider = ({ children }) => {
   const removeChild = async (
     walletAddress,
     clanId,
-    formData,
+    childId,
     callBack,
     handleErr,
   ) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      await contract.removeChild(formData.parentId, formData.childId);
+      await contract.removeChild(childId);
 
-      contract.on("ChildRemoved", async (sender, childId) => {
-        if (walletAddress == sender && formData.childId == childId) {
+      contract.on("ChildRemoved", async (sender, childIdDeleted) => {
+        if (walletAddress == sender && childId == childIdDeleted) {
           callBack();
         }
       });
@@ -332,17 +332,18 @@ export const GenealogyProvider = ({ children }) => {
   const removeSpouse = async (
     walletAddress,
     clanId,
-    formData,
+    personId,
+    spouseId,
     callBack,
     handleErr,
   ) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      await contract.removeSpouse(formData.personId, formData.spouseId);
+      await contract.removeSpouse(personId, spouseId);
 
       contract.on("SpouseRemoved", async (sender, personId, spouseId) => {
-        if (walletAddress == sender && formData.personId == spouseId) {
+        if (walletAddress == sender && spouseId == spouseId) {
           callBack();
         }
       });
@@ -401,6 +402,30 @@ export const GenealogyProvider = ({ children }) => {
 
       contract.on("UpdatePersonData", async (sender, personId) => {
         if (walletAddress == sender && personId == formData.personId) {
+          callBack();
+        }
+      });
+    } catch (error) {
+      handleErr("Error", error);
+    }
+  };
+
+  const removeClanFromOwned = async (
+    walletAddress,
+    clanId,
+    callBack,
+    handleErr,
+  ) => {
+    try {
+      const contract = await connectingWithSmartContract(
+        genealogyAddress,
+        genealogyABI,
+      );
+
+      await contract.removeClanFromOwned(clanId);
+
+      contract.on("ClanRemovedFromOwned", async (sender, clanIdRemoved) => {
+        if (walletAddress == sender && clanId == clanIdRemoved) {
           callBack();
         }
       });
@@ -508,6 +533,7 @@ export const GenealogyProvider = ({ children }) => {
         addSpouse,
         removeSpouse,
         updatePersonData,
+        removeClanFromOwned,
         getUserProfile,
         getNFTCollection,
       }}

@@ -108,13 +108,16 @@ contract FamilyNFT is LSP8IdentifiableDigitalAsset {
 
     event ChildRemoved(address sender, bytes32 indexed childId);
     function removeChild(
-        bytes32 parentId,
         bytes32 childId
-    ) external onlyAuthorized(parentId) {
-        FamilyTypes.Person storage parent = persons[parentId];
+    ) external onlyAuthorized(childId) {
+        
         FamilyTypes.Person storage child = persons[childId];
 
-        require(child.parentId == parentId, "Not child of this person");
+        require(child.parentId != bytes32(0), "Parent invalid");
+
+        FamilyTypes.Person storage parent = persons[child.parentId];
+
+        
         for (uint256 i = 0; i < parent.children.length; i++) {
             if (parent.children[i] == childId) {
                 // Swap với phần tử cuối và pop
