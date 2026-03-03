@@ -70,12 +70,12 @@ export default function AddChildModal({
         : parseDateInput(formData.deathDate),
     };
 
-    console.log(
-      "Dữ liệu gửi lên Blockchain:",
-      formattedData,
-      " | clanItem: ",
-      clanItem,
-    );
+    // console.log(
+    //   "Dữ liệu gửi lên Blockchain:",
+    //   formattedData,
+    //   " | clanItem: ",
+    //   clanItem,
+    // );
 
     addChild(
       userWalletAddress,
@@ -87,7 +87,7 @@ export default function AddChildModal({
   };
 
   const callBack = (newChildId) => {
-    console.log("newChildId: ", newChildId);
+    // console.log("newChildId: ", newChildId);
     onClose();
     setIsProcessing(false);
     fetchDataDialog();

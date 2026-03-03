@@ -26,7 +26,7 @@ export default function DetailSidebar({
   // onAddSpouse,
   fetchDataDialog,
 }) {
-  console.log("21. person: ", person);
+  // console.log("21. person: ", person);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(true);
@@ -115,7 +115,7 @@ export default function DetailSidebar({
 
   // const userWalletAddress = "0x7D351Aad461ea7FE599Ba572eFEf0d8bF8c0B9cC";
 
-  console.log("userWalletAddress: ", userWalletAddress);
+  // console.log("userWalletAddress: ", userWalletAddress);
 
   const { getOwner, removeChild, removeSpouse, getPersonDetail } =
     useContext(GenealogyContext);
@@ -139,7 +139,7 @@ export default function DetailSidebar({
   useEffect(() => {
     getPersonDetail(clanItem?.clanId, person.id).then(
       (personMetadataResult) => {
-        console.log("personMetadataResult: ", personMetadataResult);
+        // console.log("personMetadataResult: ", personMetadataResult);
         setIsGettingMetadata(false);
         if (personMetadataResult.sts) {
           // setPersonMetadata(personMetadataResult.data);
@@ -159,7 +159,7 @@ export default function DetailSidebar({
                 .filter((url) => url);
             }
           } catch (error) {
-            console.error("Error extracting CIDs:", error);
+            // console.error("Error extracting CIDs:", error);
           }
 
           const item = {
@@ -167,7 +167,7 @@ export default function DetailSidebar({
             description: personMetadataResult?.data?.description,
           };
 
-          console.log("170: item: ", item);
+          // console.log("170: item: ", item);
 
           setPersonDetail(item);
         }
@@ -241,7 +241,7 @@ export default function DetailSidebar({
   };
 
   const callBack = (newChildId) => {
-    console.log("newChildId: ", newChildId);
+    // console.log("newChildId: ", newChildId);
     onClose();
     // setIsProcessing(false);
     Swal.fire("Đã xóa!", "Thành viên đã được loại bỏ khỏi gia phả.", "success");

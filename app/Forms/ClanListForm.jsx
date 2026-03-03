@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { GenealogyContext } from "@/context/GenealogyContext";
 import ClanListItem from "./Items/ClanListItem";
 import sweetalert2 from "@/configs/swal";
+import Lottie from "lottie-react";
+import loaderAnimation from "../assets/animations/loader.json"; // Thay đổi đường dẫn cho đúng file của bạn
 
 export default function ClanListForm({ userWalletAddress }) {
   const router = useRouter();
@@ -16,14 +18,14 @@ export default function ClanListForm({ userWalletAddress }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isStillAlive, setIsStillAlive] = useState(false);
   // Tìm đến phần khởi tạo useState của formData
-const [formData, setFormData] = useState({
-  clanName: "",
-  ancestorName: "",
-  description: "",      // Đây là mô tả chung của dòng tộc
-  ancestorDesc: "",     // THÊM MỚI: Tiểu sử tóm tắt của thủy tổ
-  birthDate: "",
-  deathDate: "",
-});
+  const [formData, setFormData] = useState({
+    clanName: "",
+    ancestorName: "",
+    description: "", // Đây là mô tả chung của dòng tộc
+    ancestorDesc: "", // THÊM MỚI: Tiểu sử tóm tắt của thủy tổ
+    birthDate: "",
+    deathDate: "",
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -74,7 +76,7 @@ const [formData, setFormData] = useState({
         : parseDateInput(formData.deathDate),
     };
 
-    console.log("Dữ liệu gửi lên Blockchain:", formattedData);
+    // console.log("Dữ liệu gửi lên Blockchain:", formattedData);
 
     createClan(userWalletAddress, formattedData, callBack, handleErr);
   };
@@ -97,7 +99,7 @@ const [formData, setFormData] = useState({
     // setIsLoading(true);
     getNFTCollection(userWalletAddress).then((result) => {
       setIsLoading(false);
-      console.log("result: ", result);
+      // console.log("result: ", result);
       if (result.sts) {
         setAllClanId(result.data.allNFT);
         setIsCreator(result.data.isCreator);
@@ -119,8 +121,16 @@ const [formData, setFormData] = useState({
     // <div className="min-h-screen bg-[#e8d5b5] p-8 md:p-16 font-serif flex flex-col items-center">
     <div className="min-h-screen w-full bg-[#e8d5b5] font-serif overflow-y-auto py-12 md:py-20">
       {isLoading ? (
-        <div className="fixed inset-0 flex justify-center items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#5d3a1a]"></div>
+        // <div className="fixed inset-0 flex justify-center items-center">
+        //   <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#5d3a1a]"></div>
+        // </div>
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-[#f2e2ba]/50 backdrop-blur-sm z-50">
+          <div className="w-32 h-32">
+            <Lottie animationData={loaderAnimation} loop={true} />
+          </div>
+          <p className="text-[#5d3a1a] animate-pulse text-xl">
+            Đang kết nối tới blockchain...
+          </p>
         </div>
       ) : (
         <div className="max-w-7xl mx-auto px-6 flex flex-col items-center">
@@ -141,7 +151,6 @@ const [formData, setFormData] = useState({
           {/* Danh sách các mục chọn */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl w-full">
             {allClanId.map((clanId, index) => (
-              
               <ClanListItem clanId={clanId} key={index} />
             ))}
 
@@ -206,7 +215,7 @@ const [formData, setFormData] = useState({
                 />
               </div>
 
-               <div>
+              <div>
                 <label className="block text-[#5d3a1a] font-bold text-xs uppercase mb-1">
                   Thông tin sơ lược
                 </label>
@@ -233,19 +242,18 @@ const [formData, setFormData] = useState({
                 />
               </div>
 
-             
-
-             
-            <div className="md:col-span-2">
-              <label className="block text-[#3d2611] font-bold mb-2 text-xs uppercase">Tiểu sử tóm tắt của Thủy tổ</label>
-              <textarea
-                name="ancestorDesc"
-                onChange={handleInputChange}
-                placeholder="Nhập tiểu sử ngắn gọn của vị thủy tổ..."
-                rows="3"
-                className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white text-sm transition-all resize-none"
-              />
-            </div>
+              <div className="md:col-span-2">
+                <label className="block text-[#3d2611] font-bold mb-2 text-xs uppercase">
+                  Tiểu sử tóm tắt của Thủy tổ
+                </label>
+                <textarea
+                  name="ancestorDesc"
+                  onChange={handleInputChange}
+                  placeholder="Nhập tiểu sử ngắn gọn của vị thủy tổ..."
+                  rows="3"
+                  className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white text-sm transition-all resize-none"
+                />
+              </div>
 
               <div className="grid grid-cols-2 gap-6">
                 <div>
@@ -367,145 +375,3 @@ const [formData, setFormData] = useState({
     </div>
   );
 }
-
-// "use client";
-// import React, { useContext, useEffect, useState } from "react";
-// import { useRouter } from "next/navigation";
-// import { GenealogyContext } from "@/context/GenealogyContext";
-// import ClanListItem from "./Items/ClanListItem";
-// import sweetalert2 from "@/configs/swal";
-
-// export default function ClanListForm({ userWalletAddress }) {
-//   const router = useRouter();
-//   const { getNFTCollection, createClan } = useContext(GenealogyContext);
-//   const [allClanId, setAllClanId] = useState([]);
-//   const [isProcessing, setIsProcessing] = useState(false);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-//   const [isStillAlive, setIsStillAlive] = useState(false);
-
-//   const [formData, setFormData] = useState({
-//     clanName: "",
-//     description: "",      // Mô tả dòng tộc
-//     ancestorName: "",     // Tên thủy tổ
-//     ancestorDesc: "",     // Tiểu sử thủy tổ
-//     birthDate: "",
-//     deathDate: "",
-//   });
-
-//   const handleInputChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({ ...formData, [name]: value });
-//   };
-
-//   const parseDateInput = (dateStr) => {
-//     if (!dateStr || dateStr.trim() === "") return { year: 0, month: 0, day: 0 };
-//     const parts = dateStr.split(/[\/\-.]/);
-//     if (parts.length === 3) {
-//       return { day: parseInt(parts[0]), month: parseInt(parts[1]), year: parseInt(parts[2]) };
-//     }
-//     return { day: 0, month: 0, year: parseInt(dateStr) || 0 };
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setIsProcessing(true);
-
-//     const dataToSend = {
-//       ...formData,
-//       birthDate: parseDateInput(formData.birthDate),
-//       deathDate: isStillAlive ? { year: 0, month: 0, day: 0 } : parseDateInput(formData.deathDate)
-//     };
-
-//     createClan(userWalletAddress, dataToSend, (clanId) => {
-//       setIsProcessing(false);
-//       setIsModalOpen(false);
-//       sweetalert2.success("Khởi tạo thành công!");
-//     }, (title, msg) => {
-//       setIsProcessing(false);
-//       sweetalert2.error(title, msg);
-//     });
-//   };
-
-//   return (
-//     <div className="p-6">
-//       <button 
-//         onClick={() => setIsModalOpen(true)}
-//         className="mb-8 bg-[#5d3a1a] text-white px-6 py-3 rounded shadow-lg hover:bg-[#3d2611] transition-all"
-//       >
-//         + KHAI BÁO GIA TỘC MỚI
-//       </button>
-
-//       {/* MODAL */}
-//       {isModalOpen && (
-//         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-//           <div className="bg-[#fdf8ec] w-full max-w-2xl max-h-[90vh] overflow-y-auto border-4 border-[#5d3a1a] shadow-2xl relative">
-//             <button 
-//                onClick={() => setIsModalOpen(false)}
-//                className="absolute top-4 right-4 text-[#5d3a1a] hover:rotate-90 transition-transform font-bold text-2xl"
-//             >×</button>
-
-//             <form onSubmit={handleSubmit} className="p-8">
-//               <h2 className="text-2xl font-bold text-[#3d2611] text-center mb-8 uppercase tracking-widest border-b-2 border-[#5d3a1a] pb-4">
-//                 Khai báo Gia tộc Phả đồ
-//               </h2>
-
-//               {/* PHẦN 1: DÒNG TỘC */}
-//               <div className="mb-10 space-y-4">
-//                 <div className="flex items-center gap-2 mb-4">
-//                   <span className="bg-[#5d3a1a] text-[#f2e2ba] text-xs px-2 py-1 font-bold">I</span>
-//                   <h3 className="text-[#5d3a1a] font-bold uppercase tracking-wider text-sm">Thông tin dòng tộc</h3>
-//                 </div>
-//                 <div className="grid gap-4">
-//                   <div>
-//                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">TÊN DÒNG TỘC</label>
-//                     <input name="clanName" onChange={handleInputChange} required className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white" />
-//                   </div>
-//                   <div>
-//                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">MÔ TẢ CHUNG DÒNG TỘC</label>
-//                     <textarea name="description" onChange={handleInputChange} rows="2" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white resize-none" />
-//                   </div>
-//                 </div>
-//               </div>
-
-//               {/* PHẦN 2: THỦY TỔ */}
-//               <div className="mb-8 space-y-4 p-5 bg-[#5d3a1a]/5 border border-[#5d3a1a]/20 rounded">
-//                 <div className="flex items-center gap-2 mb-4">
-//                   <span className="bg-[#8b5a2b] text-white text-xs px-2 py-1 font-bold">II</span>
-//                   <h3 className="text-[#5d3a1a] font-bold uppercase tracking-wider text-sm">Thông tin Thủy tổ (Đời thứ 1)</h3>
-//                 </div>
-//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//                   <div className="md:col-span-2">
-//                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">HỌ VÀ TÊN THỦY TỔ</label>
-//                     <input name="ancestorName" onChange={handleInputChange} required className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none" />
-//                   </div>
-//                   <div className="md:col-span-2">
-//                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">TIỂU SỬ TÓM TẮT THỦY TỔ</label>
-//                     <textarea name="ancestorDesc" onChange={handleInputChange} rows="3" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none resize-none" />
-//                   </div>
-//                   <div>
-//                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">NGÀY SINH (HOẶC NĂM)</label>
-//                     <input name="birthDate" onChange={handleInputChange} placeholder="VD: 1900" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none" />
-//                   </div>
-//                   <div>
-//                     <div className="flex justify-between items-center mb-1">
-//                       <label className="block text-[#3d2611] font-bold text-xs uppercase">Ngày mất</label>
-//                       <label className="text-[10px] flex items-center gap-1 cursor-pointer">
-//                         <input type="checkbox" checked={isStillAlive} onChange={(e) => setIsStillAlive(e.target.checked)} /> CÒN SỐNG
-//                       </label>
-//                     </div>
-//                     <input name="deathDate" disabled={isStillAlive} onChange={handleInputChange} placeholder={isStillAlive ? "---" : "VD: 1980"} className={`w-full border-2 border-[#5d3a1a] p-2 outline-none ${isStillAlive ? "opacity-30" : "bg-white/50"}`} />
-//                   </div>
-//                 </div>
-//               </div>
-
-//               <button type="submit" disabled={isProcessing} className="w-full bg-[#5d3a1a] text-[#f2e2ba] font-bold py-4 hover:bg-[#3d2611] transition-all uppercase flex justify-center items-center gap-2">
-//                 {isProcessing && <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>}
-//                 Khởi tạo Gia phả
-//               </button>
-//             </form>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }

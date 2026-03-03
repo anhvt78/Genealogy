@@ -36,7 +36,7 @@ import PersonCard from "@/components/nodes/PersonCard";
 // );
 
 export default function PersonNode({ data }) {
-  console.log("39. data = ", data);
+  // console.log("39. data = ", data);
 
   const isMale = data.gender === "male";
 

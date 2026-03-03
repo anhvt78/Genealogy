@@ -69,7 +69,7 @@ export default function ClanDiagram({ clanId }) {
 
   useEffect(() => {
     getNFTCollection(clanId).then((result) => {
-      console.log("result: ", result);
+      // console.log("result: ", result);
     });
   }, [clanId]);
 

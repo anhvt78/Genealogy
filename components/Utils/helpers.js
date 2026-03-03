@@ -635,7 +635,7 @@ export const convertUint256ToUSD = (value) => {
     }
     // Chuyển sang chuỗi thập phân với 18 decimals
     const usdValue = ethers.utils.formatUnits(value, 18);
-    console.log("648: usdValue: ", parseFloat(usdValue).toFixed(2));
+    // console.log("648: usdValue: ", parseFloat(usdValue).toFixed(2));
     // Optional: Làm tròn hoặc format thêm (ví dụ: giữ 2 chữ số thập phân)
 
     return parseFloat(usdValue).toFixed(2); // Trả về "978.00" thay vì "978.0"
@@ -708,12 +708,12 @@ export const parseProfileMetadata = (metadata) => {
 const usdtDecimals = 6;
 export const toEthersUsdtAtomic = (amountString) => {
   // parseUnits(Giá trị, Số thập phân)
-  console.log(
-    "amountString: ",
-    amountString,
-    " | usdtDecimals =  ",
-    usdtDecimals,
-  );
+  // console.log(
+  //   "amountString: ",
+  //   amountString,
+  //   " | usdtDecimals =  ",
+  //   usdtDecimals,
+  // );
 
   return ethers.utils.parseUnits(amountString, usdtDecimals);
 };

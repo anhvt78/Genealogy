@@ -1,8 +1,8 @@
 import sweetalert2 from "@/configs/swal";
 import { GenealogyContext } from "@/context/GenealogyContext";
 import React, { useContext, useEffect, useState } from "react";
-import images from "@/app/img";
-import Image from "next/image";
+// import images from "@/app/img";
+// import Image from "next/image";
 import { useRouter } from "next/navigation";
 // import { generateMetadataLink } from "@/components/Utils/helpers";
 // import { useDispatch } from "react-redux";
@@ -13,15 +13,16 @@ const ClanListItem = ({ clanId }) => {
 
   // const dispatch = useDispatch();
 
-  // const [clanItem, setClanItem] = useState();
+  const [loading, setLoading] = useState(true);
   const [clanName, setClanName] = useState();
   const { getClanInfo } = useContext(GenealogyContext);
 
   useEffect(() => {
     if (!clanId) return;
     getClanInfo(clanId).then((result) => {
+      setLoading(false);
       if (result.sts) {
-        // console.log("result: ", result.data?.clanMetadata);
+        console.log("25. result: ", result.data);
 
         // const object = JSON.parse(result.data?.clanMetadata);
         // let imageUrl;
@@ -127,10 +128,20 @@ const ClanListItem = ({ clanId }) => {
       </div> */}
 
       {/* Nội dung mô tả */}
+
       <div className="p-6">
-        <h3 className="text-[#3d2611] text-xl font-bold mb-3 uppercase tracking-wider group-hover:text-[#8b5a2b] transition-colors">
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#5d3a1a]"></div>
+          </div>
+        ) : (
+          <h3 className="text-[#3d2611] text-xl font-bold mb-3 uppercase tracking-wider group-hover:text-[#8b5a2b] transition-colors">
+            {clanName}
+          </h3>
+        )}
+        {/* <h3 className="text-[#3d2611] text-xl font-bold mb-3 uppercase tracking-wider group-hover:text-[#8b5a2b] transition-colors">
           {clanName}
-        </h3>
+        </h3> */}
         {/* <p className="text-[#5d3a1a] text-sm leading-relaxed line-clamp-3">
           {clanItem?.shortDesc}
         </p> */}

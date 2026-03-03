@@ -78,7 +78,7 @@ export default function AddSpouseModal({
   };
 
   const callBack = (newSpouseId) => {
-    console.log("newSpouseId: ", newSpouseId);
+    // console.log("newSpouseId: ", newSpouseId);
     onClose();
     setIsProcessing(false);
     fetchDataDialog();

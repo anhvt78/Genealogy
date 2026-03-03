@@ -23,8 +23,11 @@ import React, { useState } from "react";
 //   ],
 // };
 
+import images from "@/app/img";
+import Image from "next/image";
+
 export default function GenealogyDetailForm({ clanItem, setTabIndex }) {
-  console.log("clanItem: ", clanItem);
+  // console.log("clanItem: ", clanItem);
 
   // const router = useRouter();
   // Thay vì lưu URL, ta lưu index của ảnh trong mảng gallery
@@ -122,17 +125,32 @@ export default function GenealogyDetailForm({ clanItem, setTabIndex }) {
       )}
       {/* Banner Header */}
       <div className="w-full h-[40vh] relative border-b-4 border-[#5d3a1a]">
-        <img
-          src={clanItem?.allImageUrls[0]}
+        <Image
+          // src={clanItem?.allImageUrls[0]?.url}
+          src={images.banner}
           className="w-full h-full object-cover opacity-60"
           alt="banner"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#3d2611] to-transparent"></div>
-        <div className="absolute bottom-4 left-10 right-10 text-center">
-          <h1 className="text-4xl md:text-6xl font-black text-[#f2e2ba] uppercase tracking-[0.2em] drop-shadow-lg">
+        {/* <div className="absolute inset-0 bg-gradient-to-t from-[#3d2611] to-transparent"></div> */}
+        {/* <div className="absolute bottom-24 left-10 right-10 text-center">
+          <h1 className="text-4xl md:text-4xl font-black text-[#f2e2ba] uppercase tracking-[0.2em] drop-shadow-lg opacity-80">
+            {clanItem?.clanName}
+          </h1>
+        </div> */}
+        {/* Phần chứa chữ được neo theo tỷ lệ % */}
+        <div className="absolute inset-0 flex flex-col items-center">
+          <h1
+            className="font-black text-[#f2e2ba] uppercase tracking-[0.2em] drop-shadow-lg opacity-80 text-center px-10"
+            style={{
+              fontSize: "36px", // Cỡ chữ cố định (Tương đương text-4xl)
+              marginTop: "20vh", // Neo tại vị trí 50% chiều cao của banner 40vh
+              lineHeight: "1.2",
+            }}
+          >
             {clanItem?.clanName}
           </h1>
         </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#3d2611] to-transparent"></div>
       </div>
 
       <div className="max-w-5xl mx-auto px-6 mt-12 grid grid-cols-1 md:grid-cols-3 gap-12">

@@ -303,12 +303,12 @@ export const GenealogyProvider = ({ children }) => {
       );
 
       contract.on("ClanCreated", async (_creatorAddress, clanId) => {
-        console.log(
-          "_creatorAddress = ",
-          _creatorAddress,
-          ", clanId = ",
-          clanId,
-        );
+        // console.log(
+        //   "_creatorAddress = ",
+        //   _creatorAddress,
+        //   ", clanId = ",
+        //   clanId,
+        // );
 
         if (walletAddress == _creatorAddress) {
           callBack(clanId);
@@ -329,7 +329,7 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      console.log("Dữ liệu AddChild: ", formData);
+      // console.log("Dữ liệu AddChild: ", formData);
 
       await contract.addChild(
         formData.parentId,
@@ -405,7 +405,7 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      console.log("formData = ", formData, " | clanId: ", clanId);
+      // console.log("formData = ", formData, " | clanId: ", clanId);
 
       await contract.addSpouse(
         formData.personId,
@@ -434,7 +434,7 @@ export const GenealogyProvider = ({ children }) => {
   ) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
-      console.log("382: formData: ", formData);
+      // console.log("382: formData: ", formData);
       await contract.updatePersonData(
         formData.personId,
         formData.name,
@@ -483,11 +483,11 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
       const code = await provider.getCode(address);
-      console.log("code: ", code);
+      // console.log("code: ", code);
 
       return code !== "0x";
     } catch (error) {
-      console.log("error: ", error);
+      // console.log("error: ", error);
     }
   };
 
@@ -497,7 +497,7 @@ export const GenealogyProvider = ({ children }) => {
 
     const isContract = await checkDeployedCode(walletAddress);
 
-    console.log("isContract: ", isContract);
+    // console.log("isContract: ", isContract);
     if (isContract) {
       try {
         const userData = await fetchContractData(
@@ -505,11 +505,11 @@ export const GenealogyProvider = ({ children }) => {
           profileSchema,
           "LSP3Profile",
         );
-        console.log("userData = ", userData);
+        // console.log("userData = ", userData);
 
         return { sts: true, data: { userData: userData } };
       } catch (error) {
-        console.log("err: ", error);
+        // console.log("err: ", error);
 
         return {
           sts: false,

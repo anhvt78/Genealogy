@@ -12,6 +12,8 @@ import {
   generateMetadataLink,
   numberToByte32,
 } from "@/components/Utils/helpers";
+import Lottie from "lottie-react";
+import gettingDataAnimation from "../../../assets/animations/gettingData.json";
 
 const NONE_ID =
   "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -103,7 +105,7 @@ export default function GenealogyDetail() {
     try {
       const result = await getClanDetail(clanId);
 
-      console.log("result1: ", result);
+      // console.log("result1: ", result);
 
       if (result.sts) {
         const object = JSON.parse(result.data?.clanMetadata);
@@ -122,7 +124,7 @@ export default function GenealogyDetail() {
               .filter((url) => url);
           }
         } catch (error) {
-          console.error("Error extracting CIDs:", error);
+          // console.error("Error extracting CIDs:", error);
         }
 
         const item = {
@@ -152,18 +154,18 @@ export default function GenealogyDetail() {
     setLoadingClanDialog(true);
     const ancestorId = numberToByte32(1);
 
-    console.log("ancestorId: ", ancestorId);
+    // console.log("ancestorId: ", ancestorId);
     const tempList = [];
 
-    console.log("159. ancestorId: ", ancestorId);
+    // console.log("159. ancestorId: ", ancestorId);
 
     const traverse = async (personId) => {
-      console.log("231. personId: ", personId);
+      // console.log("231. personId: ", personId);
 
       try {
         const result = await getPersonData(clanId, personId);
 
-        console.log("167. result: ", result);
+        // console.log("167. result: ", result);
 
         // Nếu API trả về thất bại ở bất kỳ mắt xích nào
         if (!result.sts) {
@@ -196,7 +198,7 @@ export default function GenealogyDetail() {
           }),
         );
 
-        console.log("198. spousesDetails: ", spousesDetails);
+        // console.log("198. spousesDetails: ", spousesDetails);
 
         const item = {
           id: personId,
@@ -211,7 +213,7 @@ export default function GenealogyDetail() {
 
         tempList.push(item);
 
-        console.log("159. data.children: ", data.children);
+        // console.log("159. data.children: ", data.children);
 
         // Đệ quy lấy dữ liệu con cái
         if (data.children && data.children.length > 0) {
@@ -259,9 +261,17 @@ export default function GenealogyDetail() {
             />
           ) : (
             <div className="flex-1 flex items-center justify-center font-serif">
-              <p className="text-[#5d3a1a] animate-pulse text-xl">
+              <div className="fixed inset-0 flex justify-center items-center bg-[#f2e2ba]/50 backdrop-blur-sm z-50">
+                <div className="w-32 h-32">
+                  <Lottie animationData={gettingDataAnimation} loop={true} />
+                </div>
+                <p className="text-[#5d3a1a] animate-pulse text-xl">
+                  Đang truy vấn dữ liệu dòng tộc...
+                </p>
+              </div>
+              {/* <p className="text-[#5d3a1a] animate-pulse text-xl">
                 Đang truy vấn dữ liệu dòng tộc...
-              </p>
+              </p> */}
             </div>
           )}
         </>
