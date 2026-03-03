@@ -218,7 +218,7 @@ export default function ConnectForm() {
                 type="text"
                 value={inputClanId}
                 onChange={(e) => setInputClanId(e.target.value)}
-                placeholder="Nhập Clan ID (0x...)"
+                placeholder="Nhập địa chỉ dòng họ (0x...)"
                 className="w-full px-4 py-3 bg-[#e8d5b5]/50 border-2 border-[#5d3a1a]/20 rounded-lg text-[#3d2611] placeholder-[#5d3a1a]/40 focus:border-[#5d3a1a] focus:outline-none transition-all text-sm"
               />
               <button
