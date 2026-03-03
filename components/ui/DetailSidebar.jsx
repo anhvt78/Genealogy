@@ -117,9 +117,14 @@ export default function DetailSidebar({
 
   console.log("userWalletAddress: ", userWalletAddress);
 
-  const { getOwner, removeChild, removeSpouse } = useContext(GenealogyContext);
+  const { getOwner, removeChild, removeSpouse, getPersonDetail } =
+    useContext(GenealogyContext);
 
   const [owner, setOwner] = useState("0x");
+
+  const [currentIndex, setCurrentIndex] = useState(null);
+  const [isGettingMetadata, setIsGettingMetadata] = useState(true);
+  const [personDetail, setPersonDetail] = useState(null);
 
   useEffect(() => {
     if (!userWalletAddress) return;
@@ -131,9 +136,44 @@ export default function DetailSidebar({
     });
   }, [userWalletAddress, person]);
 
-  // const onAddChild = async (id) => {
-  //   setModalState({ isOpen: true, type: "child", targetId: id });
-  // };
+  useEffect(() => {
+    getPersonDetail(clanItem?.clanId, person.id).then(
+      (personMetadataResult) => {
+        console.log("personMetadataResult: ", personMetadataResult);
+        setIsGettingMetadata(false);
+        if (personMetadataResult.sts) {
+          // setPersonMetadata(personMetadataResult.data);
+          // const object = JSON.parse(personMetadataResult.data);
+          let allImageUrls = [];
+
+          try {
+            const imagesData = personMetadataResult?.data?.images;
+            if (Array.isArray(imagesData)) {
+              allImageUrls = imagesData
+                .map((subArray) => {
+                  if (Array.isArray(subArray) && subArray.length > 0) {
+                    return subArray[0];
+                  }
+                  return null;
+                })
+                .filter((url) => url);
+            }
+          } catch (error) {
+            console.error("Error extracting CIDs:", error);
+          }
+
+          const item = {
+            allImageUrls: allImageUrls,
+            description: personMetadataResult?.data?.description,
+          };
+
+          console.log("170: item: ", item);
+
+          setPersonDetail(item);
+        }
+      },
+    );
+  }, [person]);
 
   const handleDelete = async () => {
     Swal.fire({
@@ -218,11 +258,98 @@ export default function DetailSidebar({
     });
   };
 
+  // Hàm chuyển ảnh tiếp theo
+  const nextImage = (e) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev + 1) % personDetail?.allImageUrls.length);
+  };
+
+  // Hàm quay lại ảnh trước
+  const prevImage = (e) => {
+    e.stopPropagation();
+    setCurrentIndex(
+      (prev) =>
+        (prev - 1 + personDetail?.allImageUrls.length) %
+        personDetail?.allImageUrls.length,
+    );
+  };
+
   return (
     <div
       style={{ width: `${width}px` }}
       className="fixed top-0 right-0 h-full bg-[#fdf8e9] border-l-4 border-[#5d3a1a] shadow-2xl z-[50] flex flex-col transition-[width] duration-68 ease-out"
     >
+      {currentIndex !== null && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+          onClick={() => setCurrentIndex(null)}
+        >
+          {/* Nút Đóng */}
+          <button className="absolute top-6 right-6 text-white/70 hover:text-white z-[110]">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Nút Trước (<) */}
+          <button
+            onClick={prevImage}
+            className="absolute left-4 md:left-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all z-[110]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+
+          {/* Ảnh hiển thị */}
+          <div className="relative max-w-5xl max-h-[85vh] flex items-center justify-center">
+            <img
+              src={personDetail?.allImageUrls[currentIndex]?.url}
+              className="max-w-full max-h-full object-contain shadow-2xl animate-in fade-in zoom-in duration-300"
+              alt="Full view"
+              onClick={(e) => e.stopPropagation()}
+            />
+            {/* Hiển thị số thứ tự ảnh (Ví dụ: 1/8) */}
+            <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-white/80 font-sans text-sm tracking-widest">
+              {currentIndex + 1} / {clanItem?.allImageUrls.length}
+            </div>
+          </div>
+
+          {/* Nút Tiếp Theo (>) */}
+          <button
+            onClick={nextImage}
+            className="absolute right-4 md:right-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all z-[110]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+      )}
       {/* THANH NẮM ĐỂ KÉO (Resizer Handle) */}
       <div
         onMouseDown={startResizing}
@@ -418,8 +545,19 @@ export default function DetailSidebar({
           <div className="p-8 h-full flex flex-col">
             <div className="flex-grow overflow-y-auto pr-2">
               <div className="flex flex-col items-center mb-8">
-                <div className="w-28 h-28 rounded-full bg-[#8b5a2b]/10 border-4 border-[#8b5a2b]/30 flex items-center justify-center text-5xl mb-4 shadow-inner">
-                  {person.gender === "male" ? "👴" : "👵"}
+                <div className="w-28 h-28 rounded-full bg-[#8b5a2b]/10 border-4 border-[#8b5a2b]/30 flex items-center justify-center mb-4 shadow-inner overflow-hidden">
+                  {personDetail?.allImageUrls &&
+                  personDetail.allImageUrls.length > 0 ? (
+                    <img
+                      src={personDetail.allImageUrls[0].url}
+                      alt={person.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-5xl">
+                      {person.gender === "male" ? "👴" : "👵"}
+                    </span>
+                  )}
                 </div>
                 <div className="text-center">
                   <p className="text-[10px] text-[#8b5a2b] uppercase tracking-[0.3em] mb-1 font-bold">
@@ -458,142 +596,115 @@ export default function DetailSidebar({
                   </div>
                 </section>
 
-                <section>
-                  {/* Thẻ div bao ngoài để căn lề giữa text và icon */}
-                  <div className="flex items-center justify-between border-b border-[#8b5a2b]/20 pb-1 mb-3">
-                    <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest">
-                      Thông tin Tiểu sử
-                    </h3>
+                {person.shortDesc && (
+                  <section>
+                    {/* Thẻ div bao ngoài để căn lề giữa text và icon */}
+                    <div className="flex items-center justify-between border-b border-[#8b5a2b]/20 pb-1 mb-3">
+                      <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest">
+                        Thông tin sơ lược
+                      </h3>
+                    </div>
 
-                    <a
-                      href={`https://universaleverything.io/asset/${clanItem.clanId}/tokenId/${person.id}?network=testnet`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex border border-[#8b5a2b]/10 size-10 items-center justify-center rounded-full transition-all duration-300 bg-neutral-97 cursor-pointer hover:scale-105 hover:bg-neutral-95"
-                      title="Cập nhật thông tin chi tiết trên Blockchain"
-                    >
-                      {/* <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M12 4H7C5.34315 4 4 5.34315 4 7V17C4 18.6569 5.34315 20 7 20H17C18.6569 20 20 18.6569 20 17V12"
-                          strokeLinecap="round"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        ></path>
-                        <path
-                          d="M19.9999 8C19.9999 6.17755 20 4 20 4H16"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        ></path>
-                        <path
-                          d="M14 10L20 4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        ></path>
-                      </svg> */}
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        style={{ width: "24px", height: "24px" }}
-                      >
-                        <path
-                          d="M9.20522 17.4916L18.5695 8.12731C18.9601 7.73679 18.9601 7.10362 18.5695 6.7131L16.5635 4.70704C16.173 4.31652 15.5398 4.31652 15.1493 4.70704L5.78495 14.0714C5.64561 14.2107 5.55055 14.3881 5.51169 14.5813L5.00661 17.0924C4.86572 17.7929 5.48368 18.4109 6.18417 18.27L8.6953 17.7649C8.88848 17.726 9.06588 17.631 9.20522 17.4916Z"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        ></path>
-                        <path
-                          d="M13.2913 6.28015L16.7115 9.70042"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        ></path>
-                      </svg>
-                    </a>
-                  </div>
+                    <div className="relative">
+                      <span className="absolute top-0 left-0 text-4xl text-[#8b5a2b]/20 font-serif">
+                        “
+                      </span>
+                      <p className="text-[#3d2611] italic leading-relaxed pt-4 px-4 text-sm">
+                        {person.shortDesc ||
+                          "Chưa có dữ liệu tiểu sử ghi chép cho thành viên này."}
+                      </p>
+                      <span className="absolute bottom-0 right-0 text-4xl text-[#8b5a2b]/20 font-serif">
+                        ”
+                      </span>
+                    </div>
+                  </section>
+                )}
 
-                  <div className="relative">
-                    <span className="absolute top-0 left-0 text-4xl text-[#8b5a2b]/20 font-serif">
-                      “
-                    </span>
-                    <p className="text-[#3d2611] italic leading-relaxed pt-4 px-4 text-sm">
-                      {person.shortDesc ||
-                        "Chưa có dữ liệu tiểu sử ghi chép cho thành viên này."}
-                    </p>
-                    <span className="absolute bottom-0 right-0 text-4xl text-[#8b5a2b]/20 font-serif">
-                      ”
-                    </span>
+                {isGettingMetadata ? (
+                  /* Hiệu ứng loading cho Avatar */
+                  // <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#8b5a2b]"></div>
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#8b5a2b]"></div>
                   </div>
-                </section>
+                ) : (
+                  <>
+                    <section>
+                      {/* Thẻ div bao ngoài để căn lề giữa text và icon */}
+                      <div className="flex items-center justify-between border-b border-[#8b5a2b]/20 pb-1 mb-3">
+                        <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest">
+                          Thông tin Tiểu sử
+                        </h3>
 
-                {/* <section>
-                  <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest border-b border-[#8b5a2b]/20 pb-1 mb-3">
-                    Thông tin Tiểu sử
-                  </h3>
-                  <a
-                    href={`https://universaleverything.io/collection/${clanItem?.clanId}?network=testnet`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center hover:opacity-70 transition-opacity"
-                    title="Xem trên Blockchain"
-                  >
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      style={{ width: "16px", height: "16px" }}
-                    >
-                      <path
-                        d="M12 4H7C5.34315 4 4 5.34315 4 7V17C4 18.6569 5.34315 20 7 20H17C18.6569 20 20 18.6569 20 17V12"
-                        strokeLinecap="round" // Chuyển thành camelCase cho React
-                        stroke="currentColor" // Sử dụng currentColor để icon cùng màu với chữ
-                        strokeWidth="2"
-                      ></path>
-                      <path
-                        d="M19.9999 8C19.9999 6.17755 20 4 20 4H16"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      ></path>
-                      <path
-                        d="M14 10L20 4"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      ></path>
-                    </svg>
-                  </a>
-                  <div className="relative">
-                    <span className="absolute top-0 left-0 text-4xl text-[#8b5a2b]/20 font-serif">
-                      “
-                    </span>
-                    <p className="text-[#3d2611] italic leading-relaxed pt-4 px-4 text-sm">
-                      {person.shortDesc ||
-                        "Chưa có dữ liệu tiểu sử ghi chép cho thành viên này."}
-                    </p>
-                    <span className="absolute bottom-0 right-0 text-4xl text-[#8b5a2b]/20 font-serif">
-                      ”
-                    </span>
-                  </div>
-                </section> */}
+                        <a
+                          href={`https://universaleverything.io/asset/${clanItem.clanId}/tokenId/${person.id}?network=testnet`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex border border-[#8b5a2b]/10 size-10 items-center justify-center rounded-full transition-all duration-300 bg-neutral-97 cursor-pointer hover:scale-105 hover:bg-neutral-95"
+                          title="Cập nhật thông tin chi tiết trên Blockchain"
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            style={{ width: "24px", height: "24px" }}
+                          >
+                            <path
+                              d="M9.20522 17.4916L18.5695 8.12731C18.9601 7.73679 18.9601 7.10362 18.5695 6.7131L16.5635 4.70704C16.173 4.31652 15.5398 4.31652 15.1493 4.70704L5.78495 14.0714C5.64561 14.2107 5.55055 14.3881 5.51169 14.5813L5.00661 17.0924C4.86572 17.7929 5.48368 18.4109 6.18417 18.27L8.6953 17.7649C8.88848 17.726 9.06588 17.631 9.20522 17.4916Z"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            ></path>
+                            <path
+                              d="M13.2913 6.28015L16.7115 9.70042"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            ></path>
+                          </svg>
+                        </a>
+                      </div>
+
+                      <div className="relative">
+                        <span className="absolute top-0 left-0 text-4xl text-[#8b5a2b]/20 font-serif">
+                          “
+                        </span>
+                        <p className="text-[#3d2611] italic leading-relaxed pt-4 px-4 text-sm">
+                          {personDetail?.description ||
+                            "Chưa có dữ liệu tiểu sử ghi chép cho thành viên này."}
+                        </p>
+                        <span className="absolute bottom-0 right-0 text-4xl text-[#8b5a2b]/20 font-serif">
+                          ”
+                        </span>
+                      </div>
+                    </section>
+
+                    <section>
+                      <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest border-b border-[#8b5a2b]/20 pb-1 mb-3">
+                        Bộ sưu tập hình ảnh
+                      </h3>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        {personDetail?.allImageUrls.map((img, index) => (
+                          <div
+                            key={index}
+                            className="h-40 overflow-hidden border-2 border-[#5d3a1a] shadow-md group"
+                            onClick={() => setCurrentIndex(index)} // Truyền index vào state
+                          >
+                            <img
+                              src={img?.url}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 cursor-pointer"
+                              alt={`gallery-${index}`}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  </>
+                )}
               </div>
             </div>
 

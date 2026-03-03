@@ -225,6 +225,49 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
+  const getPersonDetail = async (clanId, personId) => {
+    try {
+      const contract = connectingSmartContractByPrivatekey(
+        clanId,
+        familyNftABI,
+      );
+      const personMetadata = await contract.getDataForTokenId(
+        personId,
+        ERC725YDataKeys.LSP4["LSP4Metadata"],
+      );
+      // console.log("tokenIdMetadata: ", tokenIdMetadata);
+
+      const erc725js = new ERC725(lsp4Schema);
+
+      // Decode the metadata
+      const decodedMetadata = erc725js.decodeData([
+        {
+          keyName: "LSP4Metadata",
+          value: personMetadata,
+        },
+      ]);
+      const metadataURL = decodedMetadata[0].value.url;
+
+      const metadataJsonLink = generateMetadataLink(metadataURL);
+      // console.log("metadataJsonLink: ", metadataJsonLink);
+      // Fetch the URL
+      if (metadataJsonLink) {
+        const response = await fetch(metadataJsonLink);
+        const jsonMetadata = await response.json();
+        // console.log("Metadata Contents: ", jsonMetadata?.LSP4Metadata);
+        // return {
+        //   sts: true,
+        //   data: jsonMetadata?.LSP4Metadata,
+        // };
+        return { sts: true, data: jsonMetadata?.LSP4Metadata };
+      } else {
+        return { sts: true, data: null };
+      }
+    } catch (error) {
+      return { sts: false, data: error };
+    }
+  };
+
   const getOwner = async (clanId, personId) => {
     try {
       const familyNFTContract = connectingSmartContractByPrivatekey(
@@ -527,6 +570,7 @@ export const GenealogyProvider = ({ children }) => {
         getClanInfo,
         getClanDetail,
         getPersonData,
+        getPersonDetail,
         getOwner,
         addChild,
         removeChild,
