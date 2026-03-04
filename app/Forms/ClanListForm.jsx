@@ -84,7 +84,7 @@ export default function ClanListForm({ userWalletAddress }) {
   const callBack = (clanId) => {
     setIsProcessing(false);
     setIsModalOpen(false); // Đóng modal sau khi xong
-    router.push(`/pages/detail/${clanId}`);
+    router.push(`/pages/detail?id=${clanId}`);
   };
 
   const handleErr = (title, error) => {

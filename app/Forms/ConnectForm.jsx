@@ -26,7 +26,8 @@ export default function ConnectForm() {
       });
       return;
     }
-    router.push(`/pages/detail/${inputClanId.trim()}`);
+    // router.push(`/pages/detail/${inputClanId.trim()}`);
+    router.push(`/pages/detail?id=${inputClanId.trim()}`);
   };
 
   const connectWalletHandler = async () => {
@@ -147,7 +148,8 @@ export default function ConnectForm() {
               ? decodedText.split("/").pop()
               : decodedText;
             stopScanner();
-            router.push(`/pages/detail/${clanId.trim()}`);
+            // router.push(`/pages/detail/${clanId.trim()}`);
+            router.push(`/pages/detail?id=${clanId.trim()}`);
           },
         );
       } catch (err) {

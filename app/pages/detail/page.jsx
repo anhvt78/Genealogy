@@ -1,6 +1,6 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import GenealogyDetailForm from "@/app/Forms/GenealogyDetailForm";
 import GenealogyDiagramForm from "@/app/Forms/GenealogyDiagramForm";
 
@@ -13,7 +13,7 @@ import {
   numberToByte32,
 } from "@/components/Utils/helpers";
 import Lottie from "lottie-react";
-import gettingDataAnimation from "../../../assets/animations/gettingData.json";
+import gettingDataAnimation from "../../assets/animations/gettingData.json";
 
 const NONE_ID =
   "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -25,8 +25,9 @@ const GENDER_MAP = {
 };
 
 export default function GenealogyDetail() {
-  const params = useParams(); // Lấy 'id' từ thư mục [id]
-  const clanId = params.id;
+  const searchParams = useSearchParams(); // Lấy 'id' từ thư mục [id]
+  // const clanId = params.id;
+  const clanId = searchParams.get("id");
 
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -41,49 +42,6 @@ export default function GenealogyDetail() {
   const [loadingClanDetail, setLoadingClanDetail] = useState(true);
   const [loadingClanDialog, setLoadingClanDialog] = useState(true);
 
-  // useEffect(() => {
-  //   // if (!clanId) return;
-  //   // setLoadingClanDetail(true);
-
-  //   getClanDetail(clanId).then((result) => {
-  //     setLoadingClanDetail(false);
-  //     if (result.sts) {
-  //       const object = JSON.parse(result.data?.clanMetadata);
-  //       let allImageUrls = [];
-  //       try {
-  //         const imagesData = object?.value?.LSP4Metadata?.images;
-
-  //         if (Array.isArray(imagesData)) {
-  //           allImageUrls = imagesData
-  //             .map((subArray) => {
-  //               if (Array.isArray(subArray) && subArray.length > 0) {
-  //                 return generateMetadataLink(subArray[0]?.url);
-  //               }
-  //               return null;
-  //             })
-  //             .filter((url) => url); // Loại bỏ các giá trị null hoặc undefined
-  //         }
-  //       } catch (error) {
-  //         console.error("Error extracting CIDs:", error);
-  //       }
-
-  //       const item = {
-  //         clanId: clanId,
-  //         clanName: result.data?.clanName,
-  //         shortDesc: result.data?.clanDesc,
-  //         allImageUrls: allImageUrls,
-  //         clanDetail: object?.value?.LSP4Metadata?.description,
-  //       };
-
-  //       setClanItem(item);
-  //     } else {
-  //       sweetalert2.popupAlert({
-  //         title: "Đã xả ra lỗi",
-  //         text: "Lỗi khi tải thông tin Gia phả.",
-  //       });
-  //     }
-  //   });
-  // }, [clanId, getClanDetail]);
   useEffect(() => {
     // Kiểm tra nếu không có clanId thì dừng sớm và tắt loading
     if (!clanId) {
