@@ -142,7 +142,7 @@ export default function GenealogyDetailForm({ clanItem, setTabIndex }) {
           <h1
             className="font-black text-[#f2e2ba] uppercase tracking-[0.2em] drop-shadow-lg opacity-80 text-center px-10"
             style={{
-              fontSize: "36px", // Cỡ chữ cố định (Tương đương text-4xl)
+              fontSize: "48px", // Cỡ chữ cố định (Tương đương text-4xl)
               marginTop: "20vh", // Neo tại vị trí 50% chiều cao của banner 40vh
               lineHeight: "1.2",
             }}
