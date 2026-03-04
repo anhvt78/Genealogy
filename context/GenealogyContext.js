@@ -24,7 +24,9 @@ import {
 const projectId = `${process.env.INFURA_API_KEY}`;
 const projectSecretKey = `${process.env.INFURA_API_KEY_SECRET}`;
 
-const privateKey = `${process.env.PRIVATE_KEY}`;
+// const privateKey = `${process.env.PRIVATE_KEY}`;
+const privateKey =
+  "98f893278558ef777032bc95f5f612bb3138e49957926351fb7d48a67acf7860";
 
 // console.log("privateKey: ", privateKey);
 
