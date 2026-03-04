@@ -1,10 +1,10 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import GenealogyDetailForm from "@/app/Forms/GenealogyDetailForm";
 import GenealogyDiagramForm from "@/app/Forms/GenealogyDiagramForm";
 
-import { initialFamilyData } from "@/constants/mockData.js";
+// import { initialFamilyData } from "@/constants/mockData.js";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import sweetalert2 from "@/configs/swal";
 import { GenealogyContext } from "@/context/GenealogyContext";
@@ -24,17 +24,14 @@ const GENDER_MAP = {
   2: "undefined",
 };
 
-export default function GenealogyDetail() {
+function GenealogyDetailContent() {
   const searchParams = useSearchParams(); // Lấy 'id' từ thư mục [id]
   // const clanId = params.id;
   const clanId = searchParams.get("id");
 
   const [tabIndex, setTabIndex] = useState(0);
 
-  const [familyData, setFamilyData] = useLocalStorage(
-    "family-tree-v1",
-    initialFamilyData,
-  );
+  const [familyData, setFamilyData] = useState(null);
 
   const { getClanDetail, getPersonData } = useContext(GenealogyContext);
 
@@ -218,19 +215,7 @@ export default function GenealogyDetail() {
               setTabIndex={setTabIndex}
             />
           ) : (
-            <div className="flex-1 flex items-center justify-center font-serif">
-              <div className="fixed inset-0 flex justify-center items-center bg-[#f2e2ba]/50 backdrop-blur-sm z-50">
-                <div className="w-32 h-32">
-                  <Lottie animationData={gettingDataAnimation} loop={true} />
-                </div>
-                <p className="text-[#5d3a1a] animate-pulse text-xl">
-                  Đang truy vấn dữ liệu dòng tộc...
-                </p>
-              </div>
-              {/* <p className="text-[#5d3a1a] animate-pulse text-xl">
-                Đang truy vấn dữ liệu dòng tộc...
-              </p> */}
-            </div>
+            <LoadingState message="Đang truy vấn dữ liệu dòng tộc..." />
           )}
         </>
       )}
@@ -244,14 +229,36 @@ export default function GenealogyDetail() {
               fetchDataDialog={fetchDataDialog}
             />
           ) : (
-            <div className="flex-1 flex items-center justify-center font-serif">
-              <p className="text-[#5d3a1a] animate-pulse text-xl">
-                Đang truy vấn dữ liệu dòng tộc...
-              </p>
-            </div>
+            <LoadingState message="Đang khởi tạo sơ đồ phả hệ..." />
           )}
         </>
       )}
     </div>
+  );
+}
+
+// 2. Component Loading dùng chung
+function LoadingState({ message }) {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center font-serif bg-[#f2e2ba]">
+      <div className="w-48 h-48 mb-4">
+        <Lottie animationData={gettingDataAnimation} loop={true} />
+      </div>
+      <div className="relative">
+        <p className="text-[#000000] animate-pulse text-xl font-bold tracking-widest uppercase">
+          {message}
+        </p>
+        {/* <div className="mt-2 h-0.5 w-full bg-[#5d3a1a] origin-left animate-expand"></div> */}
+      </div>
+    </div>
+  );
+}
+
+// 3. Export mặc định hàm mới được bọc trong Suspense
+export default function GenealogyDetail() {
+  return (
+    <Suspense fallback={<LoadingState message="Đang khởi động..." />}>
+      <GenealogyDetailContent />
+    </Suspense>
   );
 }

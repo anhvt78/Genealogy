@@ -125,10 +125,10 @@ export default function ClanListForm({ userWalletAddress }) {
         //   <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#5d3a1a]"></div>
         // </div>
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-[#f2e2ba]/50 backdrop-blur-sm z-50">
-          <div className="w-32 h-32">
+          <div className="w-48 h-48">
             <Lottie animationData={loaderAnimation} loop={true} />
           </div>
-          <p className="text-[#5d3a1a] animate-pulse text-xl">
+          <p className="text-[#000000] animate-pulse text-xl">
             Đang kết nối tới blockchain...
           </p>
         </div>
