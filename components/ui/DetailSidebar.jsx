@@ -14,6 +14,7 @@ import UpdateMemberModal from "./UpdateMemberModal";
 import { useSelector } from "react-redux";
 import sweetalert2 from "@/configs/swal";
 import Swal from "sweetalert2";
+import { generateMetadataLink } from "@/components/Utils/helpers";
 
 const ANCESTOR_ID =
   "0x0000000000000000000000000000000000000000000000000000000000000001";
@@ -139,12 +140,14 @@ export default function DetailSidebar({
   useEffect(() => {
     getPersonDetail(clanItem?.clanId, person.id).then(
       (personMetadataResult) => {
-        // console.log("personMetadataResult: ", personMetadataResult);
+        console.log("personMetadataResult: ", personMetadataResult);
         setIsGettingMetadata(false);
         if (personMetadataResult.sts) {
           // setPersonMetadata(personMetadataResult.data);
           // const object = JSON.parse(personMetadataResult.data);
           let allImageUrls = [];
+
+          // console.log("object: ", object);
 
           try {
             const imagesData = personMetadataResult?.data?.images;
@@ -152,7 +155,14 @@ export default function DetailSidebar({
               allImageUrls = imagesData
                 .map((subArray) => {
                   if (Array.isArray(subArray) && subArray.length > 0) {
-                    return subArray[0];
+                    // return subArray[0];
+                    console.log("157: subArray[0]: ", subArray[0]?.url);
+
+                    console.log(
+                      "161: subArray[0]: ",
+                      generateMetadataLink(subArray[0]?.url),
+                    );
+                    return generateMetadataLink(subArray[0]?.url);
                   }
                   return null;
                 })
@@ -167,7 +177,7 @@ export default function DetailSidebar({
             description: personMetadataResult?.data?.description,
           };
 
-          // console.log("170: item: ", item);
+          console.log("170: item: ", item);
 
           setPersonDetail(item);
         }
@@ -320,7 +330,7 @@ export default function DetailSidebar({
           {/* Ảnh hiển thị */}
           <div className="relative max-w-5xl max-h-[85vh] flex items-center justify-center">
             <img
-              src={personDetail?.allImageUrls[currentIndex]?.url}
+              src={personDetail?.allImageUrls[currentIndex]}
               className="max-w-full max-h-full object-contain shadow-2xl animate-in fade-in zoom-in duration-300"
               alt="Full view"
               onClick={(e) => e.stopPropagation()}
@@ -549,7 +559,7 @@ export default function DetailSidebar({
                   {personDetail?.allImageUrls &&
                   personDetail.allImageUrls.length > 0 ? (
                     <img
-                      src={personDetail.allImageUrls[0].url}
+                      src={personDetail.allImageUrls[0]}
                       alt={person.name}
                       className="w-full h-full object-cover"
                     />
@@ -695,8 +705,8 @@ export default function DetailSidebar({
                             onClick={() => setCurrentIndex(index)} // Truyền index vào state
                           >
                             <img
-                              src={img?.url}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 cursor-pointer"
+                              src={img}
+                              className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 cursor-pointer"
                               alt={`gallery-${index}`}
                             />
                           </div>

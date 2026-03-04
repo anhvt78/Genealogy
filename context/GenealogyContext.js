@@ -265,6 +265,8 @@ export const GenealogyProvider = ({ children }) => {
       } else {
         return { sts: true, data: null };
       }
+
+      // return { sts: true, data: JSON.stringify(decodedMetadata, null, 2) };
     } catch (error) {
       return { sts: false, data: error };
     }

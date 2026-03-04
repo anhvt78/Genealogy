@@ -188,7 +188,7 @@ export default function GenealogyDetailForm({ clanItem, setTabIndex }) {
                 >
                   <img
                     src={img}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 cursor-pointer"
+                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 cursor-pointer"
                     alt={`gallery-${index}`}
                   />
                 </div>
