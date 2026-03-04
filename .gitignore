@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+#/contracts
 
 # next.js
 /.next/
