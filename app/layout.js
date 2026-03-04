@@ -6,7 +6,7 @@ import { GenealogyProvider } from "@/context/GenealogyContext";
 
 export const metadata = {
   title: "Gia Phả Tộc - Truyền Thống Việt",
-  description: "Hệ thống quản lý gia phả số phong cách cổ điển",
+  description: "Hệ thống quản lý gia phả số lưu trữ trên Blockchain",
 };
 
 export default function RootLayout({ children }) {
