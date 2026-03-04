@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /* config options here */
+  output: "export", // Kích hoạt chế độ Static Export
   reactStrictMode: true,
   swcMinify: true,
   images: {
