@@ -159,52 +159,99 @@ export default function ConnectForm() {
   //   }, 100); // Delay 100ms để đảm bảo DOM đã sẵn sàng
   // };
 
+  // Thêm một state để kiểm tra xem camera đã sẵn sàng chưa
+  const [isCameraReady, setIsCameraReady] = useState(false);
+
+  // const startScanner = async () => {
+  //   try {
+  //     // Luôn dọn dẹp scanner cũ trước khi bắt đầu
+  //     if (scannerRef.current) {
+  //       await stopScanner();
+  //     }
+
+  //     // Đợi một khoảng thời gian nhỏ để đảm bảo thẻ #reader đã lên giao diện
+  //     setTimeout(async () => {
+  //       const element = document.getElementById("reader");
+  //       if (!element) return;
+
+  //       const html5QrCode = new Html5Qrcode("reader");
+  //       scannerRef.current = html5QrCode;
+
+  //       const config = {
+  //         fps: 15, // Tăng fps để quét mượt hơn trên mobile
+  //         qrbox: { width: 250, height: 250 },
+  //         aspectRatio: 1.0,
+  //       };
+
+  //       await html5QrCode.start(
+  //         { facingMode: "environment" },
+  //         config,
+  //         (decodedText) => {
+  //           // Xử lý logic lấy ID từ URL hoặc text thuần
+  //           const urlParams = new URLSearchParams(decodedText.split("?")[1]);
+  //           const clanId = urlParams.get("id") || decodedText.split("/").pop();
+
+  //           stopScanner();
+  //           router.push(`/pages/detail?id=${clanId.trim()}`);
+  //         },
+  //       );
+  //       setIsCameraReady(true);
+  //     }, 500);
+  //   } catch (err) {
+  //     console.error("Manual Camera Error:", err);
+  //     setIsScanning(false);
+  //     // Thông báo chi tiết hơn để debug
+  //     sweetalert2.popupAlert({
+  //       title: "Lỗi Camera",
+  //       text: "Thiết bị báo lỗi: " + err.message,
+  //     });
+  //   }
+  // };
+
   const startScanner = async () => {
-    // Đảm bảo stop scanner cũ trước khi start mới
-    if (scannerRef.current) {
-      await stopScanner();
-    }
+    // 1. Kiểm tra DOM trước khi làm bất cứ việc gì
+    const element = document.getElementById("reader");
+    if (!element) return;
 
-    // Đợi DOM cập nhật để thấy thẻ #reader
-    setTimeout(async () => {
-      const element = document.getElementById("reader");
-      if (!element) {
-        console.error("Không tìm thấy thẻ #reader");
-        return;
+    try {
+      // 2. Nếu đã có scanner đang chạy, dừng nó trước
+      if (scannerRef.current && scannerRef.current.isScanning) {
+        await scannerRef.current.stop();
       }
 
-      try {
-        scannerRef.current = new Html5Qrcode("reader");
-        const config = {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-          aspectRatio: 1.0,
-        };
+      const html5QrCode = new Html5Qrcode("reader");
+      scannerRef.current = html5QrCode;
 
-        await scannerRef.current.start(
-          { facingMode: "environment" },
-          config,
-          (decodedText) => {
-            // Xử lý logic URL hoặc ID
-            const clanId = decodedText.includes("id=")
-              ? new URLSearchParams(decodedText.split("?")[1]).get("id")
-              : decodedText.split("/").pop();
+      const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0,
+      };
 
-            stopScanner();
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText) => {
+          // Xử lý logic ID dòng họ
+          const clanId = decodedText.includes("id=")
+            ? new URLSearchParams(decodedText.split("?")[1]).get("id")
+            : decodedText.split("/").pop();
+
+          // Dừng scanner trước khi chuyển trang
+          html5QrCode.stop().then(() => {
+            setIsScanning(false);
             router.push(`/pages/detail?id=${clanId.trim()}`);
-          },
-        );
-      } catch (err) {
-        console.error("Lỗi khởi tạo camera:", err);
+          });
+        },
+      );
+    } catch (err) {
+      console.error("Camera Error:", err);
+      // Quan trọng: Chỉ cập nhật state báo lỗi sau khi frame render hiện tại kết thúc
+      setTimeout(() => {
         setIsScanning(false);
-        sweetalert2.popupAlert({
-          title: "Lỗi",
-          text: "Không thể truy cập camera. Vui lòng kiểm tra quyền thiết bị.",
-        });
-      }
-    }, 300); // Tăng delay lên một chút để chắc chắn React đã render xong
+      }, 0);
+    }
   };
-
   const stopScanner = async () => {
     if (scannerRef.current && scannerRef.current.isScanning) {
       await scannerRef.current.stop();
@@ -214,14 +261,26 @@ export default function ConnectForm() {
   };
   // 2. Logic khởi tạo và dừng Camera thực tế
   // Lắng nghe biến isScanning để kích hoạt/tắt
+  // Cấu trúc lại useEffect để tránh render chồng chéo
   useEffect(() => {
-    if (isScanning && isMobile) {
-      startScanner();
-    }
-    return () => {
-      if (scannerRef.current) stopScanner();
+    let isMounted = true;
+
+    const initScanner = async () => {
+      if (isScanning && isMobile && isMounted) {
+        await startScanner();
+      }
     };
-  }, [isScanning]);
+
+    initScanner();
+
+    return () => {
+      isMounted = false;
+      if (scannerRef.current) {
+        // Gọi stopScanner nhưng không cập nhật state trong cleanup để tránh lỗi
+        scannerRef.current.stop().catch(console.error);
+      }
+    };
+  }, [isScanning, isMobile]); // Thêm isMobile vào dependency
 
   // const handleAccessById = () => {
   //   if (!inputClanId.trim()) return;
