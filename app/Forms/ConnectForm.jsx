@@ -209,46 +209,69 @@ export default function ConnectForm() {
   // };
 
   const startScanner = async () => {
-    // 1. Kiểm tra DOM trước khi làm bất cứ việc gì
     const element = document.getElementById("reader");
     if (!element) return;
 
     try {
-      // 2. Nếu đã có scanner đang chạy, dừng nó trước
-      if (scannerRef.current && scannerRef.current.isScanning) {
-        await scannerRef.current.stop();
+      // 1. Dọn dẹp scanner cũ một cách an toàn
+      if (scannerRef.current) {
+        try {
+          if (scannerRef.current.isScanning) {
+            await scannerRef.current.stop();
+          }
+        } catch (e) {
+          console.warn("Dừng scanner cũ thất bại:", e);
+        }
+        scannerRef.current = null;
       }
 
       const html5QrCode = new Html5Qrcode("reader");
       scannerRef.current = html5QrCode;
 
-      const config = {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0,
-      };
+      // 2. Lấy danh sách camera để tránh lỗi NotFoundError
+      const cameras = await Html5Qrcode.getCameras();
 
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        config,
-        (decodedText) => {
-          // Xử lý logic ID dòng họ
-          const clanId = decodedText.includes("id=")
-            ? new URLSearchParams(decodedText.split("?")[1]).get("id")
-            : decodedText.split("/").pop();
+      if (cameras && cameras.length > 0) {
+        // Chọn camera cuối cùng (thường là camera sau trên thiết bị di động)
+        const cameraId = cameras[cameras.length - 1].id;
 
-          // Dừng scanner trước khi chuyển trang
-          html5QrCode.stop().then(() => {
-            setIsScanning(false);
-            router.push(`/pages/detail?id=${clanId.trim()}`);
-          });
-        },
-      );
+        const config = {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+        };
+
+        await html5QrCode.start(
+          cameraId, // Dùng ID cụ thể thay vì facingMode
+          config,
+          (decodedText) => {
+            const clanId = decodedText.includes("id=")
+              ? new URLSearchParams(decodedText.split("?")[1]).get("id")
+              : decodedText.split("/").pop();
+
+            // Dừng camera và điều hướng
+            html5QrCode
+              .stop()
+              .then(() => {
+                setIsScanning(false);
+                router.push(`/pages/detail?id=${clanId.trim()}`);
+              })
+              .catch((err) => console.error("Lỗi khi dừng:", err));
+          },
+        );
+        setIsCameraReady(true);
+      } else {
+        throw new Error("Không tìm thấy camera trên thiết bị này.");
+      }
     } catch (err) {
       console.error("Camera Error:", err);
-      // Quan trọng: Chỉ cập nhật state báo lỗi sau khi frame render hiện tại kết thúc
+      // Tránh lỗi "cascading renders" bằng setTimeout
       setTimeout(() => {
         setIsScanning(false);
+        sweetalert2.popupAlert({
+          title: "Lỗi Camera",
+          text: err.message || "Không thể truy cập camera.",
+        });
       }, 0);
     }
   };
