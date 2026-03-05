@@ -2,6 +2,8 @@ import React from "react";
 import { formatDate } from "../Utils/helpers";
 
 export default function PersonCard({ person, subTitle, isMain, onNodeSelect }) {
+  console.log("person: ", person);
+
   return (
     <div
       onClick={(e) => {
@@ -29,7 +31,7 @@ export default function PersonCard({ person, subTitle, isMain, onNodeSelect }) {
         </div>
         <div className="mt-2 flex items-center justify-center h-[32px]">
           <div className="text-[10px] italic text-[#5d3a1a]/80 text-center leading-[16px] max-w-[180px] line-clamp-2 overflow-hidden">
-            {person.bio}
+            {person.shortDesc}
           </div>
         </div>
         <div className="text-[10px] mt-2 opacity-70 font-mono">
