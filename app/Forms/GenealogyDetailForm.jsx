@@ -1,37 +1,25 @@
 "use client";
 import React, { useState } from "react";
-// import { useRouter } from "next/navigation";
-
-// const DATA_DETAIL = {
-//   title: "NGUYỄN TỘC PHẢ ĐỒ",
-//   avatar:
-//     "https://cdn3648.cdn4s7.io.vn/media/1547697242_1496913269_custom_1.png",
-//   shortDesc:
-//     "Dòng dõi cụ Nguyễn Văn Tổ, khởi nguồn từ vùng đất tổ linh thiêng, gìn giữ gia phong qua nhiều thế hệ.",
-//   fullDesc: `Dòng họ Nguyễn tại đây có truyền thống hiếu học và lòng yêu nước nồng nàn. Khởi đầu từ thế kỷ 18, cụ tổ Nguyễn Văn Tổ đã khai khẩn vùng đất này, lập nên cơ đồ cho con cháu.
-
-// Trải qua nhiều biến cố lịch sử, gia phả vẫn được lưu giữ cẩn thận như một báu vật linh thiêng. Mỗi năm vào ngày giỗ Tổ, con cháu từ khắp nơi lại hội tụ về từ đường để dâng hương, tưởng nhớ công đức sinh thành và thắt chặt tình cốt nhục.`,
-//   gallery: [
-//     "https://cdn3648.cdn4s7.io.vn/media/articles/plugin/news/3280/1657886556-400426901-y-ngh-a-c-a-v-n-hoa-lang-va-dong-h.jpg",
-//     "https://cdn3648.cdn4s7.io.vn/media/img_9300_1.webp",
-//     "https://cdn3648.cdn4s7.io.vn/media/img_9310_1.webp",
-//     "https://cdn3648.cdn4s7.io.vn/media/img_9300_1.webp",
-//     "https://cdn3648.cdn4s7.io.vn/media/img_9310_1.webp",
-//     "https://cdn3648.cdn4s7.io.vn/media/img_9300_1.webp",
-//     "https://cdn3648.cdn4s7.io.vn/media/img_9310_1.webp",
-//     "https://cdn3648.cdn4s7.io.vn/media/img_9300_1.webp",
-//   ],
-// };
 
 import images from "@/app/img";
 import Image from "next/image";
 
-export default function GenealogyDetailForm({ clanItem, setTabIndex }) {
-  // console.log("clanItem: ", clanItem);
+import UpdateClanDescShortModal from "@/components/ui/UpdateClanDescShortModal";
+import { useSelector } from "react-redux";
 
-  // const router = useRouter();
-  // Thay vì lưu URL, ta lưu index của ảnh trong mảng gallery
+export default function GenealogyDetailForm({
+  clanItem,
+  setTabIndex,
+  fetchDataDetail,
+}) {
   const [currentIndex, setCurrentIndex] = useState(null);
+  const [modalUpdateState, setModalUpdateState] = useState(false);
+
+  const userWalletAddress = useSelector(
+    (state) => state.genealogyReducer.walletAddress,
+  );
+
+  // console.log("clanItem = ", clanItem);
 
   // Hàm chuyển ảnh tiếp theo
   const nextImage = (e) => {
@@ -156,19 +144,137 @@ export default function GenealogyDetailForm({ clanItem, setTabIndex }) {
       <div className="max-w-5xl mx-auto px-6 mt-12 grid grid-cols-1 md:grid-cols-3 gap-12">
         {/* Cột trái: Thông tin chính */}
         <div className="order-last md:order-0 md:col-span-2 space-y-8">
-          <section>
+          {/* <section>
             <h2 className="text-2xl font-bold text-[#3d2611] border-b-2 border-[#5d3a1a] pb-2 mb-4 uppercase tracking-widest">
               Tóm lược
             </h2>
+            <a
+              href={`https://universaleverything.io/collection/${clanItem?.clanId}?network=testnet`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex border border-[#8b5a2b]/10 size-10 items-center justify-center rounded-full transition-all duration-300 bg-neutral-97 cursor-pointer hover:scale-105 hover:bg-neutral-95"
+              title="Cập nhật thông tin chi tiết trên Blockchain"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ width: "24px", height: "24px" }}
+              >
+                <path
+                  d="M9.20522 17.4916L18.5695 8.12731C18.9601 7.73679 18.9601 7.10362 18.5695 6.7131L16.5635 4.70704C16.173 4.31652 15.5398 4.31652 15.1493 4.70704L5.78495 14.0714C5.64561 14.2107 5.55055 14.3881 5.51169 14.5813L5.00661 17.0924C4.86572 17.7929 5.48368 18.4109 6.18417 18.27L8.6953 17.7649C8.88848 17.726 9.06588 17.631 9.20522 17.4916Z"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                ></path>
+                <path
+                  d="M13.2913 6.28015L16.7115 9.70042"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                ></path>
+              </svg>
+            </a>
+            <p className="text-[#5d3a1a] text-lg italic leading-relaxed">
+              {clanItem?.shortDesc}
+            </p>
+          </section> */}
+
+          <section>
+            {/* Container bọc tiêu đề và nút cập nhật */}
+            <div className="flex items-center justify-between border-b-2 border-[#5d3a1a] pb-2 mb-4">
+              <h2 className="text-2xl font-bold text-[#3d2611] uppercase tracking-widest">
+                Tóm lược
+              </h2>
+              {userWalletAddress &&
+                clanItem?.clanOwner == userWalletAddress && (
+                  <div
+                    // href={`https://universaleverything.io/collection/${clanItem?.clanId}?network=testnet`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex border border-[#8b5a2b]/10 size-10 items-center justify-center rounded-full transition-all duration-300 bg-neutral-97 cursor-pointer hover:scale-105 hover:bg-neutral-95 text-[#5d3a1a]"
+                    title="Cập nhật thông tin sơ lược"
+                    onClick={() => {
+                      setModalUpdateState(true);
+                    }}
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9.20522 17.4916L18.5695 8.12731C18.9601 7.73679 18.9601 7.10362 18.5695 6.7131L16.5635 4.70704C16.173 4.31652 15.5398 4.31652 15.1493 4.70704L5.78495 14.0714C5.64561 14.2107 5.55055 14.3881 5.51169 14.5813L5.00661 17.0924C4.86572 17.7929 5.48368 18.4109 6.18417 18.27L8.6953 17.7649C8.88848 17.726 9.06588 17.631 9.20522 17.4916Z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      ></path>
+                      <path
+                        d="M13.2913 6.28015L16.7115 9.70042"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      ></path>
+                    </svg>
+                  </div>
+                )}
+            </div>
+
             <p className="text-[#5d3a1a] text-lg italic leading-relaxed">
               {clanItem?.shortDesc}
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-[#3d2611] border-b-2 border-[#5d3a1a] pb-2 mb-4 uppercase tracking-widest">
+            {/* <h2 className="text-2xl font-bold text-[#3d2611] border-b-2 border-[#5d3a1a] pb-2 mb-4 uppercase tracking-widest">
               Lịch sử dòng tộc
-            </h2>
+            </h2> */}
+            <div className="flex items-center justify-between border-b-2 border-[#5d3a1a] pb-2 mb-4">
+              <h2 className="text-2xl font-bold text-[#3d2611] uppercase tracking-widest">
+                Lịch sử dòng tộc
+              </h2>
+              {userWalletAddress &&
+                clanItem?.clanOwner == userWalletAddress && (
+                  <a
+                    href={`https://universaleverything.io/collection/${clanItem?.clanId}?network=testnet`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex border border-[#8b5a2b]/10 size-10 items-center justify-center rounded-full transition-all duration-300 bg-neutral-97 cursor-pointer hover:scale-105 hover:bg-neutral-95 text-[#5d3a1a]"
+                    title="Cập nhật thông tin sơ lược"
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9.20522 17.4916L18.5695 8.12731C18.9601 7.73679 18.9601 7.10362 18.5695 6.7131L16.5635 4.70704C16.173 4.31652 15.5398 4.31652 15.1493 4.70704L5.78495 14.0714C5.64561 14.2107 5.55055 14.3881 5.51169 14.5813L5.00661 17.0924C4.86572 17.7929 5.48368 18.4109 6.18417 18.27L8.6953 17.7649C8.88848 17.726 9.06588 17.631 9.20522 17.4916Z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      ></path>
+                      <path
+                        d="M13.2913 6.28015L16.7115 9.70042"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      ></path>
+                    </svg>
+                  </a>
+                )}
+            </div>
             <div className="text-[#3d2611] text-lg leading-loose whitespace-pre-line text-justify">
               {clanItem?.clanDetail}
             </div>
@@ -225,7 +331,8 @@ export default function GenealogyDetailForm({ clanItem, setTabIndex }) {
           <div className="p-6 border-2 border-dashed border-[#5d3a1a]/30 text-[#5d3a1a] italic text-sm flex items-center justify-center gap-1">
             Hồ sơ này đã được xác thực trên mạng lưới Blockchain LUKSO.
             <a
-              href={`https://universaleverything.io/collection/${clanItem?.clanId}?network=testnet`}
+              // href={`https://universaleverything.io/collection/${clanItem?.clanId}?network=testnet`}
+              href={`https://explorer.execution.testnet.lukso.network/address/${clanItem?.clanId}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center hover:opacity-70 transition-opacity"
@@ -264,6 +371,14 @@ export default function GenealogyDetailForm({ clanItem, setTabIndex }) {
           </div>
         </div>
       </div>
+
+      {modalUpdateState && (
+        <UpdateClanDescShortModal
+          onClose={() => setModalUpdateState(false)}
+          clanItem={clanItem}
+          fetchDataDetail={fetchDataDetail}
+        />
+      )}
     </div>
   );
 }

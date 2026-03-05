@@ -85,6 +85,7 @@ function GenealogyDetailContent() {
         const item = {
           clanId: clanId,
           clanName: result.data?.clanName,
+          clanOwner: result.data?.clanOwner,
           shortDesc: result.data?.clanDesc,
           allImageUrls: allImageUrls,
           clanDetail: object?.value?.LSP4Metadata?.description,
@@ -213,6 +214,7 @@ function GenealogyDetailContent() {
             <GenealogyDetailForm
               clanItem={clanItem}
               setTabIndex={setTabIndex}
+              fetchDataDetail={fetchDataDetail}
             />
           ) : (
             <LoadingState message="Đang truy vấn dữ liệu dòng tộc..." />

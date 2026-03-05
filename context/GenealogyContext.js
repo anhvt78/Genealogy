@@ -193,7 +193,11 @@ export const GenealogyProvider = ({ children }) => {
         "LSP4TokenName",
       );
 
+      const clanOwner = await contract.owner();
+
       const clanDesc = await contract.clanShortDesc();
+
+      // console.log("clanMetadata: ", clanMetadata);
 
       return {
         sts: true,
@@ -201,6 +205,7 @@ export const GenealogyProvider = ({ children }) => {
           clanMetadata: JSON.stringify(clanMetadata, null, 2),
           clanName: clanName.value,
           clanDesc: clanDesc,
+          clanOwner: clanOwner,
         },
       };
     } catch (error) {

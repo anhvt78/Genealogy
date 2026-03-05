@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import sweetalert2 from "@/configs/swal";
 import Swal from "sweetalert2";
 import { GenealogyContext } from "@/context/GenealogyContext";
+import QRGeneratorModal from "@/components/ui/QRGeneratorModal";
 
 // Đăng ký loại node tùy chỉnh
 const nodeTypes = {
@@ -53,6 +54,7 @@ export default function GenealogyDiagramForm({
   const dispatch = useDispatch();
   const router = useRouter();
   // Thêm vào trong component FamilyTreePage
+  const [modalQROpen, setModalQROpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showFemales, setShowFemales] = useState(false); // State để gạt ẩn/hiện con gái
   // const { getNFTCollection } = useContext(GenealogyContext);
@@ -253,7 +255,11 @@ export default function GenealogyDiagramForm({
     // console.log("newChildId: ", newChildId);
     // onClose();
     // setIsProcessing(false);
-    Swal.fire("Đã xóa!", "Gia phả đã không còn trong danh mục quản lý của bạn.", "success");
+    Swal.fire(
+      "Đã xóa!",
+      "Gia phả đã không còn trong danh mục quản lý của bạn.",
+      "success",
+    );
     router.push("/");
     // router.push(`/pages/detail/${clanId}`);
   };
@@ -281,28 +287,6 @@ export default function GenealogyDiagramForm({
           </h2>
 
           <div className="flex flex-col gap-4 flex-grow">
-            {/* Nút Xuất Ảnh */}
-            {/* <button
-              onClick={() => {
-                if (confirm("Tạo gia phả mới sẽ xóa dữ liệu hiện tại?"))
-                  setFamilyData([]);
-              }}
-              className="flex items-center gap-3 px-4 py-3 bg-[#5d3a1a] hover:bg-[#8b5a2b] transition-colors rounded-md text-sm font-semibold"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-              Tạo gia phả mới
-            </button> */}
-
             <button
               // onClick={() => router.push(`/pages/detail/${clanId}`)}
               onClick={() => {
@@ -424,6 +408,25 @@ export default function GenealogyDiagramForm({
               </label>
             </div>
 
+            <button
+              onClick={() => setModalQROpen(true)}
+              className="flex items-center gap-3 px-4 py-3 bg-[#5d3a1a] hover:bg-[#8b5a2b] transition-colors rounded-md text-sm font-semibold"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <polyline points="6 9 6 2 18 2 18 9" />
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                <rect x="6" y="14" width="12" height="8" />
+              </svg>
+              In mã QR
+            </button>
+
             {/* 4. Nút Xuất Ảnh (Chuyển xuống dưới nút Hiện con gái) */}
             <button
               onClick={exportImage}
@@ -519,23 +522,6 @@ export default function GenealogyDiagramForm({
         </ReactFlow>
       </div>
 
-      {/* <button
-        onClick={exportImage}
-        className="fixed bottom-10 right-10 z-50 px-6 py-3 bg-[#5d3a1a] text-[#f2e2ba] text-sm font-bold shadow-[0_10px_25px_rgba(0,0,0,0.3)] border-2 border-[#3d2611] cursor-pointer hover:bg-[#3d2611] hover:-translate-y-1 active:scale-95 transition-all flex items-center gap-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          viewBox="0 0 16 16"
-        >
-          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-          <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
-        </svg>
-        XUẤT ẢNH GIA PHẢ
-      </button> */}
-
       {/* Sidebar chi tiết bên phải */}
       {selectedPerson && (
         <DetailSidebar
@@ -543,6 +529,12 @@ export default function GenealogyDiagramForm({
           clanItem={clanItem}
           onClose={() => setSelectedPerson(null)}
           fetchDataDialog={fetchDataDialog}
+        />
+      )}
+      {modalQROpen && (
+        <QRGeneratorModal
+          clanItem={clanItem}
+          onClose={() => setModalQROpen(false)}
         />
       )}
 
