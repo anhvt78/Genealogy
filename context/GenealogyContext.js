@@ -1,28 +1,28 @@
 "use client"; // Thêm dòng này vào đầu file
-import React, { useState } from "react";
-import Web3Modal from "web3modal";
+import React from "react";
+// import Web3Modal from "web3modal";
 import { ethers } from "ethers";
-import { INTERFACE_IDS } from "@lukso/lsp-smart-contracts";
+// import { INTERFACE_IDS } from "@lukso/lsp-smart-contracts";
 import { ERC725 } from "@erc725/erc725.js";
 import profileSchema from "@erc725/erc725.js/schemas/LSP3ProfileMetadata.json";
 import lsp4Schema from "@erc725/erc725.js/schemas/LSP4DigitalAsset.json";
-import lsp8Schema from "@erc725/erc725.js/schemas/LSP8IdentifiableDigitalAsset.json";
+// import lsp8Schema from "@erc725/erc725.js/schemas/LSP8IdentifiableDigitalAsset.json";
 // import {_LSP4_METADATA_KEY} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
 
 // import LSP4Artifact from "@lukso/lsp-smart-contracts/artifacts/LSP4DigitalAssetMetadata.json";
 import { ERC725YDataKeys } from "@lukso/lsp-smart-contracts";
 
 import {
-  convertToEthers,
-  toEnglishCharacters,
-  convertEtherToWei,
+  // convertToEthers,
+  // toEnglishCharacters,
+  // convertEtherToWei,
   generateMetadataLink,
-  toEthersUsdtAtomic,
-  toEthersUsdtDisplay,
+  // toEthersUsdtAtomic,
+  // toEthersUsdtDisplay,
 } from "@/components/Utils/helpers";
 
-const projectId = `${process.env.INFURA_API_KEY}`;
-const projectSecretKey = `${process.env.INFURA_API_KEY_SECRET}`;
+// const projectId = `${process.env.INFURA_API_KEY}`;
+// const projectSecretKey = `${process.env.INFURA_API_KEY_SECRET}`;
 
 // const privateKey = `${process.env.PRIVATE_KEY}`;
 const privateKey =
@@ -31,11 +31,11 @@ const privateKey =
 // console.log("privateKey: ", privateKey);
 
 const RPC_URL = "https://rpc.testnet.lukso.network"; // RPC URL cho LUKSO Testnet
-const CHAIN_ID = 4201; // Chain ID của LUKSO Testnet
+// const CHAIN_ID = 4201; // Chain ID của LUKSO Testnet
 
-const auth = `Basic ${Buffer.from(`${projectId}:${projectSecretKey}`).toString(
-  "base64",
-)}`;
+// const auth = `Basic ${Buffer.from(`${projectId}:${projectSecretKey}`).toString(
+//   "base64",
+// )}`;
 
 import { genealogyAddress, genealogyABI, familyNftABI } from "./constants";
 
@@ -93,53 +93,53 @@ export const GenealogyContext = React.createContext();
 
 export const GenealogyProvider = ({ children }) => {
   //---CHECK IF WALLET IS CONNECTED
-  const checkIfWalletConnected = async () => {
-    try {
-      if (!window.ethereum) {
-        // return setOpenError(true), setError("Install MetaMask");
-        return;
-      } else {
-        window.ethereum.on("accountsChanged", function (accounts) {
-          currentAccount = accounts[0];
-          // window.location.reload();
+  // const checkIfWalletConnected = async () => {
+  //   try {
+  //     if (!window.ethereum) {
+  //       // return setOpenError(true), setError("Install MetaMask");
+  //       return;
+  //     } else {
+  //       window.ethereum.on("accountsChanged", function (accounts) {
+  //         currentAccount = accounts[0];
+  //         // window.location.reload();
 
-          if (accounts[0]) {
-            // setOpenError(false);
-            // getEggsOwn(accounts[0]);
-            // getBidStep();
-          } else {
-            // setOpenError(true);
-            // setError("Error while connecting to wallet");
-          }
-        });
-      }
+  //         if (accounts[0]) {
+  //           // setOpenError(false);
+  //           // getEggsOwn(accounts[0]);
+  //           // getBidStep();
+  //         } else {
+  //           // setOpenError(true);
+  //           // setError("Error while connecting to wallet");
+  //         }
+  //       });
+  //     }
 
-      const accounts = await window.ethereum.request({
-        method: "eth_accounts",
-      });
+  //     const accounts = await window.ethereum.request({
+  //       method: "eth_accounts",
+  //     });
 
-      if (accounts && accounts.length) {
-        // setCurrentAccount(accounts[0]);
-        currentAccount = accounts[0];
+  //     if (accounts && accounts.length) {
+  //       // setCurrentAccount(accounts[0]);
+  //       currentAccount = accounts[0];
 
-        // console.log(accounts.length + " : " + currentAccount);
-      } else {
-        // console.log("No Account Found");
-        // setOpenError(true), setError("No Account Found");
-      }
+  //       // console.log(accounts.length + " : " + currentAccount);
+  //     } else {
+  //       // console.log("No Account Found");
+  //       // setOpenError(true), setError("No Account Found");
+  //     }
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const mBalance = await provider.getBalance(accounts[0]);
-      const balance = ethers.utils.formatEther(mBalance);
-      setAccountBalance(balance);
+  //     const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //     const mBalance = await provider.getBalance(accounts[0]);
+  //     const balance = ethers.utils.formatEther(mBalance);
+  //     setAccountBalance(balance);
 
-      // console.log("accounts: " + accounts[0]);
-    } catch (error) {
-      console.log("Something went wrong while connecting to wallet");
-      // setOpenError(true),
-      setError("Something went wrong while connecting to wallet");
-    }
-  };
+  //     // console.log("accounts: " + accounts[0]);
+  //   } catch (error) {
+  //     console.log("Something went wrong while connecting to wallet");
+  //     // setOpenError(true),
+  //     setError("Something went wrong while connecting to wallet");
+  //   }
+  // };
 
   const getClanInfo = async (clanId) => {
     try {
@@ -569,7 +569,7 @@ export const GenealogyProvider = ({ children }) => {
   return (
     <GenealogyContext.Provider
       value={{
-        checkIfWalletConnected,
+        // checkIfWalletConnected,
         createClan,
         getClanInfo,
         getClanDetail,

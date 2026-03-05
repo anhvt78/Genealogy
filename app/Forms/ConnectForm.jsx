@@ -130,33 +130,79 @@ export default function ConnectForm() {
   // Logic quét QR thực tế
 
   // Hàm khởi tạo camera tách biệt
+  // const startScanner = async () => {
+  //   // Đợi một chút để React render xong thẻ div#reader
+  //   setTimeout(async () => {
+  //     const element = document.getElementById("reader");
+  //     if (!element) return; // Nếu vẫn chưa có thì thoát để tránh lỗi crash
+
+  //     try {
+  //       scannerRef.current = new Html5Qrcode("reader");
+  //       const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+  //       await scannerRef.current.start(
+  //         { facingMode: "environment" },
+  //         config,
+  //         (decodedText) => {
+  //           const clanId = decodedText.includes("/")
+  //             ? decodedText.split("/").pop()
+  //             : decodedText;
+  //           stopScanner();
+  //           // router.push(`/pages/detail/${clanId.trim()}`);
+  //           router.push(`/pages/detail?id=${clanId.trim()}`);
+  //         },
+  //       );
+  //     } catch (err) {
+  //       console.error("Lỗi khởi tạo camera:", err);
+  //       setIsScanning(false);
+  //     }
+  //   }, 100); // Delay 100ms để đảm bảo DOM đã sẵn sàng
+  // };
+
   const startScanner = async () => {
-    // Đợi một chút để React render xong thẻ div#reader
+    // Đảm bảo stop scanner cũ trước khi start mới
+    if (scannerRef.current) {
+      await stopScanner();
+    }
+
+    // Đợi DOM cập nhật để thấy thẻ #reader
     setTimeout(async () => {
       const element = document.getElementById("reader");
-      if (!element) return; // Nếu vẫn chưa có thì thoát để tránh lỗi crash
+      if (!element) {
+        console.error("Không tìm thấy thẻ #reader");
+        return;
+      }
 
       try {
         scannerRef.current = new Html5Qrcode("reader");
-        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+        const config = {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+        };
 
         await scannerRef.current.start(
           { facingMode: "environment" },
           config,
           (decodedText) => {
-            const clanId = decodedText.includes("/")
-              ? decodedText.split("/").pop()
-              : decodedText;
+            // Xử lý logic URL hoặc ID
+            const clanId = decodedText.includes("id=")
+              ? new URLSearchParams(decodedText.split("?")[1]).get("id")
+              : decodedText.split("/").pop();
+
             stopScanner();
-            // router.push(`/pages/detail/${clanId.trim()}`);
             router.push(`/pages/detail?id=${clanId.trim()}`);
           },
         );
       } catch (err) {
         console.error("Lỗi khởi tạo camera:", err);
         setIsScanning(false);
+        sweetalert2.popupAlert({
+          title: "Lỗi",
+          text: "Không thể truy cập camera. Vui lòng kiểm tra quyền thiết bị.",
+        });
       }
-    }, 100); // Delay 100ms để đảm bảo DOM đã sẵn sàng
+    }, 300); // Tăng delay lên một chút để chắc chắn React đã render xong
   };
 
   const stopScanner = async () => {
@@ -317,7 +363,7 @@ export default function ConnectForm() {
           </div>
 
           {/* Vùng hiển thị Camera giả lập khi bấm Scan */}
-          {isScanning && (
+          {/* {isScanning && (
             <div className="mt-4 p-4 bg-[#1a1007] rounded-lg border-2 border-dashed border-[#5d3a1a] animate-pulse">
               <div className="text-[10px] text-[#f2e2ba]/60 mb-1">
                 Đang khởi động Camera...
@@ -326,6 +372,34 @@ export default function ConnectForm() {
                 <div className="w-16 h-16 border-2 border-[#f2e2ba]/30 rounded-lg relative">
                   <div className="absolute top-0 left-0 w-full h-[2px] bg-red-500 animate-scan"></div>
                 </div>
+              </div>
+            </div>
+          )} */}
+
+          {/* Thay thế phần hiển thị Camera giả lập bằng code này */}
+          {isScanning && (
+            <div className="mt-4 relative bg-[#1a1007] rounded-lg border-2 border-[#5d3a1a] overflow-hidden">
+              {/* Nút đóng camera */}
+              <button
+                onClick={() => stopScanner()}
+                className="absolute top-2 right-2 z-50 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  viewBox="0 0 256 256"
+                >
+                  <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
+                </svg>
+              </button>
+
+              {/* Đây là nơi Camera thực tế sẽ hiển thị */}
+              <div id="reader" className="w-full"></div>
+
+              <div className="py-2 bg-[#5d3a1a] text-[#f2e2ba] text-[10px] font-bold uppercase">
+                Đang quét mã QR...
               </div>
             </div>
           )}

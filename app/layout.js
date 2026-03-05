@@ -5,7 +5,7 @@ import { GenealogyProvider } from "@/context/GenealogyContext";
 // const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Gia Phả Tộc - Truyền Thống Việt",
+  title: "Gia Phả Việt - Nơi Truyền Thống Việt Mãi Lưu Truyền",
   description: "Hệ thống quản lý gia phả số lưu trữ trên Blockchain",
 };
 

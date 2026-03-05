@@ -1,5 +1,5 @@
-import familyNftJSON from "@/contracts/ABIs/familyNFT.json";
-import genealogyJSON from "@/contracts/ABIs/genealogy.json";
+import familyNftJSON from "./ABIs/familyNFT.json";
+import genealogyJSON from "./ABIs/genealogy.json";
 
 export const familyNftABI = familyNftJSON.abi;
 
