@@ -208,109 +208,136 @@ export default function ConnectForm() {
   //   }
   // };
 
-  // Ref theo dõi trạng thái đang dừng để tránh gọi stop() nhiều lần
+  // Ref để tránh gọi stop() đồng thời nhiều lần
   const isStoppingRef = useRef(false);
 
-  const safeStopScanner = async (scanner) => {
-    if (!scanner || isStoppingRef.current) return;
+  const safeStop = async () => {
+    if (!scannerRef.current || isStoppingRef.current) return;
+    isStoppingRef.current = true;
     try {
-      isStoppingRef.current = true;
-      // Kiểm tra thuộc tính nội bộ thực sự của html5-qrcode trước khi dừng
-      const state = scanner.getState ? scanner.getState() : null;
-      // State 2 = SCANNING, State 3 = PAUSED trong html5-qrcode
-      if (state === 2 || state === 3 || scanner.isScanning) {
-        await scanner.stop();
+      const state = scannerRef.current.getState?.();
+      // getState: 2=SCANNING, 3=PAUSED
+      if (state === 2 || state === 3) {
+        await scannerRef.current.stop();
       }
     } catch (e) {
-      // Bỏ qua lỗi "not running" — đây là trường hợp đã dừng rồi
       if (
-        !e.message?.includes("not running") &&
-        !e.message?.includes("not scanning")
+        !e?.message?.includes("not running") &&
+        !e?.message?.includes("not scanning")
       ) {
-        console.warn("Lỗi khi dừng scanner:", e);
+        console.warn("safeStop warning:", e);
       }
     } finally {
+      scannerRef.current = null;
       isStoppingRef.current = false;
     }
   };
 
-  const startScanner = async () => {
-    // Đợi DOM render xong thẻ #reader
-    await new Promise((r) => setTimeout(r, 150));
+  // Hàm này được gọi TRỰC TIẾP từ user tap — iOS WebKit yêu cầu điều này
+  const handleScanButtonClick = async () => {
+    if (!isMobile) return;
 
+    // BƯỚC 1: Kiểm tra hỗ trợ
+    if (!navigator.mediaDevices?.getUserMedia) {
+      sweetalert2.popupAlert({
+        title: "Không hỗ trợ",
+        text: "Trình duyệt không hỗ trợ camera. Hãy dùng Safari hoặc Chrome mới nhất.",
+      });
+      return;
+    }
+
+    // BƯỚC 2: Xin quyền camera NGAY TẠI ĐÂY — phải nằm trong user gesture
+    // iOS Safari chỉ cho phép getUserMedia khi gọi trực tiếp từ tap event
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+      });
+      // Tắt stream ngay — html5-qrcode sẽ tự mở lại sau
+      stream.getTracks().forEach((t) => t.stop());
+    } catch (permErr) {
+      const msg =
+        permErr.name === "NotAllowedError"
+          ? "Quyền camera bị từ chối. Vào Cài đặt > Safari > Camera và cho phép trang này."
+          : permErr.name === "NotFoundError"
+            ? "Không tìm thấy camera. Hãy kiểm tra thiết bị."
+            : permErr.message || "Không thể truy cập camera.";
+      sweetalert2.popupAlert({ title: "Lỗi Camera", text: msg });
+      return;
+    }
+
+    // BƯỚC 3: Hiện UI scanner — useEffect sẽ gọi startScanner()
+    setIsScanning(true);
+  };
+
+  const startScanner = async () => {
+    // Chờ DOM render xong thẻ #reader
+    await new Promise((r) => setTimeout(r, 200));
     const element = document.getElementById("reader");
     if (!element) return;
 
-    // Dọn dẹp scanner cũ một cách an toàn
-    if (scannerRef.current) {
-      await safeStopScanner(scannerRef.current);
-      scannerRef.current = null;
-    }
-
-    const html5QrCode = new Html5Qrcode("reader");
-    scannerRef.current = html5QrCode;
-
-    const config = {
-      fps: 10,
-      qrbox: { width: 250, height: 250 },
-      aspectRatio: 1.0,
-    };
-
-    const onScanSuccess = (decodedText) => {
-      const clanId = decodedText.includes("id=")
-        ? new URLSearchParams(decodedText.split("?")[1]).get("id")
-        : decodedText.split("/").pop();
-
-      safeStopScanner(html5QrCode).then(() => {
-        scannerRef.current = null;
-        setIsScanning(false);
-        router.push(`/pages/detail?id=${clanId.trim()}`);
-      });
-    };
+    await safeStop();
 
     try {
-      // Ưu tiên lấy danh sách camera cụ thể, fallback về facingMode
-      let cameraConstraint = { facingMode: "environment" };
+      const html5QrCode = new Html5Qrcode("reader");
+      scannerRef.current = html5QrCode;
+
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+      const onSuccess = (decodedText) => {
+        const clanId = decodedText.includes("id=")
+          ? new URLSearchParams(decodedText.split("?")[1]).get("id")
+          : decodedText.split("/").pop();
+        safeStop().then(() => {
+          setIsScanning(false);
+          router.push(`/pages/detail?id=${clanId.trim()}`);
+        });
+      };
+
+      // Ưu tiên facingMode ideal (iOS-friendly) thay vì exact
+      // "ideal" không ném lỗi nếu không có camera sau — iOS xử lý tốt hơn
+      let started = false;
       try {
         const cameras = await Html5Qrcode.getCameras();
-        if (cameras && cameras.length > 0) {
-          // Ưu tiên camera sau (thường là index cuối cùng trên mobile)
-          const backCamera = cameras.find((c) =>
+        if (cameras?.length > 0) {
+          const back = cameras.find((c) =>
             /back|rear|environment/i.test(c.label),
           );
-          cameraConstraint = (backCamera || cameras[cameras.length - 1]).id;
+          await html5QrCode.start(
+            (back || cameras[cameras.length - 1]).id,
+            config,
+            onSuccess,
+          );
+          started = true;
         }
-      } catch (camListErr) {
-        // Không lấy được danh sách — dùng facingMode fallback
-        console.warn(
-          "Không lấy được danh sách camera, dùng facingMode:",
-          camListErr,
+      } catch (_) {
+        // fallback bên dưới
+      }
+
+      if (!started) {
+        // iOS hoạt động tốt hơn với "ideal" thay vì "exact"
+        await html5QrCode.start(
+          { facingMode: { ideal: "environment" } },
+          config,
+          onSuccess,
         );
       }
 
-      await html5QrCode.start(cameraConstraint, config, onScanSuccess);
       setIsCameraReady(true);
     } catch (err) {
       console.error("Camera Error:", err);
-      scannerRef.current = null;
+      await safeStop();
       setTimeout(() => {
         setIsScanning(false);
-        const msg =
-          err.name === "NotFoundError" || err.message?.includes("NotFoundError")
-            ? "Không tìm thấy camera. Hãy kiểm tra thiết bị và cấp quyền camera."
-            : err.name === "NotAllowedError"
-              ? "Quyền truy cập camera bị từ chối. Vui lòng cho phép trong cài đặt trình duyệt."
-              : err.message || "Không thể truy cập camera.";
-        sweetalert2.popupAlert({ title: "Lỗi Camera", text: msg });
+        sweetalert2.popupAlert({
+          title: "Lỗi Camera",
+          text: err.message || "Không thể khởi động scanner.",
+        });
       }, 0);
     }
   };
 
   const stopScanner = async () => {
-    if (scannerRef.current) {
-      await safeStopScanner(scannerRef.current);
-      scannerRef.current = null;
-    }
+    await safeStop();
     setIsScanning(false);
   };
   // 2. Logic khởi tạo và dừng Camera thực tế
@@ -329,12 +356,7 @@ export default function ConnectForm() {
 
     return () => {
       isMounted = false;
-      if (scannerRef.current) {
-        // Dùng safeStopScanner để tránh lỗi "not running"
-        safeStopScanner(scannerRef.current).then(() => {
-          scannerRef.current = null;
-        });
-      }
+      safeStop();
     };
   }, [isScanning, isMobile]); // Thêm isMobile vào dependency
 
@@ -425,7 +447,7 @@ export default function ConnectForm() {
               </button> */}
 
               <button
-                onClick={() => (isMobile ? setIsScanning(true) : null)}
+                onClick={handleScanButtonClick}
                 className={`flex flex-col items-center gap-2 p-3 border-2 rounded-xl transition-all w-full
       ${
         isMobile

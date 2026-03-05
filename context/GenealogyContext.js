@@ -323,6 +323,28 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
+  const updateClanDescShort = async (
+    walletAddress,
+    clanId,
+    newDescShort,
+    callBack,
+    handleErr,
+  ) => {
+    try {
+      const contract = await connectingWithSmartContract(clanId, familyNftABI);
+
+      await contract.setClanShortDesc(newDescShort);
+
+      contract.on("ClanShortDescChanged", async (sender) => {
+        if (walletAddress == sender) {
+          callBack();
+        }
+      });
+    } catch (error) {
+      handleErr("Error", error);
+    }
+  };
+
   const addChild = async (
     walletAddress,
     clanId,
@@ -573,6 +595,7 @@ export const GenealogyProvider = ({ children }) => {
         createClan,
         getClanInfo,
         getClanDetail,
+        updateClanDescShort,
         getPersonData,
         getPersonDetail,
         getOwner,
