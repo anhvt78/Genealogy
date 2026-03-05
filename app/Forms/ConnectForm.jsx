@@ -208,76 +208,107 @@ export default function ConnectForm() {
   //   }
   // };
 
+  // Ref theo dõi trạng thái đang dừng để tránh gọi stop() nhiều lần
+  const isStoppingRef = useRef(false);
+
+  const safeStopScanner = async (scanner) => {
+    if (!scanner || isStoppingRef.current) return;
+    try {
+      isStoppingRef.current = true;
+      // Kiểm tra thuộc tính nội bộ thực sự của html5-qrcode trước khi dừng
+      const state = scanner.getState ? scanner.getState() : null;
+      // State 2 = SCANNING, State 3 = PAUSED trong html5-qrcode
+      if (state === 2 || state === 3 || scanner.isScanning) {
+        await scanner.stop();
+      }
+    } catch (e) {
+      // Bỏ qua lỗi "not running" — đây là trường hợp đã dừng rồi
+      if (
+        !e.message?.includes("not running") &&
+        !e.message?.includes("not scanning")
+      ) {
+        console.warn("Lỗi khi dừng scanner:", e);
+      }
+    } finally {
+      isStoppingRef.current = false;
+    }
+  };
+
   const startScanner = async () => {
+    // Đợi DOM render xong thẻ #reader
+    await new Promise((r) => setTimeout(r, 150));
+
     const element = document.getElementById("reader");
     if (!element) return;
 
-    try {
-      // 1. Dọn dẹp scanner cũ một cách an toàn
-      if (scannerRef.current) {
-        try {
-          if (scannerRef.current.isScanning) {
-            await scannerRef.current.stop();
-          }
-        } catch (e) {
-          console.warn("Dừng scanner cũ thất bại:", e);
-        }
+    // Dọn dẹp scanner cũ một cách an toàn
+    if (scannerRef.current) {
+      await safeStopScanner(scannerRef.current);
+      scannerRef.current = null;
+    }
+
+    const html5QrCode = new Html5Qrcode("reader");
+    scannerRef.current = html5QrCode;
+
+    const config = {
+      fps: 10,
+      qrbox: { width: 250, height: 250 },
+      aspectRatio: 1.0,
+    };
+
+    const onScanSuccess = (decodedText) => {
+      const clanId = decodedText.includes("id=")
+        ? new URLSearchParams(decodedText.split("?")[1]).get("id")
+        : decodedText.split("/").pop();
+
+      safeStopScanner(html5QrCode).then(() => {
         scannerRef.current = null;
-      }
+        setIsScanning(false);
+        router.push(`/pages/detail?id=${clanId.trim()}`);
+      });
+    };
 
-      const html5QrCode = new Html5Qrcode("reader");
-      scannerRef.current = html5QrCode;
-
-      // 2. Lấy danh sách camera để tránh lỗi NotFoundError
-      const cameras = await Html5Qrcode.getCameras();
-
-      if (cameras && cameras.length > 0) {
-        // Chọn camera cuối cùng (thường là camera sau trên thiết bị di động)
-        const cameraId = cameras[cameras.length - 1].id;
-
-        const config = {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-          aspectRatio: 1.0,
-        };
-
-        await html5QrCode.start(
-          cameraId, // Dùng ID cụ thể thay vì facingMode
-          config,
-          (decodedText) => {
-            const clanId = decodedText.includes("id=")
-              ? new URLSearchParams(decodedText.split("?")[1]).get("id")
-              : decodedText.split("/").pop();
-
-            // Dừng camera và điều hướng
-            html5QrCode
-              .stop()
-              .then(() => {
-                setIsScanning(false);
-                router.push(`/pages/detail?id=${clanId.trim()}`);
-              })
-              .catch((err) => console.error("Lỗi khi dừng:", err));
-          },
+    try {
+      // Ưu tiên lấy danh sách camera cụ thể, fallback về facingMode
+      let cameraConstraint = { facingMode: "environment" };
+      try {
+        const cameras = await Html5Qrcode.getCameras();
+        if (cameras && cameras.length > 0) {
+          // Ưu tiên camera sau (thường là index cuối cùng trên mobile)
+          const backCamera = cameras.find((c) =>
+            /back|rear|environment/i.test(c.label),
+          );
+          cameraConstraint = (backCamera || cameras[cameras.length - 1]).id;
+        }
+      } catch (camListErr) {
+        // Không lấy được danh sách — dùng facingMode fallback
+        console.warn(
+          "Không lấy được danh sách camera, dùng facingMode:",
+          camListErr,
         );
-        setIsCameraReady(true);
-      } else {
-        throw new Error("Không tìm thấy camera trên thiết bị này.");
       }
+
+      await html5QrCode.start(cameraConstraint, config, onScanSuccess);
+      setIsCameraReady(true);
     } catch (err) {
       console.error("Camera Error:", err);
-      // Tránh lỗi "cascading renders" bằng setTimeout
+      scannerRef.current = null;
       setTimeout(() => {
         setIsScanning(false);
-        sweetalert2.popupAlert({
-          title: "Lỗi Camera",
-          text: err.message || "Không thể truy cập camera.",
-        });
+        const msg =
+          err.name === "NotFoundError" || err.message?.includes("NotFoundError")
+            ? "Không tìm thấy camera. Hãy kiểm tra thiết bị và cấp quyền camera."
+            : err.name === "NotAllowedError"
+              ? "Quyền truy cập camera bị từ chối. Vui lòng cho phép trong cài đặt trình duyệt."
+              : err.message || "Không thể truy cập camera.";
+        sweetalert2.popupAlert({ title: "Lỗi Camera", text: msg });
       }, 0);
     }
   };
+
   const stopScanner = async () => {
-    if (scannerRef.current && scannerRef.current.isScanning) {
-      await scannerRef.current.stop();
+    if (scannerRef.current) {
+      await safeStopScanner(scannerRef.current);
       scannerRef.current = null;
     }
     setIsScanning(false);
@@ -299,8 +330,10 @@ export default function ConnectForm() {
     return () => {
       isMounted = false;
       if (scannerRef.current) {
-        // Gọi stopScanner nhưng không cập nhật state trong cleanup để tránh lỗi
-        scannerRef.current.stop().catch(console.error);
+        // Dùng safeStopScanner để tránh lỗi "not running"
+        safeStopScanner(scannerRef.current).then(() => {
+          scannerRef.current = null;
+        });
       }
     };
   }, [isScanning, isMobile]); // Thêm isMobile vào dependency
