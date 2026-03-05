@@ -155,7 +155,7 @@ export default function GenealogyDetailForm({ clanItem, setTabIndex }) {
 
       <div className="max-w-5xl mx-auto px-6 mt-12 grid grid-cols-1 md:grid-cols-3 gap-12">
         {/* Cột trái: Thông tin chính */}
-        <div className="md:col-span-2 space-y-8">
+        <div className="order-last md:order-0 md:col-span-2 space-y-8">
           <section>
             <h2 className="text-2xl font-bold text-[#3d2611] border-b-2 border-[#5d3a1a] pb-2 mb-4 uppercase tracking-widest">
               Tóm lược
@@ -198,7 +198,7 @@ export default function GenealogyDetailForm({ clanItem, setTabIndex }) {
         </div>
 
         {/* Cột phải: Sidebar chức năng */}
-        <div className="space-y-6">
+        <div className="order-first md:order-0 space-y-6">
           <div className="bg-[#f2e2ba] border-2 border-[#5d3a1a] p-6 shadow-[8px_8px_0px_0px_rgba(93,58,26,0.1)]">
             <h3 className="text-[#3d2611] font-bold text-center border-b border-[#5d3a1a]/20 pb-4 mb-6 uppercase tracking-tighter">
               Truy cập dữ liệu
@@ -222,41 +222,6 @@ export default function GenealogyDetailForm({ clanItem, setTabIndex }) {
               XEM PHẢ ĐỒ
             </button>
           </div>
-
-          {/* <div className="p-6 border-2 border-dashed border-[#5d3a1a]/30 text-[#5d3a1a] text-center italic text-sm">
-            Hồ sơ này đã được xác thực trên mạng lưới Blockchain LUKSO.
-            <span>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                style={{ width: "16px", height: "16px" }}
-              >
-                <path
-                  d="M12 4H7C5.34315 4 4 5.34315 4 7V17C4 18.6569 5.34315 20 7 20H17C18.6569 20 20 18.6569 20 17V12"
-                  stroke-linecap="round"
-                  stroke="var(--neutral-20)"
-                  stroke-width="2"
-                ></path>
-                <path
-                  d="M19.9999 8C19.9999 6.17755 20 4 20 4H16"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke="var(--neutral-20)"
-                  stroke-width="2"
-                ></path>
-                <path
-                  d="M14 10L20 4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke="var(--neutral-20)"
-                  stroke-width="2"
-                ></path>
-              </svg>
-            </span>
-          </div> */}
           <div className="p-6 border-2 border-dashed border-[#5d3a1a]/30 text-[#5d3a1a] italic text-sm flex items-center justify-center gap-1">
             Hồ sơ này đã được xác thực trên mạng lưới Blockchain LUKSO.
             <a
