@@ -221,10 +221,7 @@ export default function ConnectForm() {
         await scannerRef.current.stop();
       }
     } catch (e) {
-      if (
-        !e?.message?.includes("not running") &&
-        !e?.message?.includes("not scanning")
-      ) {
+      if (!e?.message?.includes("not running") && !e?.message?.includes("not scanning")) {
         console.warn("safeStop warning:", e);
       }
     } finally {
@@ -233,11 +230,28 @@ export default function ConnectForm() {
     }
   };
 
-  // Hàm này được gọi TRỰC TIẾP từ user tap — iOS WebKit yêu cầu điều này
+  // Chọn camera sau phù hợp nhất — hỗ trợ cả iOS và Android
+  const selectBackCamera = (cameras) => {
+    if (!cameras?.length) return null;
+
+    // Android: tên camera thường chứa "back", "facing back", "environment"
+    // iOS: thường chứa "back", "Back"
+    const backByLabel = cameras.find((c) =>
+      /back|rear|environment|facing back/i.test(c.label),
+    );
+    if (backByLabel) return backByLabel;
+
+    // Fallback: camera cuối trong danh sách
+    // (thường là camera sau trên cả Android lẫn iOS)
+    return cameras[cameras.length - 1];
+  };
+
+  // Hàm này được gọi TRỰC TIẾP từ user tap
+  // iOS WebKit bắt buộc getUserMedia phải nằm trong user gesture
   const handleScanButtonClick = async () => {
     if (!isMobile) return;
 
-    // BƯỚC 1: Kiểm tra hỗ trợ
+    // Kiểm tra trình duyệt hỗ trợ
     if (!navigator.mediaDevices?.getUserMedia) {
       sweetalert2.popupAlert({
         title: "Không hỗ trợ",
@@ -246,26 +260,28 @@ export default function ConnectForm() {
       return;
     }
 
-    // BƯỚC 2: Xin quyền camera NGAY TẠI ĐÂY — phải nằm trong user gesture
-    // iOS Safari chỉ cho phép getUserMedia khi gọi trực tiếp từ tap event
+    // Xin quyền camera NGAY TẠI ĐÂY — phải nằm trong user gesture
+    // iOS Safari yêu cầu; Android Chrome cũng chấp nhận cách này
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { ideal: "environment" } },
       });
-      // Tắt stream ngay — html5-qrcode sẽ tự mở lại sau
       stream.getTracks().forEach((t) => t.stop());
     } catch (permErr) {
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
       const msg =
         permErr.name === "NotAllowedError"
-          ? "Quyền camera bị từ chối. Vào Cài đặt > Safari > Camera và cho phép trang này."
+          ? isIOS
+            ? "Quyền camera bị từ chối. Vào Cài đặt > Safari > Camera và cho phép trang này."
+            : "Quyền camera bị từ chối. Nhấn vào biểu tượng khoá trên thanh địa chỉ và cho phép Camera."
           : permErr.name === "NotFoundError"
-            ? "Không tìm thấy camera. Hãy kiểm tra thiết bị."
-            : permErr.message || "Không thể truy cập camera.";
+          ? "Không tìm thấy camera. Hãy kiểm tra thiết bị."
+          : permErr.message || "Không thể truy cập camera.";
       sweetalert2.popupAlert({ title: "Lỗi Camera", text: msg });
       return;
     }
 
-    // BƯỚC 3: Hiện UI scanner — useEffect sẽ gọi startScanner()
+    // Quyền đã được cấp — hiện UI và để useEffect gọi startScanner()
     setIsScanning(true);
   };
 
@@ -293,28 +309,24 @@ export default function ConnectForm() {
         });
       };
 
-      // Ưu tiên facingMode ideal (iOS-friendly) thay vì exact
-      // "ideal" không ném lỗi nếu không có camera sau — iOS xử lý tốt hơn
       let started = false;
+
+      // Thử lấy danh sách camera cụ thể trước
+      // Android: getCameras() trả về đầy đủ sau khi đã grant permission
+      // iOS: cũng hoạt động sau khi đã grant permission ở bước trên
       try {
         const cameras = await Html5Qrcode.getCameras();
-        if (cameras?.length > 0) {
-          const back = cameras.find((c) =>
-            /back|rear|environment/i.test(c.label),
-          );
-          await html5QrCode.start(
-            (back || cameras[cameras.length - 1]).id,
-            config,
-            onSuccess,
-          );
+        const chosen = selectBackCamera(cameras);
+        if (chosen) {
+          await html5QrCode.start(chosen.id, config, onSuccess);
           started = true;
         }
       } catch (_) {
-        // fallback bên dưới
+        // Không lấy được danh sách — fallback bên dưới
       }
 
+      // Fallback: dùng facingMode ideal — an toàn cho cả iOS và Android
       if (!started) {
-        // iOS hoạt động tốt hơn với "ideal" thay vì "exact"
         await html5QrCode.start(
           { facingMode: { ideal: "environment" } },
           config,
