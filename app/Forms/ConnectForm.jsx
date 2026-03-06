@@ -6,7 +6,7 @@ import { checkChainId } from "@/components/Utils/helpers";
 import sweetalert2 from "@/configs/swal";
 import { ethers } from "ethers";
 import { useRouter } from "next/navigation"; // Thêm router để điều hướng
-import { Html5QrcodeScanner, Html5Qrcode } from "html5-qrcode";
+import { Html5Qrcode } from "html5-qrcode";
 
 export default function ConnectForm() {
   const [isShaking, setIsShaking] = useState(false);
@@ -45,20 +45,38 @@ export default function ConnectForm() {
         } catch (switchError) {
           if (switchError.code === 4902) {
             try {
+              // await injectedProvider.request({
+              //   method: "wallet_addEthereumChain",
+              //   params: [
+              //     {
+              //       chainId: "0x1069",
+              //       chainName: "LUKSO Testnet",
+              //       nativeCurrency: {
+              //         name: "Test LYX",
+              //         symbol: "LYXt",
+              //         decimals: 18,
+              //       },
+              //       rpcUrls: ["https://rpc.testnet.lukso.network"],
+              //       blockExplorerUrls: [
+              //         "https://explorer.execution.testnet.lukso.network",
+              //       ],
+              //     },
+              //   ],
+              // });
               await injectedProvider.request({
                 method: "wallet_addEthereumChain",
                 params: [
                   {
-                    chainId: "0x1069",
-                    chainName: "LUKSO Testnet",
+                    chainId: "0x2A", // 42 trong hệ thập phân
+                    chainName: "LUKSO Mainnet",
                     nativeCurrency: {
-                      name: "Test LYX",
-                      symbol: "LYXt",
+                      name: "LYX",
+                      symbol: "LYX",
                       decimals: 18,
                     },
-                    rpcUrls: ["https://rpc.testnet.lukso.network"],
+                    rpcUrls: ["https://rpc.mainnet.lukso.network"],
                     blockExplorerUrls: [
-                      "https://explorer.execution.testnet.lukso.network",
+                      "https://explorer.execution.mainnet.lukso.network",
                     ],
                   },
                 ],
@@ -66,7 +84,7 @@ export default function ConnectForm() {
             } catch (addError) {
               sweetalert2.popupAlert({
                 title: "Error",
-                text: "Failed to add LUKSO Testnet.",
+                text: "Failed to add LUKSO Network.",
               });
               return;
             }
@@ -221,7 +239,10 @@ export default function ConnectForm() {
         await scannerRef.current.stop();
       }
     } catch (e) {
-      if (!e?.message?.includes("not running") && !e?.message?.includes("not scanning")) {
+      if (
+        !e?.message?.includes("not running") &&
+        !e?.message?.includes("not scanning")
+      ) {
         console.warn("safeStop warning:", e);
       }
     } finally {
@@ -275,8 +296,8 @@ export default function ConnectForm() {
             ? "Quyền camera bị từ chối. Vào Cài đặt > Safari > Camera và cho phép trang này."
             : "Quyền camera bị từ chối. Nhấn vào biểu tượng khoá trên thanh địa chỉ và cho phép Camera."
           : permErr.name === "NotFoundError"
-          ? "Không tìm thấy camera. Hãy kiểm tra thiết bị."
-          : permErr.message || "Không thể truy cập camera.";
+            ? "Không tìm thấy camera. Hãy kiểm tra thiết bị."
+            : permErr.message || "Không thể truy cập camera.";
       sweetalert2.popupAlert({ title: "Lỗi Camera", text: msg });
       return;
     }

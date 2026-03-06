@@ -646,7 +646,7 @@ export default function DetailSidebar({
                         </h3>
 
                         <a
-                          href={`https://universaleverything.io/asset/${clanItem.clanId}/tokenId/${person.id}?network=testnet`}
+                          href={`https://universaleverything.io/asset/${clanItem.clanId}/tokenId/${person.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex border border-[#8b5a2b]/10 size-10 items-center justify-center rounded-full transition-all duration-300 bg-neutral-97 cursor-pointer hover:scale-105 hover:bg-neutral-95"

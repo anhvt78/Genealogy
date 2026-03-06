@@ -26,20 +26,38 @@ export const ConnectorModal = ({ isShow, onHide }) => {
         } catch (switchError) {
           if (switchError.code === 4902) {
             try {
+              // await injectedProvider.request({
+              //   method: "wallet_addEthereumChain",
+              //   params: [
+              //     {
+              //       chainId: "0x1069",
+              //       chainName: "LUKSO Testnet",
+              //       nativeCurrency: {
+              //         name: "Test LYX",
+              //         symbol: "LYXt",
+              //         decimals: 18,
+              //       },
+              //       rpcUrls: ["https://rpc.testnet.lukso.network"],
+              //       blockExplorerUrls: [
+              //         "https://explorer.execution.testnet.lukso.network",
+              //       ],
+              //     },
+              //   ],
+              // });
               await injectedProvider.request({
                 method: "wallet_addEthereumChain",
                 params: [
                   {
-                    chainId: "0x1069",
-                    chainName: "LUKSO Testnet",
+                    chainId: "0x2A", // 42 trong hệ thập phân
+                    chainName: "LUKSO Mainnet",
                     nativeCurrency: {
-                      name: "Test LYX",
-                      symbol: "LYXt",
+                      name: "LYX",
+                      symbol: "LYX",
                       decimals: 18,
                     },
-                    rpcUrls: ["https://rpc.testnet.lukso.network"],
+                    rpcUrls: ["https://rpc.mainnet.lukso.network"],
                     blockExplorerUrls: [
-                      "https://explorer.execution.testnet.lukso.network",
+                      "https://explorer.execution.mainnet.lukso.network",
                     ],
                   },
                 ],
@@ -47,7 +65,7 @@ export const ConnectorModal = ({ isShow, onHide }) => {
             } catch (addError) {
               sweetalert2.popupAlert({
                 title: "Error",
-                text: "Failed to add LUKSO Testnet.",
+                text: "Failed to add LUKSO Network.",
               });
               return;
             }

@@ -30,7 +30,7 @@ const privateKey =
 
 // console.log("privateKey: ", privateKey);
 
-const RPC_URL = "https://rpc.testnet.lukso.network"; // RPC URL cho LUKSO Testnet
+const RPC_URL = "https://rpc.mainnet.lukso.network"; // RPC URL cho LUKSO Testnet
 // const CHAIN_ID = 4201; // Chain ID của LUKSO Testnet
 
 // const auth = `Basic ${Buffer.from(`${projectId}:${projectSecretKey}`).toString(
@@ -328,17 +328,17 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const updateClanDescShort = async (
+  const updateClanShortDesc = async (
     walletAddress,
     clanId,
-    newDescShort,
+    newShortDesc,
     callBack,
     handleErr,
   ) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      await contract.setClanShortDesc(newDescShort);
+      await contract.setClanShortDesc(newShortDesc);
 
       contract.on("ClanShortDescChanged", async (sender) => {
         if (walletAddress == sender) {
@@ -600,7 +600,7 @@ export const GenealogyProvider = ({ children }) => {
         createClan,
         getClanInfo,
         getClanDetail,
-        updateClanDescShort,
+        updateClanShortDesc,
         getPersonData,
         getPersonDetail,
         getOwner,

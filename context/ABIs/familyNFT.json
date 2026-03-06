@@ -778,7 +778,7 @@
 			},
 			{
 				"internalType": "string",
-				"name": "descShort",
+				"name": "shortDesc",
 				"type": "string"
 			},
 			{
@@ -1505,7 +1505,7 @@
 			},
 			{
 				"internalType": "string",
-				"name": "newDescShort",
+				"name": "newShortDesc",
 				"type": "string"
 			},
 			{
