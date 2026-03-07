@@ -193,7 +193,9 @@ export const GenealogyProvider = ({ children }) => {
         "LSP4TokenName",
       );
 
-      const clanOwner = await contract.owner();
+      const clanOwner = await contract.tokenOwnerOf(
+        "0x0000000000000000000000000000000000000000000000000000000000000001",
+      );
 
       const clanDesc = await contract.clanShortDesc();
 
