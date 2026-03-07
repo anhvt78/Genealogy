@@ -22,7 +22,7 @@ export default function ConnectForm() {
     if (!inputClanId.trim()) {
       sweetalert2.popupAlert({
         title: "Thông báo",
-        text: "Vui lòng nhập Clan ID để tiếp tục.",
+        text: "Vui lòng nhập địa chỉ dòng họ để tiếp tục.",
       });
       return;
     }

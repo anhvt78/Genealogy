@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import GenealogyDetailForm from "@/app/Forms/GenealogyDetailForm";
 import GenealogyDiagramForm from "@/app/Forms/GenealogyDiagramForm";
-
+import { useRouter } from "next/navigation"; // Thêm router để điều hướng
 // import { initialFamilyData } from "@/constants/mockData.js";
 // import { useLocalStorage } from "@/hooks/useLocalStorage";
 import sweetalert2 from "@/configs/swal";
@@ -25,6 +25,7 @@ const GENDER_MAP = {
 };
 
 function GenealogyDetailContent() {
+  const router = useRouter();
   const searchParams = useSearchParams(); // Lấy 'id' từ thư mục [id]
   // const clanId = params.id;
   const clanId = searchParams.get("id");
@@ -50,8 +51,6 @@ function GenealogyDetailContent() {
     // Nếu muốn chắc chắn, bạn có thể bọc trong một hàm async
 
     fetchDataDetail();
-
-    fetchDataDialog();
   }, [clanId]);
 
   const fetchDataDetail = async () => {
@@ -63,6 +62,7 @@ function GenealogyDetailContent() {
       // console.log("result1: ", result);
 
       if (result.sts) {
+        fetchDataDialog();
         const object = JSON.parse(result.data?.clanMetadata);
         let allImageUrls = [];
 
@@ -80,6 +80,7 @@ function GenealogyDetailContent() {
           }
         } catch (error) {
           // console.error("Error extracting CIDs:", error);
+          router.push(`/`);
         }
 
         const item = {
@@ -95,11 +96,16 @@ function GenealogyDetailContent() {
       } else {
         sweetalert2.popupAlert({
           title: "Đã xảy ra lỗi",
-          text: "Lỗi khi tải thông tin Gia phả.",
+          text: "Lỗi khi tải thông tin Gia phả.Vui lòng kiểm tra lại thông tin địa chỉ dòng họ!",
         });
+        router.push(`/`);
       }
     } catch (err) {
-      console.error("Fetch error:", err);
+      sweetalert2.popupAlert({
+        title: "Đã xảy ra lỗi",
+        text: "Lỗi khi tải thông tin Gia phả. Vui lòng kiểm tra lại thông tin địa chỉ dòng họ!",
+      });
+      router.push(`/`);
     } finally {
       // Tắt loading sau khi kết thúc (dù thành công hay thất bại)
       setLoadingClanDetail(false);
@@ -126,7 +132,7 @@ function GenealogyDetailContent() {
         // Nếu API trả về thất bại ở bất kỳ mắt xích nào
         if (!result.sts) {
           throw new Error(
-            `Không thể tải dữ liệu cho cá nhân có ID: ${personId}`,
+            `Không thể tải dữ liệu cho cá nhân có ID: ${personId}. Xin vui lòng kiểm tra lại!`,
           );
         }
 
