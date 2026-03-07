@@ -235,6 +235,7 @@ function GenealogyDetailContent() {
               familyData={familyData}
               setTabIndex={setTabIndex}
               fetchDataDialog={fetchDataDialog}
+              fetchDataDetail={fetchDataDetail}
             />
           ) : (
             <LoadingState message="Đang khởi tạo sơ đồ phả hệ..." />

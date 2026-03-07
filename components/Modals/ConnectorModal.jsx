@@ -2,12 +2,12 @@
 import React from "react";
 import sweetalert2 from "@/configs/swal";
 import { ethers } from "ethers";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { checkChainId } from "@/components/Utils/helpers";
 import { useDispatch } from "react-redux";
 import { setWalletAddress } from "@/redux/genealogySlide";
 import Modal from "./Modal"; // Sử dụng Modal tùy chỉnh dùng Tailwind
-import { X } from "lucide-react";
+// import { X } from "lucide-react";
 
 export const ConnectorModal = ({ isShow, onHide }) => {
   const dispatch = useDispatch();

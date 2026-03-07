@@ -19,13 +19,22 @@ export default function ConnectForm() {
 
   // Hàm xử lý khi nhập ID thủ công
   const handleAccessById = () => {
-    if (!inputClanId.trim()) {
-      sweetalert2.popupAlert({
-        title: "Thông báo",
-        text: "Vui lòng nhập địa chỉ dòng họ để tiếp tục.",
-      });
-      return;
-    }
+    // if (!inputClanId.trim()) {
+    //   sweetalert2.popupAlert({
+    //     title: "Thông báo",
+    //     text: "Vui lòng nhập địa chỉ dòng họ để tiếp tục.",
+    //   });
+    //   return;
+    // }
+
+    // Kiểm tra định dạng địa chỉ ví cơ bản
+        if (!inputClanId.trim().startsWith("0x") || inputClanId.trim().length !== 42) {
+          sweetalert2.popupAlert({
+            title: "Địa chỉ không lệ",
+            text: "Vui lòng nhập đúng địa chỉ ví Blockchain (0x...)",
+          });
+          return;
+        }
     // router.push(`/pages/detail/${inputClanId.trim()}`);
     router.push(`/pages/detail?id=${inputClanId.trim()}`);
   };

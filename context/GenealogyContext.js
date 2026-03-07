@@ -510,6 +510,28 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
+  const transferOwnership = async (
+    walletAddress,
+    clanId,
+    newOwner,
+    callBack,
+    handleErr,
+  ) => {
+    try {
+      const contract = await connectingWithSmartContract(clanId, familyNftABI);
+      // console.log("382: formData: ", formData);
+      await contract.transferOwnership(newOwner);
+//OwnershipTransferred(_owner, newOwner)
+      contract.on("OwnershipTransferred", async (_owner, _newOwner) => {
+        if (walletAddress == _owner && newOwner == _newOwner) {
+          callBack();
+        }
+      });
+    } catch (error) {
+      handleErr("Error", error);
+    }
+  };
+
   const checkDeployedCode = async (address) => {
     // new ethers.providers.Web3Provider(window.ethereum);
     // const provider = new ethers.JsonRpcProvider(RPC_URL);
@@ -612,6 +634,7 @@ export const GenealogyProvider = ({ children }) => {
         removeSpouse,
         updatePersonData,
         removeClanFromOwned,
+        transferOwnership,
         getUserProfile,
         getNFTCollection,
       }}
