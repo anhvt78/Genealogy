@@ -146,6 +146,11 @@
 	},
 	{
 		"inputs": [],
+		"name": "LSP8CannotSendToSelf",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "LSP8CannotUseAddressZeroAsOperator",
 		"type": "error"
 	},
@@ -257,27 +262,6 @@
 		"type": "error"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "caller",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "tokenOwner",
-				"type": "address"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "tokenId",
-				"type": "bytes32"
-			}
-		],
-		"name": "LSP8RevokeOperatorNotAuthorized",
-		"type": "error"
-	},
-	{
 		"inputs": [],
 		"name": "LSP8TokenContractCannotHoldValue",
 		"type": "error"
@@ -316,33 +300,23 @@
 	{
 		"inputs": [
 			{
-				"internalType": "bytes32",
-				"name": "tokenId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "address",
-				"name": "oldOwner",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "LSP8TokenOwnerChanged",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "bytes4",
 				"name": "functionSelector",
 				"type": "bytes4"
 			}
 		],
 		"name": "NoExtensionFoundForFunctionSelector",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "callerAddress",
+				"type": "address"
+			}
+		],
+		"name": "OwnableCallerNotTheOwner",
 		"type": "error"
 	},
 	{
@@ -648,25 +622,6 @@
 			}
 		],
 		"name": "Transfer",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "TransferGenealogyOwner",
 		"type": "event"
 	},
 	{
@@ -1461,19 +1416,6 @@
 			}
 		],
 		"name": "transferBatch",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferGenealogyOwner",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
