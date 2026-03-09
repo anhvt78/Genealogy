@@ -23,6 +23,7 @@ import Swal from "sweetalert2";
 import { GenealogyContext } from "@/context/GenealogyContext";
 import QRGeneratorModal from "@/components/ui/QRGeneratorModal";
 import TransferOwnershipModal from "@/components/ui/TransferOwnershipModal";
+import { ConnectorModal } from "@/components/Modals/ConnectorModal";
 
 // Đăng ký loại node tùy chỉnh
 const nodeTypes = {
@@ -69,11 +70,13 @@ export default function GenealogyDiagramForm({
   // );
   const [collapsedIds, setCollapsedIds] = useState([]);
   const [selectedPerson, setSelectedPerson] = useState(null);
-  const [modalState, setModalState] = useState({
-    isOpen: false,
-    type: null,
-    targetId: null,
-  });
+  // const [modalState, setModalState] = useState({
+  //   isOpen: false,
+  //   type: null,
+  //   targetId: null,
+  // });
+
+  const [isShowModalConnector, setIsShowModalConnector] = useState(false); // Quản lý ẩn hiện modal đăng nhập
 
   const { removeClanFromOwned } = useContext(GenealogyContext);
 
@@ -475,7 +478,7 @@ export default function GenealogyDiagramForm({
             </button>
 
             {/* 5. Nút Đăng Xuất (Vị trí cũ của nút Xuất ảnh) */}
-            <button
+            {/* <button
               onClick={() => {
                 dispatch(userSignOut());
                 router.push("/");
@@ -494,7 +497,51 @@ export default function GenealogyDiagramForm({
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
               </svg>
               Đăng xuất
-            </button>
+            </button> */}
+
+            {/* 5. Nút Đăng nhập / Đăng xuất */}
+            {userWalletAddress ? (
+              // Nếu đã đăng nhập -> Hiện nút Đăng xuất
+              <button
+                onClick={() => {
+                  dispatch(userSignOut());
+                  router.push("/");
+                }}
+                className="flex items-center gap-3 px-4 py-3 bg-red-900/40 hover:bg-red-800 transition-colors rounded-md text-sm font-semibold text-red-200 mt-auto mb-4"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+                </svg>
+                Đăng xuất
+              </button>
+            ) : (
+              // Nếu chưa đăng nhập -> Hiện nút Đăng nhập
+              <button
+                onClick={() => setIsShowModalConnector(true)}
+                className="flex items-center gap-3 px-4 py-3 bg-green-900/40 hover:bg-green-800 transition-colors rounded-md text-sm font-semibold text-green-200 mt-auto mb-4"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3" />
+                </svg>
+                Đăng nhập
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -569,17 +616,17 @@ export default function GenealogyDiagramForm({
       {/* Modal thêm thành viên */}
       {modalTransferOwner && (
         <TransferOwnershipModal
-        clanItem={clanItem}
+          clanItem={clanItem}
           fetchDataDetail={fetchDataDetail}
           onClose={() => setModalTransferOwner(false)}
         />
       )}
-      {/* {!userWalletAddress && (
+      {!userWalletAddress && (
         <ConnectorModal
           isShow={isShowModalConnector}
           onHide={() => setIsShowModalConnector(false)}
         />
-      )} */}
+      )}
     </div>
   );
 }
