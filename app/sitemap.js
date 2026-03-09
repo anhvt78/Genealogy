@@ -1,7 +1,7 @@
 // app/sitemap.js
 
 export default async function sitemap() {
-  const baseUrl = "https://giaphaviet.vn";
+  const baseUrl = "https://giaphaviet.top";
 
   // 1. Danh sách các trang tĩnh cơ bản
   const staticPages = ["", "/page.js", "/pages", "/pages/detail"].flatMap(
