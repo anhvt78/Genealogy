@@ -7,6 +7,13 @@ import { GenealogyProvider } from "@/context/GenealogyContext";
 export const metadata = {
   title: "Gia Phả Việt - Nơi Truyền Thống Việt Mãi Lưu Truyền",
   description: "Hệ thống quản lý gia phả số lưu trữ trên Blockchain",
+  alternates: {
+    canonical: "https://giaphaviet.vn",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }) {
