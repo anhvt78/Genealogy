@@ -155,32 +155,31 @@ export default function ClanListForm({ userWalletAddress }) {
             ))}
 
             {/* Nút Thêm Gia Phả Mới (Dạng Placeholder) */}
-            {!isCreator && (
-              <div
-                onClick={() => setIsModalOpen(true)}
-                className="border-4 border-dashed border-[#5d3a1a]/30 flex flex-col items-center justify-center p-8 opacity-60 hover:opacity-100 transition-opacity cursor-pointer group"
-              >
-                <div className="w-16 h-16 rounded-full bg-[#5d3a1a]/10 flex items-center justify-center mb-4 group-hover:bg-[#5d3a1a] group-hover:text-[#f2e2ba] transition-all">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-8 w-8"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                </div>
-                <span className="font-bold text-[#5d3a1a] uppercase tracking-tighter">
-                  Thêm gia tộc mới
-                </span>
+
+            <div
+              onClick={() => setIsModalOpen(true)}
+              className="border-4 border-dashed border-[#5d3a1a]/30 flex flex-col items-center justify-center p-8 opacity-60 hover:opacity-100 transition-opacity cursor-pointer group"
+            >
+              <div className="w-16 h-16 rounded-full bg-[#5d3a1a]/10 flex items-center justify-center mb-4 group-hover:bg-[#5d3a1a] group-hover:text-[#f2e2ba] transition-all">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-8 w-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
               </div>
-            )}
+              <span className="font-bold text-[#5d3a1a] uppercase tracking-tighter">
+                Thêm gia tộc mới
+              </span>
+            </div>
           </div>
         </div>
       )}
