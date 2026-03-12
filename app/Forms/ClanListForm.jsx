@@ -99,7 +99,7 @@ export default function ClanListForm({ userWalletAddress }) {
     // setIsLoading(true);
     getNFTCollection(userWalletAddress).then((result) => {
       setIsLoading(false);
-      // console.log("result: ", result);
+
       if (result.sts) {
         setAllClanId(result.data.allNFT);
         setIsCreator(result.data.isCreator);
