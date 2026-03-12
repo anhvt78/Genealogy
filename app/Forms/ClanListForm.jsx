@@ -121,9 +121,7 @@ export default function ClanListForm({ userWalletAddress }) {
     // <div className="min-h-screen bg-[#e8d5b5] p-8 md:p-16 font-serif flex flex-col items-center">
     <div className="min-h-screen w-full bg-[#e8d5b5] font-serif overflow-y-auto py-12 md:py-20">
       {isLoading ? (
-        // <div className="fixed inset-0 flex justify-center items-center">
-        //   <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#5d3a1a]"></div>
-        // </div>
+   
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-[#f2e2ba]/50 backdrop-blur-sm z-50">
           <div className="w-48 h-48">
             <Lottie animationData={loaderAnimation} loop={true} />
