@@ -603,7 +603,9 @@ export const GenealogyProvider = ({ children }) => {
 
             const ownerNFT = await nftContract.getClanOwner(el);
             if (ownerNFT != 0x0000000000000000000000000000000000000000) {
-              allNFT.push(el);
+              if (!allNFT.includes(el)) {
+                allNFT.push(el);
+              }
               if (ownerNFT == walletAddress) {
                 isCreator = true;
               }
