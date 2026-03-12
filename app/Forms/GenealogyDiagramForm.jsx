@@ -78,7 +78,7 @@ export default function GenealogyDiagramForm({
 
   const [isShowModalConnector, setIsShowModalConnector] = useState(false); // Quản lý ẩn hiện modal đăng nhập
 
-  const { removeClanFromOwned } = useContext(GenealogyContext);
+  // const { removeClanFromOwned } = useContext(GenealogyContext);
 
   // const [isShowModalConnector, setIsShowModalConnector] = useState(true);
 
@@ -202,60 +202,60 @@ export default function GenealogyDiagramForm({
     }
   };
 
-  const handleDelete = async () => {
-    Swal.fire({
-      title: "Xác nhận xóa?",
-      text: `Bạn có chắc chắn muốn xóa ${
-        clanItem.clanName
-      } phả đồ khỏi danh sách quản lý? Hành động này không thể hoàn tác.`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33", // Màu đỏ cho nút xóa
-      cancelButtonColor: "#3085d6", // Màu xanh cho nút hủy
-      confirmButtonText: "Đồng ý",
-      cancelButtonText: "Huỷ",
-      reverseButtons: true, // Đưa nút Huỷ sang bên phải cho tự nhiên
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: "Đang xử lý...",
-          text: "Vui lòng chờ trong giây lát",
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading(); // Hiển thị biểu tượng quay (spinner)
-          },
-        });
-        // try {
-        // setIsProcessing(true); // Bật trạng thái đang xử lý
+  // const handleDelete = async () => {
+  //   Swal.fire({
+  //     title: "Xác nhận xóa?",
+  //     text: `Bạn có chắc chắn muốn xóa ${
+  //       clanItem.clanName
+  //     } phả đồ khỏi danh sách quản lý? Hành động này không thể hoàn tác.`,
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#d33", // Màu đỏ cho nút xóa
+  //     cancelButtonColor: "#3085d6", // Màu xanh cho nút hủy
+  //     confirmButtonText: "Đồng ý",
+  //     cancelButtonText: "Huỷ",
+  //     reverseButtons: true, // Đưa nút Huỷ sang bên phải cho tự nhiên
+  //   }).then(async (result) => {
+  //     if (result.isConfirmed) {
+  //       Swal.fire({
+  //         title: "Đang xử lý...",
+  //         text: "Vui lòng chờ trong giây lát",
+  //         allowOutsideClick: false,
+  //         didOpen: () => {
+  //           Swal.showLoading(); // Hiển thị biểu tượng quay (spinner)
+  //         },
+  //       });
+  //       // try {
+  //       // setIsProcessing(true); // Bật trạng thái đang xử lý
 
-        // --- CHỖ NÀY: Gọi hàm xóa từ Context hoặc API của bạn ---
-        // Ví dụ: const res = await deleteMember(clanItem.clanId, person.id);
-        removeClanFromOwned(
-          userWalletAddress,
-          clanItem.clanId,
-          callBack,
-          handleErr,
-        );
+  //       // --- CHỖ NÀY: Gọi hàm xóa từ Context hoặc API của bạn ---
+  //       // Ví dụ: const res = await deleteMember(clanItem.clanId, person.id);
+  //       removeClanFromOwned(
+  //         userWalletAddress,
+  //         clanItem.clanId,
+  //         callBack,
+  //         handleErr,
+  //       );
 
-        // Giả lập xử lý thành công:
-        //   setTimeout(() => {
-        //     Swal.fire(
-        //       "Đã xóa!",
-        //       "Thành viên đã được loại bỏ khỏi gia phả.",
-        //       "success",
-        //     );
+  //       // Giả lập xử lý thành công:
+  //       //   setTimeout(() => {
+  //       //     Swal.fire(
+  //       //       "Đã xóa!",
+  //       //       "Thành viên đã được loại bỏ khỏi gia phả.",
+  //       //       "success",
+  //       //     );
 
-        //     // Gọi callback để load lại dữ liệu và đóng sidebar
-        //     callBack();
-        //   }, 2000);
-        // } catch (error) {
-        //   handleErr("Lỗi khi xóa", error.message);
-        // } finally {
-        //   setIsProcessing(false);
-        // }
-      }
-    });
-  };
+  //       //     // Gọi callback để load lại dữ liệu và đóng sidebar
+  //       //     callBack();
+  //       //   }, 2000);
+  //       // } catch (error) {
+  //       //   handleErr("Lỗi khi xóa", error.message);
+  //       // } finally {
+  //       //   setIsProcessing(false);
+  //       // }
+  //     }
+  //   });
+  // };
 
   const callBack = () => {
     // console.log("newChildId: ", newChildId);
@@ -343,7 +343,7 @@ export default function GenealogyDiagramForm({
                   </svg>
                   Chuyển quyền quản lý
                 </button>
-                <button
+                {/* <button
                   onClick={() => {
                     // if (
                     //   confirm(
@@ -370,7 +370,7 @@ export default function GenealogyDiagramForm({
                     <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
                   </svg>
                   Xoá gia phả
-                </button>
+                </button> */}
               </>
             )}
             {/* Nút Gạt Ẩn/Hiện Con Gái */}

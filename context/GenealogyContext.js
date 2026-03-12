@@ -486,29 +486,29 @@ export const GenealogyProvider = ({ children }) => {
     }
   };
 
-  const removeClanFromOwned = async (
-    walletAddress,
-    clanId,
-    callBack,
-    handleErr,
-  ) => {
-    try {
-      const contract = await connectingWithSmartContract(
-        genealogyAddress,
-        genealogyABI,
-      );
+  // const removeClanFromOwned = async (
+  //   walletAddress,
+  //   clanId,
+  //   callBack,
+  //   handleErr,
+  // ) => {
+  //   try {
+  //     const contract = await connectingWithSmartContract(
+  //       genealogyAddress,
+  //       genealogyABI,
+  //     );
 
-      await contract.removeClanFromOwned(clanId);
+  //     await contract.removeClanFromOwned(clanId);
 
-      contract.on("ClanRemovedFromOwned", async (sender, clanIdRemoved) => {
-        if (walletAddress == sender && clanId == clanIdRemoved) {
-          callBack();
-        }
-      });
-    } catch (error) {
-      handleErr("Error", error);
-    }
-  };
+  //     contract.on("ClanRemovedFromOwned", async (sender, clanIdRemoved) => {
+  //       if (walletAddress == sender && clanId == clanIdRemoved) {
+  //         callBack();
+  //       }
+  //     });
+  //   } catch (error) {
+  //     handleErr("Error", error);
+  //   }
+  // };
 
   const transferOwnership = async (
     walletAddress,
@@ -521,7 +521,7 @@ export const GenealogyProvider = ({ children }) => {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
       // console.log("382: formData: ", formData);
       await contract.transferOwnership(newOwner);
-//OwnershipTransferred(_owner, newOwner)
+      //OwnershipTransferred(_owner, newOwner)
       contract.on("OwnershipTransferred", async (_owner, _newOwner) => {
         if (walletAddress == _owner && newOwner == _newOwner) {
           callBack();
@@ -596,23 +596,27 @@ export const GenealogyProvider = ({ children }) => {
       );
 
       // console.log(": ", receivedAssetsValue);
+      if (Array.isArray(receivedAssetsValue?.value)) {
+        await Promise.all(
+          receivedAssetsValue?.value?.map(async (el) => {
+            // console.log("receivedAssetsValue: ", el);
 
-      await Promise.all(
-        receivedAssetsValue.value.map(async (el) => {
-          // console.log("receivedAssetsValue: ", el);
-
-          const ownerNFT = await nftContract.getClanOwner(el);
-          if (ownerNFT != 0x0000000000000000000000000000000000000000) {
-            allNFT.push(el);
-            if (ownerNFT == walletAddress) {
-              isCreator = true;
+            const ownerNFT = await nftContract.getClanOwner(el);
+            if (ownerNFT != 0x0000000000000000000000000000000000000000) {
+              allNFT.push(el);
+              if (ownerNFT == walletAddress) {
+                isCreator = true;
+              }
             }
-          }
-        }),
-      );
+          }),
+        );
+      }
+
       // console.log("allNFT: ", allNFT);
       return { sts: true, data: { allNFT: allNFT, isCreator: isCreator } };
     } catch (error) {
+      // console.log("error: ", error);
+
       return { sts: false, data: error };
     }
   };
@@ -633,7 +637,7 @@ export const GenealogyProvider = ({ children }) => {
         addSpouse,
         removeSpouse,
         updatePersonData,
-        removeClanFromOwned,
+        // removeClanFromOwned,
         transferOwnership,
         getUserProfile,
         getNFTCollection,
