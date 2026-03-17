@@ -1063,6 +1063,11 @@
 						"internalType": "string",
 						"name": "shortDesc",
 						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "createdAt",
+						"type": "uint256"
 					}
 				],
 				"internalType": "struct FamilyTypes.Person",
