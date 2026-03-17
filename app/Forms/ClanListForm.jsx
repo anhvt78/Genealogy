@@ -121,7 +121,6 @@ export default function ClanListForm({ userWalletAddress }) {
     // <div className="min-h-screen bg-[#e8d5b5] p-8 md:p-16 font-serif flex flex-col items-center">
     <div className="min-h-screen w-full bg-[#e8d5b5] font-serif overflow-y-auto py-12 md:py-20">
       {isLoading ? (
-   
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-[#f2e2ba]/50 backdrop-blur-sm z-50">
           <div className="w-48 h-48">
             <Lottie animationData={loaderAnimation} loop={true} />
@@ -306,66 +305,6 @@ export default function ClanListForm({ userWalletAddress }) {
                 <span>Xác nhận khởi tạo</span>
               </button>
             </form>
-
-            {/* <form onSubmit={handleSubmit} className="p-8">
-               <h2 className="text-2xl font-bold text-[#3d2611] text-center mb-8 uppercase tracking-widest border-b-2 border-[#5d3a1a] pb-4">
-                Khai báo Gia tộc Phả đồ
-               </h2>
-
-               
-               <div className="mb-10 space-y-4">
-                 <div className="flex items-center gap-2 mb-4">
-                   <span className="bg-[#5d3a1a] text-[#f2e2ba] text-xs px-2 py-1 font-bold">I</span>
-                   <h3 className="text-[#5d3a1a] font-bold uppercase tracking-wider text-sm">Thông tin dòng tộc</h3>
-                 </div>
-                 <div className="grid gap-4">
-                   <div>
-                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">TÊN DÒNG TỘC</label>
-                     <input name="clanName" onChange={handleInputChange} required className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white" />
-                   </div>
-                   <div>
-                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">MÔ TẢ CHUNG DÒNG TỘC</label>
-                     <textarea name="description" onChange={handleInputChange} rows="2" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white resize-none" />
-                   </div>
-                 </div>
-               </div>
-
-               
-               <div className="mb-8 space-y-4 p-5 bg-[#5d3a1a]/5 border border-[#5d3a1a]/20 rounded">
-                 <div className="flex items-center gap-2 mb-4">
-                   <span className="bg-[#8b5a2b] text-white text-xs px-2 py-1 font-bold">II</span>
-                   <h3 className="text-[#5d3a1a] font-bold uppercase tracking-wider text-sm">Thông tin Thủy tổ (Đời thứ 1)</h3>
-                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div className="md:col-span-2">
-                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">HỌ VÀ TÊN THỦY TỔ</label>
-                     <input name="ancestorName" onChange={handleInputChange} required className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none" />
-                   </div>
-                   <div className="md:col-span-2">
-                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">TIỂU SỬ TÓM TẮT THỦY TỔ</label>
-                     <textarea name="ancestorDesc" onChange={handleInputChange} rows="3" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none resize-none" />
-                   </div>
-                   <div>
-                     <label className="block text-[#3d2611] font-bold mb-1 text-xs">NGÀY SINH (HOẶC NĂM)</label>
-                     <input name="birthDate" onChange={handleInputChange} placeholder="VD: 1900" className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none" />
-                   </div>
-                   <div>
-                     <div className="flex justify-between items-center mb-1">
-                       <label className="block text-[#3d2611] font-bold text-xs uppercase">Ngày mất</label>
-                       <label className="text-[10px] flex items-center gap-1 cursor-pointer">
-                         <input type="checkbox" checked={isStillAlive} onChange={(e) => setIsStillAlive(e.target.checked)} /> CÒN SỐNG
-                       </label>
-                     </div>
-                     <input name="deathDate" disabled={isStillAlive} onChange={handleInputChange} placeholder={isStillAlive ? "---" : "VD: 1980"} className={`w-full border-2 border-[#5d3a1a] p-2 outline-none ${isStillAlive ? "opacity-30" : "bg-white/50"}`} />
-                   </div>
-                 </div>
-               </div>
-
-               <button type="submit" disabled={isProcessing} className="w-full bg-[#5d3a1a] text-[#f2e2ba] font-bold py-4 hover:bg-[#3d2611] transition-all uppercase flex justify-center items-center gap-2">
-                 {isProcessing && <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>}
-                 Khởi tạo Gia phả
-              </button>
-             </form> */}
           </div>
         </div>
       )}

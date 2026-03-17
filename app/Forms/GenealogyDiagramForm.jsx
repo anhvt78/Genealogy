@@ -107,11 +107,22 @@ export default function GenealogyDiagramForm({
 
   // 4. Tính toán Nodes và Edges
   const { nodes, edges } = useMemo(() => {
-    const filteredData = showFemales
-      ? familyData
-      : familyData.filter(
-          (p) => p.gender !== "female" && p.gender !== "FEMALE",
-        );
+    // const filteredData = showFemales
+    //   ? familyData
+    //   : familyData.filter(
+    //       (p) => p.gender !== "female" && p.gender !== "FEMALE",
+    //     );
+
+    const filteredData = (
+      showFemales
+        ? familyData
+        : familyData.filter(
+            (p) => p.gender !== "female" && p.gender !== "FEMALE",
+          )
+    ).sort(
+      (a, b) => a.createdAt - b.createdAt, // tăng dần
+      // hoặc: b.createdAt.toNumber() - a.createdAt.toNumber()  // giảm dần
+    );
 
     const visibleFamily = getVisibleData(filteredData, collapsedIds);
 

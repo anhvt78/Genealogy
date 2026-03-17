@@ -156,7 +156,7 @@ function GenealogyDetailContent() {
               gender: GENDER_MAP[spouseResult.data.sex] || "undefined",
               isSpouse: true,
               spouseId: personId,
-              createdAt: spouseResult.data.createdAt,
+              createdAt: spouseResult.data.createdAt.toNumber(),
             };
           }),
         );
@@ -172,7 +172,7 @@ function GenealogyDetailContent() {
           shortDesc: data.shortDesc,
           parents: data.parentId !== NONE_ID ? [data.parentId] : [],
           spouses: spousesDetails,
-          createdAt: spouseResult.data.data,
+          createdAt: data.createdAt.toNumber(),
         };
 
         tempList.push(item);
