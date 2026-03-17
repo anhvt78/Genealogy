@@ -1,26 +1,22 @@
 "use client";
-import React, { useContext, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import ReactFlow, { Background, Controls } from "reactflow";
 import "reactflow/dist/style.css";
 import { toPng } from "html-to-image";
 
 // --- IMPORT CÁC COMPONENT ---
 import PersonNode from "@/components/nodes/PersonNode";
-// import AddMemberModal from "@/components/ui/AddChildModal";
+
 import DetailSidebar from "@/components/ui/DetailSidebar"; // Bạn cần tạo file này
-// import { useLocalStorage } from "@/hooks/useLocalStorage";
+
 import { getLayoutedElements } from "@/utils/layoutEngine";
-// import { initialFamilyData } from "@/constants/mockData.js";
+
 import ClanTitleNode from "@/components/nodes/ClanTitleNode";
-// import { ConnectorModal } from "@/components/Modals/ConnectorModal";
-// import { GenealogyContext } from "@/context/GenealogyContext";
+
 import { useDispatch, useSelector } from "react-redux";
 import { userSignOut } from "@/redux/genealogySlide";
 import { useRouter } from "next/navigation";
 
-import sweetalert2 from "@/configs/swal";
-import Swal from "sweetalert2";
-import { GenealogyContext } from "@/context/GenealogyContext";
 import QRGeneratorModal from "@/components/ui/QRGeneratorModal";
 import TransferOwnershipModal from "@/components/ui/TransferOwnershipModal";
 import { ConnectorModal } from "@/components/Modals/ConnectorModal";
@@ -61,36 +57,17 @@ export default function GenealogyDiagramForm({
   const [modalTransferOwner, setModalTransferOwner] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showFemales, setShowFemales] = useState(false); // State để gạt ẩn/hiện con gái
-  // const { getNFTCollection } = useContext(GenealogyContext);
-  // const [mounted, setMounted] = useState(false);
+
   const [isLocked, setIsLocked] = useState(false);
-  // const [familyData, setFamilyData] = useLocalStorage(
-  //   "family-tree-v1",
-  //   initialFamilyData,
-  // );
+
   const [collapsedIds, setCollapsedIds] = useState([]);
   const [selectedPerson, setSelectedPerson] = useState(null);
-  // const [modalState, setModalState] = useState({
-  //   isOpen: false,
-  //   type: null,
-  //   targetId: null,
-  // });
 
   const [isShowModalConnector, setIsShowModalConnector] = useState(false); // Quản lý ẩn hiện modal đăng nhập
-
-  // const { removeClanFromOwned } = useContext(GenealogyContext);
-
-  // const [isShowModalConnector, setIsShowModalConnector] = useState(true);
 
   const userWalletAddress = useSelector(
     (state) => state.genealogyReducer.walletAddress,
   );
-
-  // useEffect(() => {
-  //   getNFTCollection(clanId).then((result) => {
-  //     console.log("result: ", result);
-  //   });
-  // }, [clanId]);
 
   // 1. Hàm xử lý Đóng/Mở nhánh
   const toggleCollapse = (id) => {
@@ -107,12 +84,6 @@ export default function GenealogyDiagramForm({
 
   // 4. Tính toán Nodes và Edges
   const { nodes, edges } = useMemo(() => {
-    // const filteredData = showFemales
-    //   ? familyData
-    //   : familyData.filter(
-    //       (p) => p.gender !== "female" && p.gender !== "FEMALE",
-    //     );
-
     const filteredData = (
       showFemales
         ? familyData
@@ -121,7 +92,6 @@ export default function GenealogyDiagramForm({
           )
     ).sort(
       (a, b) => a.createdAt - b.createdAt, // tăng dần
-      // hoặc: b.createdAt.toNumber() - a.createdAt.toNumber()  // giảm dần
     );
 
     const visibleFamily = getVisibleData(filteredData, collapsedIds);
@@ -277,49 +247,8 @@ export default function GenealogyDiagramForm({
                   </svg>
                   Chuyển quyền quản lý
                 </button>
-                {/* <button
-                  onClick={() => {
-                    // if (
-                    //   confirm(
-                    //     "CẢNH BÁO: Hành động này sẽ xoá sạch toàn bộ dữ liệu gia phả của bạn và không thể hoàn tác. Bạn có chắc chắn?",
-                    //   )
-                    // ) {
-                    //   localStorage.removeItem("family-tree-v1"); // Xoá cứng trong LocalStorage
-                    //   window.location.reload(); // Reload trang để reset state về mặc định
-                    // }
-                    handleDelete();
-                  }}
-                  //   className="flex items-center gap-3 px-4 py-3 bg-red-700/20 hover:bg-red-700 transition-colors rounded-md text-sm font-semibold text-red-400 border border-red-700/50"
-                  className="flex items-center gap-3 px-4 py-3 bg-[#5d3a1a] hover:bg-[#8b5a2b] transition-colors rounded-md text-sm font-semibold"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
-                  </svg>
-                  Xoá gia phả
-                </button> */}
               </>
             )}
-            {/* Nút Gạt Ẩn/Hiện Con Gái */}
-            {/* <div className="flex items-center justify-between px-4 py-3 bg-[#5d3a1a] rounded-md text-sm font-semibold">
-              <span>Hiện con gái</span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={showFemales}
-                  onChange={() => setShowFemales(!showFemales)}
-                />
-                <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
-              </label>
-            </div> */}
 
             {/* Nút Gạt Ẩn/Hiện Con Gái (Đã thêm Icon Con mắt) */}
             <div className="flex items-center justify-between px-4 py-3 bg-[#5d3a1a] rounded-md text-sm font-semibold">
@@ -410,28 +339,6 @@ export default function GenealogyDiagramForm({
               </svg>
               Xuất ảnh gia phả
             </button>
-
-            {/* 5. Nút Đăng Xuất (Vị trí cũ của nút Xuất ảnh) */}
-            {/* <button
-              onClick={() => {
-                dispatch(userSignOut());
-                router.push("/");
-              }}
-              className="flex items-center gap-3 px-4 py-3 bg-red-900/40 hover:bg-red-800 transition-colors rounded-md text-sm font-semibold text-red-200 mt-auto mb-4"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
-              </svg>
-              Đăng xuất
-            </button> */}
 
             {/* 5. Nút Đăng nhập / Đăng xuất */}
             {userWalletAddress ? (
