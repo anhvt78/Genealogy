@@ -2,7 +2,7 @@ import React from "react";
 import { formatDate } from "../Utils/helpers";
 
 export default function PersonCard({ person, subTitle, isMain, onNodeSelect }) {
-  console.log("person: ", person);
+  // console.log("person: ", person);
 
   return (
     <div

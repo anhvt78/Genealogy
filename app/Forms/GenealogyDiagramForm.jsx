@@ -56,7 +56,7 @@ export default function GenealogyDiagramForm({
   const [modalQROpen, setModalQROpen] = useState(false);
   const [modalTransferOwner, setModalTransferOwner] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showFemales, setShowFemales] = useState(false); // State để gạt ẩn/hiện con gái
+  const [showFemales, setShowFemales] = useState(true); // State để gạt ẩn/hiện con gái
 
   const [isLocked, setIsLocked] = useState(false);
 
