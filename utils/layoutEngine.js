@@ -77,7 +77,7 @@
 
 import dagre from "dagre";
 
-export const getLayoutedElements = (nodes, edges) => {
+export const getLayoutedElements = (nodes, edges, showFemales) => {
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
 
@@ -107,7 +107,7 @@ export const getLayoutedElements = (nodes, edges) => {
       //     nodes.find((n) => n.id === edge.target),
       // );
 
-      const spouseCount = node.data.spouseNumber;
+      const spouseCount = showFemales ? node.data.spouseNumber : 0;
 
       console.log("spouseCount: ", spouseCount);
 

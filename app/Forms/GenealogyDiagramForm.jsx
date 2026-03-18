@@ -167,7 +167,10 @@ export default function GenealogyDiagramForm({
       }
     });
 
-    return { nodes: getLayoutedElements(rawNodes, rawEdges), edges: rawEdges };
+    return {
+      nodes: getLayoutedElements(rawNodes, rawEdges, showFemales),
+      edges: rawEdges,
+    };
   }, [familyData, collapsedIds, clanItem, showFemales]);
 
   // Hàm xuất ảnh PNG
