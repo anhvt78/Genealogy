@@ -7,6 +7,7 @@ import {
   custom,
   http,
   getContract,
+  parseEventLogs,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { lukso } from "viem/chains";
@@ -195,34 +196,38 @@ export const GenealogyProvider = ({ children }) => {
         ERC725YDataKeys.LSP4["LSP4Metadata"],
       ]);
 
+      // Chưa có metadata on-chain → trả về null thay vì báo lỗi
+      if (!personMetadata || personMetadata === "0x") {
+        return { sts: true, data: null };
+      }
+
       const erc725js = new ERC725(lsp4Schema);
 
-      // Decode the metadata
       const decodedMetadata = erc725js.decodeData([
         {
           keyName: "LSP4Metadata",
           value: personMetadata,
         },
       ]);
-      const metadataURL = decodedMetadata[0].value.url;
 
-      const metadataJsonLink = generateMetadataLink(metadataURL);
-      // console.log("metadataJsonLink: ", metadataJsonLink);
-      // Fetch the URL
-      if (metadataJsonLink) {
-        const response = await fetch(metadataJsonLink);
-        const jsonMetadata = await response.json();
-        // console.log("Metadata Contents: ", jsonMetadata?.LSP4Metadata);
-        // return {
-        //   sts: true,
-        //   data: jsonMetadata?.LSP4Metadata,
-        // };
-        return { sts: true, data: jsonMetadata?.LSP4Metadata };
-      } else {
+      // decodedMetadata[0].value có thể null nếu bytes rỗng sau decode
+      const metadataURL = decodedMetadata?.[0]?.value?.url;
+      if (!metadataURL) {
         return { sts: true, data: null };
       }
 
-      // return { sts: true, data: JSON.stringify(decodedMetadata, null, 2) };
+      const metadataJsonLink = generateMetadataLink(metadataURL);
+      if (!metadataJsonLink) {
+        return { sts: true, data: null };
+      }
+
+      const response = await fetch(metadataJsonLink);
+      if (!response.ok) {
+        return { sts: true, data: null };
+      }
+
+      const jsonMetadata = await response.json();
+      return { sts: true, data: jsonMetadata?.LSP4Metadata ?? null };
     } catch (error) {
       return { sts: false, data: error };
     }
@@ -258,22 +263,7 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
-      const unwatch = publicClient.watchContractEvent({
-        address: genealogyAddress,
-        abi: genealogyABI,
-        eventName: "ClanCreated",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { _creatorAddress, clanId } = log.args;
-            if (walletAddress.toLowerCase() === _creatorAddress.toLowerCase()) {
-              unwatch();
-              callBack(clanId);
-            }
-          }
-        },
-      });
-
-      await contract.write.createClan([
+      const txHash = await contract.write.createClan([
         formData.clanName,
         formData.description,
         formData.ancestorName,
@@ -281,6 +271,13 @@ export const GenealogyProvider = ({ children }) => {
         formData.birthDate,
         formData.deathDate,
       ]);
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      const logs = parseEventLogs({ abi: genealogyABI, eventName: "ClanCreated", logs: receipt.logs });
+      const event = logs.find(
+        (l) => l.args._creatorAddress?.toLowerCase() === walletAddress.toLowerCase()
+      );
+      if (event) callBack(event.args.clanId);
     } catch (error) {
       handleErr("Error", error);
     }
@@ -301,22 +298,9 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
-      const unwatch = publicClient.watchContractEvent({
-        address: clanId,
-        abi: familyNftABI,
-        eventName: "ClanShortDescChanged",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { sender } = log.args;
-            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
-              unwatch();
-              callBack();
-            }
-          }
-        },
-      });
-
-      await contract.write.setClanShortDesc([newShortDesc]);
+      const txHash = await contract.write.setClanShortDesc([newShortDesc]);
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      callBack();
     } catch (error) {
       handleErr("Error", error);
     }
@@ -339,22 +323,7 @@ export const GenealogyProvider = ({ children }) => {
 
       // console.log("Dữ liệu AddChild: ", formData);
 
-      const unwatch = publicClient.watchContractEvent({
-        address: clanId,
-        abi: familyNftABI,
-        eventName: "ChildAdded",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { sender, newChildId } = log.args;
-            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
-              unwatch();
-              callBack(newChildId);
-            }
-          }
-        },
-      });
-
-      await contract.write.addChild([
+      const txHash = await contract.write.addChild([
         formData.parentId,
         formData.name,
         formData.shortDesc,
@@ -362,6 +331,13 @@ export const GenealogyProvider = ({ children }) => {
         formData.birthDate,
         formData.deathDate,
       ]);
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      const logs = parseEventLogs({ abi: familyNftABI, eventName: "ChildAdded", logs: receipt.logs });
+      const event = logs.find(
+        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
+      );
+      if (event) callBack(event.args.newChildId);
     } catch (error) {
       handleErr("Error", error);
     }
@@ -382,25 +358,9 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
-      // Đăng ký listener TRƯỚC khi gửi transaction
-      // tránh miss event do block time nhanh trên LUKSO
-      const unwatch = publicClient.watchContractEvent({
-        address: clanId,
-        abi: familyNftABI,
-        eventName: "ChildRemoved",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { sender } = log.args;
-            // Chỉ cần kiểm tra sender — childId đã được đảm bảo đúng bởi transaction
-            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
-              unwatch();
-              callBack();
-            }
-          }
-        },
-      });
-
-      await contract.write.removeChild([childId]);
+      const txHash = await contract.write.removeChild([childId]);
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      callBack();
     } catch (error) {
       handleErr("Error", error);
     }
@@ -422,24 +382,9 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
-      // Đăng ký listener TRƯỚC khi gửi transaction
-      const unwatch = publicClient.watchContractEvent({
-        address: clanId,
-        abi: familyNftABI,
-        eventName: "SpouseRemoved",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { sender } = log.args;
-            // Chỉ cần kiểm tra sender — personId/spouseId đã đúng bởi transaction
-            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
-              unwatch();
-              callBack();
-            }
-          }
-        },
-      });
-
-      await contract.write.removeSpouse([personId, spouseId]);
+      const txHash = await contract.write.removeSpouse([personId, spouseId]);
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      callBack();
     } catch (error) {
       handleErr("Error", error);
     }
@@ -460,28 +405,20 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
-      const unwatch = publicClient.watchContractEvent({
-        address: clanId,
-        abi: familyNftABI,
-        eventName: "SpouseAdded",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { sender, newSpouseId } = log.args;
-            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
-              unwatch();
-              callBack(newSpouseId);
-            }
-          }
-        },
-      });
-
-      await contract.write.addSpouse([
+      const txHash = await contract.write.addSpouse([
         formData.personId,
         formData.name,
         formData.shortDesc,
         formData.birthDate,
         formData.deathDate,
       ]);
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      const logs = parseEventLogs({ abi: familyNftABI, eventName: "SpouseAdded", logs: receipt.logs });
+      const event = logs.find(
+        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
+      );
+      if (event) callBack(event.args.newSpouseId);
     } catch (error) {
       handleErr("Error", error);
     }
@@ -503,28 +440,16 @@ export const GenealogyProvider = ({ children }) => {
       });
 
       // console.log("382: formData: ", formData);
-      const unwatch = publicClient.watchContractEvent({
-        address: clanId,
-        abi: familyNftABI,
-        eventName: "UpdatePersonData",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { sender } = log.args;
-            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
-              unwatch();
-              callBack();
-            }
-          }
-        },
-      });
-
-      await contract.write.updatePersonData([
+      const txHash = await contract.write.updatePersonData([
         formData.personId,
         formData.name,
         formData.shortDesc,
         formData.birthYear,
         formData.deathYear,
       ]);
+
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      callBack();
     } catch (error) {
       handleErr("Error", error);
     }
@@ -546,23 +471,9 @@ export const GenealogyProvider = ({ children }) => {
       });
 
       // console.log("382: formData: ", formData);
-      //OwnershipTransferred(_owner, newOwner)
-      const unwatch = publicClient.watchContractEvent({
-        address: clanId,
-        abi: familyNftABI,
-        eventName: "OwnershipTransferred",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { _owner } = log.args;
-            if (walletAddress.toLowerCase() === _owner.toLowerCase()) {
-              unwatch();
-              callBack();
-            }
-          }
-        },
-      });
-
-      await contract.write.transferOwnership([newOwner]);
+      const txHash = await contract.write.transferOwnership([newOwner]);
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      callBack();
     } catch (error) {
       handleErr("Error", error);
     }
