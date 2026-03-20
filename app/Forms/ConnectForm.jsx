@@ -1,18 +1,60 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { setWalletAddress } from "@/redux/genealogySlide";
-import { checkChainId } from "@/components/Utils/helpers";
 import sweetalert2 from "@/configs/swal";
-import { ethers } from "ethers";
-import { useRouter } from "next/navigation"; // Thêm router để điều hướng
+import { useRouter } from "next/navigation";
 import { Html5Qrcode } from "html5-qrcode";
+import { createWalletClient, custom } from "viem";
+import { lukso } from "viem/chains";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// KIẾN TRÚC PROVIDER CỦA LUKSO
+// ─────────────────────────────────────────────────────────────────────────────
+//
+//  ┌──────────────────────────┬──────────────────────────────────────────────┐
+//  │  Môi trường              │  Provider inject vào đâu                     │
+//  ├──────────────────────────┼──────────────────────────────────────────────┤
+//  │  PC – Chrome Extension   │  window.lukso                                │
+//  │  Mobile app (WebView)    │  window.lukso  (app inject như Extension)    │
+//  │  The Grid (mini-app)     │  up-provider  (parent page inject)           │
+//  │  Mobile – không có app   │  undefined → hướng dẫn tải app              │
+//  └──────────────────────────┴──────────────────────────────────────────────┘
+
+const LUKSO_MAINNET_ID = 42;
+
+/**
+ * Trả về injected EIP-1193 provider theo thứ tự ưu tiên:
+ *  1. window.lukso               — Extension (PC) hoặc WebView (Mobile app)
+ *  2. window.ethereum.isLukso   — fallback build cũ
+ *  3. null                       — không tìm thấy
+ */
+const detectInjectedProvider = () => {
+  if (typeof window === "undefined") return null;
+  if (window.lukso) return window.lukso;
+  if (window.ethereum?.isLukso) return window.ethereum;
+  return null;
+};
+
+/**
+ * Phát hiện dApp đang chạy trong The Grid (iframe universaleverything.io).
+ * Dấu hiệu: đang trong iframe VÀ không có window.lukso inject.
+ */
+const detectGridContext = () => {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.self !== window.top && !window.lukso;
+  } catch {
+    return true; // cross-origin block → chắc chắn trong iframe
+  }
+};
 
 export default function ConnectForm() {
   const [isShaking, setIsShaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [inputClanId, setInputClanId] = useState(""); // State cho ô nhập liệu
   const [isScanning, setIsScanning] = useState(false); // State cho hiệu ứng giả lập scan
+  const [isMobile, setIsMobile] = useState(false);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -39,105 +81,181 @@ export default function ConnectForm() {
     router.push(`/pages/detail?id=${inputClanId.trim()}`);
   };
 
-  const connectWalletHandler = async () => {
-    setIsProcessing(true);
-    if (typeof window.lukso !== "undefined") {
-      const injectedProvider = window.lukso;
-      const isCorrectChain = await checkChainId(injectedProvider);
+  // ── Kiểm tra & chuyển đổi chain về LUKSO Mainnet ────────────────────────
+  const ensureCorrectChain = async (provider) => {
+    const chainIdHex = await provider.request({ method: "eth_chainId" });
+    const chainId = parseInt(chainIdHex, 16);
+    if (chainId === LUKSO_MAINNET_ID) return true;
 
-      if (!isCorrectChain) {
+    // Thử switch trước
+    try {
+      await provider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x2A" }],
+      });
+      return true;
+    } catch (switchError) {
+      // Chain chưa được thêm vào ví → thêm mới
+      if (switchError.code === 4902) {
         try {
-          await injectedProvider.request({
-            method: "wallet_switchEthereumChain",
-            params: [{ chainId: "0x1069" }],
-          });
-        } catch (switchError) {
-          if (switchError.code === 4902) {
-            try {
-              // await injectedProvider.request({
-              //   method: "wallet_addEthereumChain",
-              //   params: [
-              //     {
-              //       chainId: "0x1069",
-              //       chainName: "LUKSO Testnet",
-              //       nativeCurrency: {
-              //         name: "Test LYX",
-              //         symbol: "LYXt",
-              //         decimals: 18,
-              //       },
-              //       rpcUrls: ["https://rpc.testnet.lukso.network"],
-              //       blockExplorerUrls: [
-              //         "https://explorer.execution.testnet.lukso.network",
-              //       ],
-              //     },
-              //   ],
-              // });
-              await injectedProvider.request({
-                method: "wallet_addEthereumChain",
-                params: [
-                  {
-                    chainId: "0x2A", // 42 trong hệ thập phân
-                    chainName: "LUKSO Mainnet",
-                    nativeCurrency: {
-                      name: "LYX",
-                      symbol: "LYX",
-                      decimals: 18,
-                    },
-                    rpcUrls: ["https://rpc.mainnet.lukso.network"],
-                    blockExplorerUrls: [
-                      "https://explorer.execution.mainnet.lukso.network",
-                    ],
-                  },
+          await provider.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0x2A",
+                chainName: "LUKSO Mainnet",
+                nativeCurrency: { name: "LYX", symbol: "LYX", decimals: 18 },
+                rpcUrls: ["https://rpc.mainnet.lukso.network"],
+                blockExplorerUrls: [
+                  "https://explorer.execution.mainnet.lukso.network",
                 ],
-              });
-            } catch (addError) {
-              sweetalert2.popupAlert({
-                title: "Error",
-                text: "Failed to add LUKSO Network.",
-              });
-              return;
-            }
-          }
+              },
+            ],
+          });
+          return true;
+        } catch {
+          sweetalert2.popupAlert({
+            title: "Lỗi mạng",
+            text: "Không thể thêm LUKSO Mainnet vào ví.",
+          });
+          return false;
         }
       }
+    }
+    sweetalert2.popupAlert({
+      title: "Mạng không đúng",
+      text: `Vui lòng chuyển sang LUKSO Mainnet (ID: 42). Hiện tại: ${chainId}.`,
+    });
+    return false;
+  };
 
-      const provider = new ethers.providers.Web3Provider(injectedProvider);
-      await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
-      const walletAddress = await signer.getAddress();
+  // ── LUỒNG A: Injected provider — Extension (PC) / WebView (Mobile app) ──
+  const connectViaInjected = useCallback(async () => {
+    setIsProcessing(true);
+    try {
+      const provider = detectInjectedProvider();
+      if (!provider) throw new Error("NO_PROVIDER");
 
-      dispatch(setWalletAddress(walletAddress));
+      // Khởi tạo viem walletClient (dùng cho ký giao dịch sau này)
+      createWalletClient({ chain: lukso, transport: custom(provider) });
+
+      const ok = await ensureCorrectChain(provider);
+      if (!ok) return;
+
+      const accounts = await provider.request({
+        method: "eth_requestAccounts",
+      });
+      if (!accounts?.length) throw new Error("EMPTY_ACCOUNTS");
+
+      dispatch(setWalletAddress(accounts[0]));
+    } catch (error) {
+      console.error("[Injected Provider] Lỗi kết nối:", error);
+      resolveAndShowError(error);
+    } finally {
       setIsProcessing(false);
+    }
+  }, [dispatch]);
+
+  // ── LUỒNG B: up-provider — dApp nhúng trong The Grid ────────────────────
+  const connectViaUPProvider = useCallback(async () => {
+    setIsProcessing(true);
+    try {
+      const { createClientUPProvider } = await import("@lukso/up-provider");
+      const upProvider = createClientUPProvider();
+
+      createWalletClient({ chain: lukso, transport: custom(upProvider) });
+
+      let accounts = await upProvider.request({ method: "eth_accounts" });
+
+      if (!accounts?.length) {
+        // Chờ parent page inject accounts qua postMessage
+        accounts = await new Promise((resolve, reject) => {
+          const timeout = setTimeout(
+            () => reject(new Error("TIMEOUT")),
+            60_000
+          );
+          upProvider.on("accountsChanged", (newAccounts) => {
+            clearTimeout(timeout);
+            if (newAccounts?.length) resolve(newAccounts);
+            else reject(new Error("EMPTY_ACCOUNTS"));
+          });
+        });
+      }
+
+      const chainIdHex = await upProvider.request({ method: "eth_chainId" });
+      if (parseInt(chainIdHex, 16) !== LUKSO_MAINNET_ID) {
+        sweetalert2.popupAlert({
+          title: "Mạng không đúng",
+          text: "The Grid đang dùng sai mạng. Vui lòng kiểm tra lại.",
+        });
+        return;
+      }
+
+      dispatch(setWalletAddress(accounts[0]));
+    } catch (error) {
+      console.error("[UP Provider / Grid] Lỗi kết nối:", error);
+      const msg =
+        error.message === "TIMEOUT"
+          ? "Hết thời gian chờ. Vui lòng thử kết nối lại trong The Grid."
+          : resolveErrorMessage(error, false);
+      sweetalert2.popupAlert({ title: "Lỗi kết nối", text: msg });
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [dispatch]);
+
+  // ── Xử lý lỗi chung ─────────────────────────────────────────────────────
+  const resolveErrorMessage = (error, mobile) => {
+    if (error.message === "NO_PROVIDER") {
+      return mobile
+        ? "Không tìm thấy Universal Profiles App. Vui lòng mở trang này bên trong ứng dụng Universal Profiles trên điện thoại."
+        : "Không tìm thấy Universal Profile Extension. Vui lòng cài Extension cho Chrome và thử lại.";
+    }
+    if (error.code === 4001 || error.message?.includes("rejected")) {
+      return "Bạn đã từ chối yêu cầu kết nối.";
+    }
+    if (error.message === "EMPTY_ACCOUNTS") {
+      return "Không lấy được tài khoản. Vui lòng mở khóa ví và thử lại.";
+    }
+    return "Không thể kết nối Universal Profile. Vui lòng thử lại.";
+  };
+
+  const resolveAndShowError = (error) => {
+    sweetalert2.popupAlert({
+      title: "Lỗi kết nối",
+      text: resolveErrorMessage(error, isMobile),
+    });
+  };
+
+  // ── Dispatcher thông minh — tự chọn luồng phù hợp ──────────────────────
+  //  Thứ tự ưu tiên:
+  //   1. The Grid context   → up-provider
+  //   2. Injected provider  → window.lukso (Extension PC / WebView mobile)
+  //   3. Không tìm thấy    → hướng dẫn theo thiết bị
+  const connectWalletHandler = () => {
+    if (detectGridContext()) {
+      connectViaUPProvider();
+    } else if (detectInjectedProvider()) {
+      connectViaInjected();
+    } else if (isMobile) {
+      sweetalert2.popupAlert({
+        title: "Cần mở bằng ứng dụng",
+        text: "Vui lòng mở trang này bên trong ứng dụng Universal Profiles (iOS/Android) để kết nối.",
+      });
     } else {
-      setIsProcessing(false);
       sweetalert2
         .popupAlert({
-          title: "Connect Wallet",
-          text: "Universal Profile not detected. Please install the extension.",
+          title: "Cần cài Extension",
+          text: "Không tìm thấy Universal Profile Extension. Vui lòng cài Extension cho Chrome.",
         })
         .then(() => {
           window.open(
             "https://chromewebstore.google.com/detail/universal-profiles/abpickdkkbnbcoepogfhkhennhfhehfn",
-            "_blank",
+            "_blank"
           );
         });
     }
   };
-
-  const [isMobile, setIsMobile] = useState(false);
-
-  // useEffect(() => {
-  //   // Kiểm tra User Agent hoặc chiều rộng màn hình
-  //   const checkMobile = () => {
-  //     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-  //     const isMobileDevice = /android|iphone|ipad|ipod/i.test(
-  //       userAgent.toLowerCase(),
-  //     );
-  //     setIsMobile(isMobileDevice);
-  //   };
-
-  //   checkMobile();
-  // }, []);
 
   // Sử dụng useRef để theo dõi trạng thái scanner, tránh khởi tạo nhiều lần
   const scannerRef = useRef(null);
