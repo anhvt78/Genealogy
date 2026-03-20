@@ -22,8 +22,6 @@ import { generateMetadataLink } from "@/components/Utils/helpers";
 
 const privateKey = `${process.env.PRIVATE_KEY}`;
 
-console.log("privateKey: ", privateKey);
-
 const RPC_URL = "https://rpc.mainnet.lukso.network"; // RPC URL cho LUKSO Testnet
 
 import { genealogyAddress, genealogyABI, familyNftABI } from "./constants";
