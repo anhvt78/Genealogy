@@ -21,6 +21,8 @@ import { generateMetadataLink } from "@/components/Utils/helpers";
 
 const privateKey = `${process.env.PRIVATE_KEY}`;
 
+console.log("privateKey: ", privateKey);
+
 const RPC_URL = "https://rpc.mainnet.lukso.network"; // RPC URL cho LUKSO Testnet
 
 import { genealogyAddress, genealogyABI, familyNftABI } from "./constants";
@@ -33,9 +35,14 @@ const connectingWithSmartContract = async (smAddr, smABI) => {
     window.lukso || (window.ethereum?.isLukso ? window.ethereum : null);
   if (!injectedProvider) throw new Error("NO_PROVIDER");
 
-  await injectedProvider.request({ method: "eth_requestAccounts" });
+  // Lấy danh sách accounts từ provider — bắt buộc để viem biết account nào ký
+  const accounts = await injectedProvider.request({
+    method: "eth_requestAccounts",
+  });
+  if (!accounts?.length) throw new Error("EMPTY_ACCOUNTS");
 
   const walletClient = createWalletClient({
+    account: accounts[0],   // ← gắn account vào client, viem mới cho phép write
     chain: lukso,
     transport: custom(injectedProvider),
   });
@@ -58,7 +65,7 @@ const connectingWithSmartContract = async (smAddr, smABI) => {
 const connectingSmartContractByPrivatekey = (contractAddress, contractABI) => {
   try {
     const account = privateKeyToAccount(
-      privateKey.startsWith("0x") ? privateKey : `0x${privateKey}`,
+      privateKey.startsWith("0x") ? privateKey : `0x${privateKey}`
     );
 
     const publicClient = createPublicClient({
@@ -227,9 +234,7 @@ export const GenealogyProvider = ({ children }) => {
         clanId,
         familyNftABI,
       );
-      const ownerOfToken = await familyNFTContract.read.tokenOwnerOf([
-        personId,
-      ]);
+      const ownerOfToken = await familyNFTContract.read.tokenOwnerOf([personId]);
       // console.log("tokenIdMetadata: ", tokenIdMetadata);
 
       return {
