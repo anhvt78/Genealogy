@@ -57,8 +57,6 @@ export default function UpdateMemberModal({
     const newErrors = {};
     // Kiểm tra các trường bắt buộc
     if (!formData.name.trim()) newErrors.name = "Danh tánh không được để trống";
-    if (!formData.birthYear.trim())
-      newErrors.birthYear = "Xin ghi rõ năm sinh hoặc ngày sinh";
 
     // Nếu có lỗi, cập nhật state và dừng xử lý
     if (Object.keys(newErrors).length > 0) {
