@@ -258,6 +258,21 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
+      const unwatch = publicClient.watchContractEvent({
+        address: genealogyAddress,
+        abi: genealogyABI,
+        eventName: "ClanCreated",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { _creatorAddress, clanId } = log.args;
+            if (walletAddress.toLowerCase() === _creatorAddress.toLowerCase()) {
+              unwatch();
+              callBack(clanId);
+            }
+          }
+        },
+      });
+
       await contract.write.createClan([
         formData.clanName,
         formData.description,
@@ -266,21 +281,6 @@ export const GenealogyProvider = ({ children }) => {
         formData.birthDate,
         formData.deathDate,
       ]);
-
-      const unwatch = publicClient.watchContractEvent({
-        address: genealogyAddress,
-        abi: genealogyABI,
-        eventName: "ClanCreated",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { _creatorAddress, clanId } = log.args;
-            if (walletAddress == _creatorAddress) {
-              unwatch();
-              callBack(clanId);
-            }
-          }
-        },
-      });
     } catch (error) {
       handleErr("Error", error);
     }
@@ -301,8 +301,6 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
-      await contract.write.setClanShortDesc([newShortDesc]);
-
       const unwatch = publicClient.watchContractEvent({
         address: clanId,
         abi: familyNftABI,
@@ -310,13 +308,15 @@ export const GenealogyProvider = ({ children }) => {
         onLogs: (logs) => {
           for (const log of logs) {
             const { sender } = log.args;
-            if (walletAddress == sender) {
+            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
               unwatch();
               callBack();
             }
           }
         },
       });
+
+      await contract.write.setClanShortDesc([newShortDesc]);
     } catch (error) {
       handleErr("Error", error);
     }
@@ -339,6 +339,21 @@ export const GenealogyProvider = ({ children }) => {
 
       // console.log("Dữ liệu AddChild: ", formData);
 
+      const unwatch = publicClient.watchContractEvent({
+        address: clanId,
+        abi: familyNftABI,
+        eventName: "ChildAdded",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { sender, newChildId } = log.args;
+            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
+              unwatch();
+              callBack(newChildId);
+            }
+          }
+        },
+      });
+
       await contract.write.addChild([
         formData.parentId,
         formData.name,
@@ -347,21 +362,6 @@ export const GenealogyProvider = ({ children }) => {
         formData.birthDate,
         formData.deathDate,
       ]);
-
-      const unwatch = publicClient.watchContractEvent({
-        address: clanId,
-        abi: familyNftABI,
-        eventName: "ChildAdded",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { sender, parentId, newChildId } = log.args;
-            if (walletAddress == sender && formData.parentId == parentId) {
-              unwatch();
-              callBack(newChildId);
-            }
-          }
-        },
-      });
     } catch (error) {
       handleErr("Error", error);
     }
@@ -382,22 +382,25 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
-      await contract.write.removeChild([childId]);
-
+      // Đăng ký listener TRƯỚC khi gửi transaction
+      // tránh miss event do block time nhanh trên LUKSO
       const unwatch = publicClient.watchContractEvent({
         address: clanId,
         abi: familyNftABI,
         eventName: "ChildRemoved",
         onLogs: (logs) => {
           for (const log of logs) {
-            const { sender, childIdDeleted } = log.args;
-            if (walletAddress == sender && childId == childIdDeleted) {
+            const { sender } = log.args;
+            // Chỉ cần kiểm tra sender — childId đã được đảm bảo đúng bởi transaction
+            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
               unwatch();
               callBack();
             }
           }
         },
       });
+
+      await contract.write.removeChild([childId]);
     } catch (error) {
       handleErr("Error", error);
     }
@@ -419,22 +422,24 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
-      await contract.write.removeSpouse([personId, spouseId]);
-
+      // Đăng ký listener TRƯỚC khi gửi transaction
       const unwatch = publicClient.watchContractEvent({
         address: clanId,
         abi: familyNftABI,
         eventName: "SpouseRemoved",
         onLogs: (logs) => {
           for (const log of logs) {
-            const { sender, spouseId: removedSpouseId } = log.args;
-            if (walletAddress == sender && spouseId == removedSpouseId) {
+            const { sender } = log.args;
+            // Chỉ cần kiểm tra sender — personId/spouseId đã đúng bởi transaction
+            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
               unwatch();
               callBack();
             }
           }
         },
       });
+
+      await contract.write.removeSpouse([personId, spouseId]);
     } catch (error) {
       handleErr("Error", error);
     }
@@ -455,6 +460,21 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
+      const unwatch = publicClient.watchContractEvent({
+        address: clanId,
+        abi: familyNftABI,
+        eventName: "SpouseAdded",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { sender, newSpouseId } = log.args;
+            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
+              unwatch();
+              callBack(newSpouseId);
+            }
+          }
+        },
+      });
+
       await contract.write.addSpouse([
         formData.personId,
         formData.name,
@@ -462,21 +482,6 @@ export const GenealogyProvider = ({ children }) => {
         formData.birthDate,
         formData.deathDate,
       ]);
-
-      const unwatch = publicClient.watchContractEvent({
-        address: clanId,
-        abi: familyNftABI,
-        eventName: "SpouseAdded",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { sender, personId, newSpouseId } = log.args;
-            if (sender == walletAddress && personId == formData.personId) {
-              unwatch();
-              callBack(newSpouseId);
-            }
-          }
-        },
-      });
     } catch (error) {
       handleErr("Error", error);
     }
@@ -498,6 +503,21 @@ export const GenealogyProvider = ({ children }) => {
       });
 
       // console.log("382: formData: ", formData);
+      const unwatch = publicClient.watchContractEvent({
+        address: clanId,
+        abi: familyNftABI,
+        eventName: "UpdatePersonData",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { sender } = log.args;
+            if (walletAddress.toLowerCase() === sender.toLowerCase()) {
+              unwatch();
+              callBack();
+            }
+          }
+        },
+      });
+
       await contract.write.updatePersonData([
         formData.personId,
         formData.name,
@@ -505,21 +525,6 @@ export const GenealogyProvider = ({ children }) => {
         formData.birthYear,
         formData.deathYear,
       ]);
-
-      const unwatch = publicClient.watchContractEvent({
-        address: clanId,
-        abi: familyNftABI,
-        eventName: "UpdatePersonData",
-        onLogs: (logs) => {
-          for (const log of logs) {
-            const { sender, personId } = log.args;
-            if (walletAddress == sender && personId == formData.personId) {
-              unwatch();
-              callBack();
-            }
-          }
-        },
-      });
     } catch (error) {
       handleErr("Error", error);
     }
@@ -541,8 +546,6 @@ export const GenealogyProvider = ({ children }) => {
       });
 
       // console.log("382: formData: ", formData);
-      await contract.write.transferOwnership([newOwner]);
-
       //OwnershipTransferred(_owner, newOwner)
       const unwatch = publicClient.watchContractEvent({
         address: clanId,
@@ -550,14 +553,16 @@ export const GenealogyProvider = ({ children }) => {
         eventName: "OwnershipTransferred",
         onLogs: (logs) => {
           for (const log of logs) {
-            const { _owner, _newOwner } = log.args;
-            if (walletAddress == _owner && newOwner == _newOwner) {
+            const { _owner } = log.args;
+            if (walletAddress.toLowerCase() === _owner.toLowerCase()) {
               unwatch();
               callBack();
             }
           }
         },
       });
+
+      await contract.write.transferOwnership([newOwner]);
     } catch (error) {
       handleErr("Error", error);
     }
