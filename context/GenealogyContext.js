@@ -1,74 +1,83 @@
 "use client"; // Thêm dòng này vào đầu file
 import React from "react";
-// import Web3Modal from "web3modal";
-import { ethers } from "ethers";
-// import { INTERFACE_IDS } from "@lukso/lsp-smart-contracts";
+
+import {
+  createWalletClient,
+  createPublicClient,
+  custom,
+  http,
+  getContract,
+} from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { lukso } from "viem/chains";
+
 import { ERC725 } from "@erc725/erc725.js";
 import profileSchema from "@erc725/erc725.js/schemas/LSP3ProfileMetadata.json";
 import lsp4Schema from "@erc725/erc725.js/schemas/LSP4DigitalAsset.json";
-// import lsp8Schema from "@erc725/erc725.js/schemas/LSP8IdentifiableDigitalAsset.json";
-// import {_LSP4_METADATA_KEY} from "@lukso/lsp-smart-contracts/contracts/LSP4DigitalAssetMetadata/LSP4Constants.sol";
 
-// import LSP4Artifact from "@lukso/lsp-smart-contracts/artifacts/LSP4DigitalAssetMetadata.json";
 import { ERC725YDataKeys } from "@lukso/lsp-smart-contracts";
 
-import {
-  // convertToEthers,
-  // toEnglishCharacters,
-  // convertEtherToWei,
-  generateMetadataLink,
-  // toEthersUsdtAtomic,
-  // toEthersUsdtDisplay,
-} from "@/components/Utils/helpers";
+import { generateMetadataLink } from "@/components/Utils/helpers";
 
-// const projectId = `${process.env.INFURA_API_KEY}`;
-// const projectSecretKey = `${process.env.INFURA_API_KEY_SECRET}`;
-
-// const privateKey = `${process.env.PRIVATE_KEY}`;
-const privateKey =
-  "98f893278558ef777032bc95f5f612bb3138e49957926351fb7d48a67acf7860";
-
-// console.log("privateKey: ", privateKey);
+const privateKey = `${process.env.PRIVATE_KEY}`;
 
 const RPC_URL = "https://rpc.mainnet.lukso.network"; // RPC URL cho LUKSO Testnet
-// const CHAIN_ID = 4201; // Chain ID của LUKSO Testnet
-
-// const auth = `Basic ${Buffer.from(`${projectId}:${projectSecretKey}`).toString(
-//   "base64",
-// )}`;
 
 import { genealogyAddress, genealogyABI, familyNftABI } from "./constants";
 
-const fetchContract = (smAddr, smABI, signerOrProvider) =>
-  new ethers.Contract(smAddr, smABI, signerOrProvider);
-
 //---CONNECTING WITH SMART CONTRACT
 
+// Kết nối qua injected provider (window.lukso) — dùng cho giao dịch cần chữ ký user
 const connectingWithSmartContract = async (smAddr, smABI) => {
-  const injectedProvider = window.lukso;
+  const injectedProvider =
+    window.lukso || (window.ethereum?.isLukso ? window.ethereum : null);
+  if (!injectedProvider) throw new Error("NO_PROVIDER");
 
-  const provider = new ethers.providers.Web3Provider(injectedProvider);
-  await provider.send("eth_requestAccounts", []);
-  const signer = provider.getSigner();
-  const contract = fetchContract(smAddr, smABI, signer);
+  await injectedProvider.request({ method: "eth_requestAccounts" });
+
+  const walletClient = createWalletClient({
+    chain: lukso,
+    transport: custom(injectedProvider),
+  });
+
+  const publicClient = createPublicClient({
+    chain: lukso,
+    transport: custom(injectedProvider),
+  });
+
+  const contract = getContract({
+    address: smAddr,
+    abi: smABI,
+    client: { public: publicClient, wallet: walletClient },
+  });
+
   return contract;
 };
 
-// Hàm kết nối với smart contract
+// Kết nối qua private key (read/write không cần user ký) — dùng cho các hàm đọc dữ liệu
 const connectingSmartContractByPrivatekey = (contractAddress, contractABI) => {
   try {
-    // Tạo instance của smart contract
-    const providerOfMarket = new ethers.providers.JsonRpcProvider(RPC_URL);
-    const walletOfMarket = new ethers.Wallet(privateKey, providerOfMarket);
-    const signerOrProviderOfMarket = walletOfMarket
-      ? walletOfMarket.connect(providerOfMarket)
-      : providerOfMarket;
-
-    const contract = new ethers.Contract(
-      contractAddress,
-      contractABI,
-      signerOrProviderOfMarket,
+    const account = privateKeyToAccount(
+      privateKey.startsWith("0x") ? privateKey : `0x${privateKey}`,
     );
+
+    const publicClient = createPublicClient({
+      chain: lukso,
+      transport: http(RPC_URL),
+    });
+
+    const walletClient = createWalletClient({
+      account,
+      chain: lukso,
+      transport: http(RPC_URL),
+    });
+
+    const contract = getContract({
+      address: contractAddress,
+      abi: contractABI,
+      client: { public: publicClient, wallet: walletClient },
+    });
+
     return contract;
   } catch (error) {
     console.error("Error connecting to smart contract:", error);
@@ -92,86 +101,22 @@ const fetchContractData = async (contractAddress, lspSchema, dataType) => {
 export const GenealogyContext = React.createContext();
 
 export const GenealogyProvider = ({ children }) => {
-  //---CHECK IF WALLET IS CONNECTED
-  // const checkIfWalletConnected = async () => {
-  //   try {
-  //     if (!window.ethereum) {
-  //       // return setOpenError(true), setError("Install MetaMask");
-  //       return;
-  //     } else {
-  //       window.ethereum.on("accountsChanged", function (accounts) {
-  //         currentAccount = accounts[0];
-  //         // window.location.reload();
-
-  //         if (accounts[0]) {
-  //           // setOpenError(false);
-  //           // getEggsOwn(accounts[0]);
-  //           // getBidStep();
-  //         } else {
-  //           // setOpenError(true);
-  //           // setError("Error while connecting to wallet");
-  //         }
-  //       });
-  //     }
-
-  //     const accounts = await window.ethereum.request({
-  //       method: "eth_accounts",
-  //     });
-
-  //     if (accounts && accounts.length) {
-  //       // setCurrentAccount(accounts[0]);
-  //       currentAccount = accounts[0];
-
-  //       // console.log(accounts.length + " : " + currentAccount);
-  //     } else {
-  //       // console.log("No Account Found");
-  //       // setOpenError(true), setError("No Account Found");
-  //     }
-
-  //     const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //     const mBalance = await provider.getBalance(accounts[0]);
-  //     const balance = ethers.utils.formatEther(mBalance);
-  //     setAccountBalance(balance);
-
-  //     // console.log("accounts: " + accounts[0]);
-  //   } catch (error) {
-  //     console.log("Something went wrong while connecting to wallet");
-  //     // setOpenError(true),
-  //     setError("Something went wrong while connecting to wallet");
-  //   }
-  // };
-
   const getClanInfo = async (clanId) => {
     try {
-      // const contract = connectingSmartContractByPrivatekey(
-      //   clanId,
-      //   familyNftABI,
-      // );
-
-      // const clanMetadata = await fetchContractData(
-      //   clanId,
-      //   lsp4Schema,
-      //   "LSP4Metadata",
-      // );
       const clanName = await fetchContractData(
         clanId,
         lsp4Schema,
         "LSP4TokenName",
       );
 
-      // const clanDesc = await contract.clanShortDesc();
-
       return {
         sts: true,
         data: {
-          // clanMetadata: JSON.stringify(clanMetadata, null, 2),
           clanName: clanName.value,
-          // clanDesc: clanDesc,
         },
       };
     } catch (error) {
       return { sts: false, data: error };
-      // console.log("error = ", error);
     }
   };
 
@@ -193,13 +138,11 @@ export const GenealogyProvider = ({ children }) => {
         "LSP4TokenName",
       );
 
-      const clanOwner = await contract.tokenOwnerOf(
+      const clanOwner = await contract.read.tokenOwnerOf([
         "0x0000000000000000000000000000000000000000000000000000000000000001",
-      );
+      ]);
 
-      const clanDesc = await contract.clanShortDesc();
-
-      // console.log("clanMetadata: ", clanMetadata);
+      const clanDesc = await contract.read.clanShortDesc();
 
       return {
         sts: true,
@@ -223,7 +166,7 @@ export const GenealogyProvider = ({ children }) => {
         familyNftABI,
       );
 
-      const personData = await contract.getPersonInfo(personId);
+      const personData = await contract.read.getPersonInfo([personId]);
 
       return {
         sts: true,
@@ -240,11 +183,10 @@ export const GenealogyProvider = ({ children }) => {
         clanId,
         familyNftABI,
       );
-      const personMetadata = await contract.getDataForTokenId(
+      const personMetadata = await contract.read.getDataForTokenId([
         personId,
         ERC725YDataKeys.LSP4["LSP4Metadata"],
-      );
-      // console.log("tokenIdMetadata: ", tokenIdMetadata);
+      ]);
 
       const erc725js = new ERC725(lsp4Schema);
 
@@ -285,7 +227,9 @@ export const GenealogyProvider = ({ children }) => {
         clanId,
         familyNftABI,
       );
-      const ownerOfToken = await familyNFTContract.tokenOwnerOf(personId);
+      const ownerOfToken = await familyNFTContract.read.tokenOwnerOf([
+        personId,
+      ]);
       // console.log("tokenIdMetadata: ", tokenIdMetadata);
 
       return {
@@ -304,26 +248,33 @@ export const GenealogyProvider = ({ children }) => {
         genealogyABI,
       );
 
-      await contract.createClan(
+      const publicClient = createPublicClient({
+        chain: lukso,
+        transport: http(RPC_URL),
+      });
+
+      await contract.write.createClan([
         formData.clanName,
         formData.description,
         formData.ancestorName,
         formData.ancestorDesc,
         formData.birthDate,
         formData.deathDate,
-      );
+      ]);
 
-      contract.on("ClanCreated", async (_creatorAddress, clanId) => {
-        // console.log(
-        //   "_creatorAddress = ",
-        //   _creatorAddress,
-        //   ", clanId = ",
-        //   clanId,
-        // );
-
-        if (walletAddress == _creatorAddress) {
-          callBack(clanId);
-        }
+      const unwatch = publicClient.watchContractEvent({
+        address: genealogyAddress,
+        abi: genealogyABI,
+        eventName: "ClanCreated",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { _creatorAddress, clanId } = log.args;
+            if (walletAddress == _creatorAddress) {
+              unwatch();
+              callBack(clanId);
+            }
+          }
+        },
       });
     } catch (error) {
       handleErr("Error", error);
@@ -340,12 +291,26 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      await contract.setClanShortDesc(newShortDesc);
+      const publicClient = createPublicClient({
+        chain: lukso,
+        transport: http(RPC_URL),
+      });
 
-      contract.on("ClanShortDescChanged", async (sender) => {
-        if (walletAddress == sender) {
-          callBack();
-        }
+      await contract.write.setClanShortDesc([newShortDesc]);
+
+      const unwatch = publicClient.watchContractEvent({
+        address: clanId,
+        abi: familyNftABI,
+        eventName: "ClanShortDescChanged",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { sender } = log.args;
+            if (walletAddress == sender) {
+              unwatch();
+              callBack();
+            }
+          }
+        },
       });
     } catch (error) {
       handleErr("Error", error);
@@ -362,21 +327,35 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
+      const publicClient = createPublicClient({
+        chain: lukso,
+        transport: http(RPC_URL),
+      });
+
       // console.log("Dữ liệu AddChild: ", formData);
 
-      await contract.addChild(
+      await contract.write.addChild([
         formData.parentId,
         formData.name,
         formData.shortDesc,
         formData.gender,
         formData.birthDate,
         formData.deathDate,
-      );
+      ]);
 
-      contract.on("ChildAdded", async (sender, parentId, newChildId) => {
-        if (walletAddress == sender && formData.parentId == parentId) {
-          callBack(newChildId);
-        }
+      const unwatch = publicClient.watchContractEvent({
+        address: clanId,
+        abi: familyNftABI,
+        eventName: "ChildAdded",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { sender, parentId, newChildId } = log.args;
+            if (walletAddress == sender && formData.parentId == parentId) {
+              unwatch();
+              callBack(newChildId);
+            }
+          }
+        },
       });
     } catch (error) {
       handleErr("Error", error);
@@ -393,12 +372,26 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      await contract.removeChild(childId);
+      const publicClient = createPublicClient({
+        chain: lukso,
+        transport: http(RPC_URL),
+      });
 
-      contract.on("ChildRemoved", async (sender, childIdDeleted) => {
-        if (walletAddress == sender && childId == childIdDeleted) {
-          callBack();
-        }
+      await contract.write.removeChild([childId]);
+
+      const unwatch = publicClient.watchContractEvent({
+        address: clanId,
+        abi: familyNftABI,
+        eventName: "ChildRemoved",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { sender, childIdDeleted } = log.args;
+            if (walletAddress == sender && childId == childIdDeleted) {
+              unwatch();
+              callBack();
+            }
+          }
+        },
       });
     } catch (error) {
       handleErr("Error", error);
@@ -416,12 +409,26 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      await contract.removeSpouse(personId, spouseId);
+      const publicClient = createPublicClient({
+        chain: lukso,
+        transport: http(RPC_URL),
+      });
 
-      contract.on("SpouseRemoved", async (sender, personId, spouseId) => {
-        if (walletAddress == sender && spouseId == spouseId) {
-          callBack();
-        }
+      await contract.write.removeSpouse([personId, spouseId]);
+
+      const unwatch = publicClient.watchContractEvent({
+        address: clanId,
+        abi: familyNftABI,
+        eventName: "SpouseRemoved",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { sender, spouseId: removedSpouseId } = log.args;
+            if (walletAddress == sender && spouseId == removedSpouseId) {
+              unwatch();
+              callBack();
+            }
+          }
+        },
       });
     } catch (error) {
       handleErr("Error", error);
@@ -438,20 +445,32 @@ export const GenealogyProvider = ({ children }) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
 
-      // console.log("formData = ", formData, " | clanId: ", clanId);
+      const publicClient = createPublicClient({
+        chain: lukso,
+        transport: http(RPC_URL),
+      });
 
-      await contract.addSpouse(
+      await contract.write.addSpouse([
         formData.personId,
         formData.name,
         formData.shortDesc,
         formData.birthDate,
         formData.deathDate,
-      );
+      ]);
 
-      contract.on("SpouseAdded", async (sender, personId, newSpouseId) => {
-        if (sender == walletAddress && personId == formData.personId) {
-          callBack(newSpouseId);
-        }
+      const unwatch = publicClient.watchContractEvent({
+        address: clanId,
+        abi: familyNftABI,
+        eventName: "SpouseAdded",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { sender, personId, newSpouseId } = log.args;
+            if (sender == walletAddress && personId == formData.personId) {
+              unwatch();
+              callBack(newSpouseId);
+            }
+          }
+        },
       });
     } catch (error) {
       handleErr("Error", error);
@@ -467,48 +486,39 @@ export const GenealogyProvider = ({ children }) => {
   ) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
+
+      const publicClient = createPublicClient({
+        chain: lukso,
+        transport: http(RPC_URL),
+      });
+
       // console.log("382: formData: ", formData);
-      await contract.updatePersonData(
+      await contract.write.updatePersonData([
         formData.personId,
         formData.name,
         formData.shortDesc,
         formData.birthYear,
         formData.deathYear,
-      );
+      ]);
 
-      contract.on("UpdatePersonData", async (sender, personId) => {
-        if (walletAddress == sender && personId == formData.personId) {
-          callBack();
-        }
+      const unwatch = publicClient.watchContractEvent({
+        address: clanId,
+        abi: familyNftABI,
+        eventName: "UpdatePersonData",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { sender, personId } = log.args;
+            if (walletAddress == sender && personId == formData.personId) {
+              unwatch();
+              callBack();
+            }
+          }
+        },
       });
     } catch (error) {
       handleErr("Error", error);
     }
   };
-
-  // const removeClanFromOwned = async (
-  //   walletAddress,
-  //   clanId,
-  //   callBack,
-  //   handleErr,
-  // ) => {
-  //   try {
-  //     const contract = await connectingWithSmartContract(
-  //       genealogyAddress,
-  //       genealogyABI,
-  //     );
-
-  //     await contract.removeClanFromOwned(clanId);
-
-  //     contract.on("ClanRemovedFromOwned", async (sender, clanIdRemoved) => {
-  //       if (walletAddress == sender && clanId == clanIdRemoved) {
-  //         callBack();
-  //       }
-  //     });
-  //   } catch (error) {
-  //     handleErr("Error", error);
-  //   }
-  // };
 
   const transferOwnership = async (
     walletAddress,
@@ -519,13 +529,29 @@ export const GenealogyProvider = ({ children }) => {
   ) => {
     try {
       const contract = await connectingWithSmartContract(clanId, familyNftABI);
+
+      const publicClient = createPublicClient({
+        chain: lukso,
+        transport: http(RPC_URL),
+      });
+
       // console.log("382: formData: ", formData);
-      await contract.transferOwnership(newOwner);
+      await contract.write.transferOwnership([newOwner]);
+
       //OwnershipTransferred(_owner, newOwner)
-      contract.on("OwnershipTransferred", async (_owner, _newOwner) => {
-        if (walletAddress == _owner && newOwner == _newOwner) {
-          callBack();
-        }
+      const unwatch = publicClient.watchContractEvent({
+        address: clanId,
+        abi: familyNftABI,
+        eventName: "OwnershipTransferred",
+        onLogs: (logs) => {
+          for (const log of logs) {
+            const { _owner, _newOwner } = log.args;
+            if (walletAddress == _owner && newOwner == _newOwner) {
+              unwatch();
+              callBack();
+            }
+          }
+        },
       });
     } catch (error) {
       handleErr("Error", error);
@@ -533,23 +559,21 @@ export const GenealogyProvider = ({ children }) => {
   };
 
   const checkDeployedCode = async (address) => {
-    // new ethers.providers.Web3Provider(window.ethereum);
-    // const provider = new ethers.JsonRpcProvider(RPC_URL);
     try {
-      const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
-      const code = await provider.getCode(address);
+      const publicClient = createPublicClient({
+        chain: lukso,
+        transport: http(RPC_URL),
+      });
+      const code = await publicClient.getBytecode({ address });
       // console.log("code: ", code);
 
-      return code !== "0x";
+      return code !== undefined && code !== "0x";
     } catch (error) {
       // console.log("error: ", error);
     }
   };
 
   const getUserProfile = async (walletAddress) => {
-    // const profileAddress = await fetchUniversalProfile(walletAddress); // trả về địa chỉ ERC725 hoặc null
-    // console.log("profileAddress: ", profileAddress);
-
     const isContract = await checkDeployedCode(walletAddress);
 
     // console.log("isContract: ", isContract);
@@ -601,7 +625,7 @@ export const GenealogyProvider = ({ children }) => {
           receivedAssetsValue?.value?.map(async (el) => {
             // console.log("receivedAssetsValue: ", el);
 
-            const ownerNFT = await nftContract.getClanOwner(el);
+            const ownerNFT = await nftContract.read.getClanOwner([el]);
             if (ownerNFT != 0x0000000000000000000000000000000000000000) {
               if (!allNFT.includes(el)) {
                 allNFT.push(el);
@@ -626,7 +650,6 @@ export const GenealogyProvider = ({ children }) => {
   return (
     <GenealogyContext.Provider
       value={{
-        // checkIfWalletConnected,
         createClan,
         getClanInfo,
         getClanDetail,
@@ -639,7 +662,7 @@ export const GenealogyProvider = ({ children }) => {
         addSpouse,
         removeSpouse,
         updatePersonData,
-        // removeClanFromOwned,
+
         transferOwnership,
         getUserProfile,
         getNFTCollection,
