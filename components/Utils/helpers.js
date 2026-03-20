@@ -5,7 +5,9 @@ import {
   // GAMEFI_NFT_CURRENCY,
   NETWORK,
 } from "@/constants";
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
+import { toHex, padHex } from "viem";
+
 import sweetalert2 from "@/configs/swal";
 
 export const httpService = (cb) => {
@@ -36,31 +38,6 @@ export const fileToBase64 = (file, callback) => {
   reader.onerror = (error) => {
     console.error("Error: ", error);
   };
-};
-
-// export const priceWithUSDCurrency = (ethValue, rate) => {
-//   const convertedPrice = convertETHToUSD(ethValue, rate);
-//   return `${convertedPrice.toString()} ${BRAND_NFT_CURRENCY}`;
-// };
-
-// export const priceWithCWCurrency = (value) => {
-//   return value ? `${value} ${GAMEFI_NFT_CURRENCY}` : " ";
-// };
-
-// export const convertToEthers = (weiValue) => ethers.utils.formatEther(weiValue);
-
-export const convertToEthers = (weiValue) => {
-  // Kiểm tra xem weiValue có hợp lệ không
-  if (weiValue === undefined || weiValue === null) {
-    throw new Error("Invalid input: weiValue is undefined or null");
-  }
-
-  try {
-    // Đảm bảo weiValue là chuỗi hoặc số hợp lệ
-    return ethers.utils.formatEther(weiValue);
-  } catch (error) {
-    throw new Error(`Failed to convert weiValue to Ether: ${error.message}`);
-  }
 };
 
 export function roundUpForETH(num, precision) {
@@ -563,21 +540,6 @@ export const fetchLyxUsdtPrice = async () => {
   }
 };
 
-export const convertEtherToWei = (etherAmount) =>
-  ethers.utils.parseEther(etherAmount);
-
-// export default function convertEtherToWei(etherAmount) {
-//   // const etherAmount = "1.5"; // số lượng ether (chuỗi hoặc số)
-
-//   try {
-//     const weiAmount = ethers.utils.parseEther(etherAmount);
-//     // console.log("Số lượng wei:", weiAmount.toString()); // Kết quả dưới dạng chuỗi
-//     return weiAmount;
-//   } catch (error) {
-//     console.error("Eror:", error.message);
-//   }
-// }
-
 export const generateMetadataLink = (link) => {
   // If link is a regular Web2 Link, it can be passed back
   if (link?.startsWith("https://") || link?.startsWith("http://")) {
@@ -612,37 +574,16 @@ export const timeStampToLastSeen = (lastSeen) => {
   return `Last seen: ${diffInYears} years ago`;
 };
 
+// export const numberToByte32 = (number) => {
+//   const hex = ethers.utils.hexValue(number);
+//   const bytes32 = ethers.utils.hexZeroPad(hex, 32);
+//   return bytes32;
+// };
+
 export const numberToByte32 = (number) => {
-  const hex = ethers.utils.hexValue(number);
-  const bytes32 = ethers.utils.hexZeroPad(hex, 32);
+  const hex = toHex(number);
+  const bytes32 = padHex(hex, { size: 32 });
   return bytes32;
-};
-
-export const convertUSDToUint256 = (priceUSD) => {
-  // Chuyển 2.5 USD → wei (10^18)
-  const value = ethers.utils.parseUnits(priceUSD, 18);
-  return value;
-};
-
-export const convertUint256ToUSD = (value) => {
-  try {
-    // Kiểm tra nếu value là BigNumber hợp lệ
-
-    // console.log("641: value: ", value);
-
-    if (!value || !ethers.BigNumber.isBigNumber(value)) {
-      throw new Error("Invalid BigNumber value");
-    }
-    // Chuyển sang chuỗi thập phân với 18 decimals
-    const usdValue = ethers.utils.formatUnits(value, 18);
-    // console.log("648: usdValue: ", parseFloat(usdValue).toFixed(2));
-    // Optional: Làm tròn hoặc format thêm (ví dụ: giữ 2 chữ số thập phân)
-
-    return parseFloat(usdValue).toFixed(2); // Trả về "978.00" thay vì "978.0"
-  } catch (error) {
-    console.error("Error converting uint256 to USD:", error);
-    return "0.00"; // Hoặc throw error tùy nhu cầu
-  }
 };
 
 export const parseProductMetadata = (metadata) => {
@@ -703,24 +644,6 @@ export const parseProfileMetadata = (metadata) => {
     console.error("Lỗi khi phân tích metadata: ", error);
     return null;
   }
-};
-
-const usdtDecimals = 6;
-export const toEthersUsdtAtomic = (amountString) => {
-  // parseUnits(Giá trị, Số thập phân)
-  // console.log(
-  //   "amountString: ",
-  //   amountString,
-  //   " | usdtDecimals =  ",
-  //   usdtDecimals,
-  // );
-
-  return ethers.utils.parseUnits(amountString, usdtDecimals);
-};
-
-export const toEthersUsdtDisplay = (amount) => {
-  // formatUnits(Giá trị atomic, Số thập phân)
-  return ethers.utils.formatUnits(amount, usdtDecimals);
 };
 
 export const formatDate = (dateData) => {
