@@ -24,6 +24,10 @@ const GENDER_MAP = {
   2: "undefined",
 };
 
+// viem trả về số dạng BigInt — helper chuyển về Number an toàn
+const toNum = (val) => (val !== undefined && val !== null ? Number(val) : null);
+const toStr = (val) => (val !== undefined && val !== null ? String(val) : "");
+
 function GenealogyDetailContent() {
   const router = useRouter();
   const searchParams = useSearchParams(); // Lấy 'id' từ thư mục [id]
@@ -150,13 +154,13 @@ function GenealogyDetailContent() {
             return {
               id: el,
               name: spouseResult.data.name,
-              birthYear: spouseResult.data.birthDate,
-              deathYear: spouseResult.data.deathDate,
+              birthYear: toNum(spouseResult.data.birthDate),
+              deathYear: toNum(spouseResult.data.deathDate),
               shortDesc: spouseResult.data.shortDesc,
-              gender: GENDER_MAP[spouseResult.data.sex] || "undefined",
+              gender: GENDER_MAP[toNum(spouseResult.data.sex)] || "undefined",
               isSpouse: true,
               spouseId: personId,
-              createdAt: spouseResult.data.createdAt.toNumber(),
+              createdAt: toNum(spouseResult.data.createdAt),
             };
           }),
         );
@@ -166,13 +170,13 @@ function GenealogyDetailContent() {
         const item = {
           id: personId,
           name: data.name,
-          gender: GENDER_MAP[data.sex] || "undefined",
-          birthYear: data.birthDate,
-          deathYear: data.deathDate,
+          gender: GENDER_MAP[toNum(data.sex)] || "undefined",
+          birthYear: toNum(data.birthDate),
+          deathYear: toNum(data.deathDate),
           shortDesc: data.shortDesc,
           parents: data.parentId !== NONE_ID ? [data.parentId] : [],
           spouses: spousesDetails,
-          createdAt: data.createdAt.toNumber(),
+          createdAt: toNum(data.createdAt),
         };
 
         tempList.push(item);
