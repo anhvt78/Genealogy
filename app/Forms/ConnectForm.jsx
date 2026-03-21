@@ -239,23 +239,33 @@ export default function ConnectForm() {
       connectViaInjected();
     } else if (isMobile) {
       sweetalert2.popupAlert({
-        title: "Cần mở bằng ứng dụng",
-        text: "Vui lòng mở trang này bên trong ứng dụng Universal Profiles (iOS/Android) để kết nối.",
+        
+        //title: "Cần mở bằng ứng dụng",
+        //text: "Vui lòng mở trang này bên trong ứng dụng Universal Profiles (iOS/Android) để kết nối.",
+        title: "Cài đặt ví",
+      text: "Không tìm thấy Universal Profile. Bạn có muốn cài đặt ứng dụng để tiếp tục không?",
+      showCancelButton: true,         // QUAN TRỌNG: Thêm dòng này để hiện nút Cancel
+      confirmButtonText: "Cài đặt",
+      cancelButtonText: "Để sau",      // Tùy chỉnh text cho nút Cancel
       })
         .then(() => {
-          handleRedirectToStore();
+          if (result.isConfirmed) {
+        handleRedirectToStore();
+      }
         });;
     } else {
       sweetalert2
         .popupAlert({
-          title: "Cần cài Extension",
-          text: "Không tìm thấy Universal Profile Extension. Vui lòng cài Extension cho Chrome.",
+          title: "Kết nối ví",
+      text: "Universal Profile chưa được cài đặt trên trình duyệt.",
+      showCancelButton: true,
+      confirmButtonText: "Cài tiện ích",
+      cancelButtonText: "Đóng",
         })
         .then(() => {
-          window.open(
-            "https://chromewebstore.google.com/detail/universal-profiles/abpickdkkbnbcoepogfhkhennhfhehfn",
-            "_blank"
-          );
+          if (result.isConfirmed) {
+        window.open("https://chromewebstore.google.com/detail/universal-profiles/abpickdkkbnbcoepogfhkhennhfhehfn", "_blank");
+      }
         });
     }
   };
