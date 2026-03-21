@@ -261,24 +261,36 @@ export default function ConnectForm() {
   };
 
   const handleRedirectToStore = () => {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    
-    // Link chính thức của LUKSO Universal Profile trên các kho ứng dụng
-    const iosUrl = "https://apps.apple.com/app/lukso-universal-profile/id6443617025";
-    const androidUrl = "https://play.google.com/store/apps/details?id=io.lukso.up";
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+  const isAndroid = /android/i.test(userAgent);
 
-    sweetalert2.popupAlert({
-      title: "Cài đặt ứng dụng",
-      text: "Bạn cần cài đặt ứng dụng Universal Profile để tiếp tục.",
-      confirmButtonText: "Tải ngay"
-    }).then(() => {
-      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-        window.location.href = iosUrl;
-      } else {
-        window.location.href = androidUrl;
+  // ID ứng dụng LUKSO Universal Profile
+  const appIdIOS = "6443617025";
+  const appIdAndroid = "io.lukso.up";
+
+  sweetalert2.popupAlert({
+    title: "Cài đặt Universal Profile",
+    text: "Ứng dụng chưa được cài đặt. Nhấn để tải về từ kho ứng dụng.",
+    confirmButtonText: "Tải ngay",
+    showCancelButton: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      if (isIOS) {
+        // Thử mở thẳng App Store
+        window.location.href = `https://apps.apple.com/app/id${appIdIOS}`;
+      } else if (isAndroid) {
+        // Thử mở bằng giao thức market:// trước, nếu lỗi thì dùng https://
+        window.location.href = `market://details?id=${appIdAndroid}`;
+        
+        // Fallback sau 500ms nếu market:// không chạy
+        setTimeout(() => {
+          window.location.href = `https://play.google.com/store/apps/details?id=${appIdAndroid}`;
+        }, 500);
       }
-    });
-  };
+    }
+  });
+};
 
   // Sử dụng useRef để theo dõi trạng thái scanner, tránh khởi tạo nhiều lần
   const scannerRef = useRef(null);
