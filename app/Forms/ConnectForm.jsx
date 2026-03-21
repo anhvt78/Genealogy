@@ -241,7 +241,10 @@ export default function ConnectForm() {
       sweetalert2.popupAlert({
         title: "Cần mở bằng ứng dụng",
         text: "Vui lòng mở trang này bên trong ứng dụng Universal Profiles (iOS/Android) để kết nối.",
-      });
+      })
+        .then(() => {
+          handleRedirectToStore();
+        });;
     } else {
       sweetalert2
         .popupAlert({
@@ -255,6 +258,26 @@ export default function ConnectForm() {
           );
         });
     }
+  };
+
+  const handleRedirectToStore = () => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    
+    // Link chính thức của LUKSO Universal Profile trên các kho ứng dụng
+    const iosUrl = "https://apps.apple.com/app/lukso-universal-profile/id6443617025";
+    const androidUrl = "https://play.google.com/store/apps/details?id=io.lukso.up";
+
+    sweetalert2.popupAlert({
+      title: "Cài đặt ứng dụng",
+      text: "Bạn cần cài đặt ứng dụng Universal Profile để tiếp tục.",
+      confirmButtonText: "Tải ngay"
+    }).then(() => {
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        window.location.href = iosUrl;
+      } else {
+        window.location.href = androidUrl;
+      }
+    });
   };
 
   // Sử dụng useRef để theo dõi trạng thái scanner, tránh khởi tạo nhiều lần
