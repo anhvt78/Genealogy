@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Html5Qrcode } from "html5-qrcode";
 import { createWalletClient, custom } from "viem";
 import { lukso } from "viem/chains";
-
+import Swal from 'sweetalert2';
 // ─────────────────────────────────────────────────────────────────────────────
 // KIẾN TRÚC PROVIDER CỦA LUKSO
 // ─────────────────────────────────────────────────────────────────────────────
@@ -232,74 +232,68 @@ export default function ConnectForm() {
   //   1. The Grid context   → up-provider
   //   2. Injected provider  → window.lukso (Extension PC / WebView mobile)
   //   3. Không tìm thấy    → hướng dẫn theo thiết bị
-  const connectWalletHandler = () => {
-    if (detectGridContext()) {
-      connectViaUPProvider();
-    } else if (detectInjectedProvider()) {
-      connectViaInjected();
-    } else if (isMobile) {
-      sweetalert2.popupAlert({
-        
-        //title: "Cần mở bằng ứng dụng",
-        //text: "Vui lòng mở trang này bên trong ứng dụng Universal Profiles (iOS/Android) để kết nối.",
-        title: "Cài đặt ví",
-      text: "Không tìm thấy Universal Profile. Bạn có muốn cài đặt ứng dụng để tiếp tục không?",
-      showCancelButton: true,         // QUAN TRỌNG: Thêm dòng này để hiện nút Cancel
-      confirmButtonText: "Cài đặt",
-      cancelButtonText: "Để sau",      // Tùy chỉnh text cho nút Cancel
-      })
-        .then(() => {
-          if (result.isConfirmed) {
+
+const connectWalletHandler = () => {
+  if (detectGridContext()) {
+    connectViaUPProvider();
+  } else if (detectInjectedProvider()) {
+    connectViaInjected();
+  } else if (isMobile) {
+    // 1. Hỏi người dùng trên Mobile
+    Swal.fire({
+      title: "Cài đặt ứng dụng ví",
+      text: "Để kết nối Gia Phả, bạn cần cài đặt Universal Profile. Bạn có muốn tải ngay không?",
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonColor: "#5d3a1a", // Màu nâu gỗ hợp tone Gia Phả
+      cancelButtonColor: "#8e8e8e",
+      confirmButtonText: "Tải ứng dụng",
+      cancelButtonText: "Để sau",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Gọi hàm chuyển hướng thẳng, không hiện popup nữa
         handleRedirectToStore();
       }
-        });;
-    } else {
-      sweetalert2
-        .popupAlert({
-          title: "Kết nối ví",
-      text: "Universal Profile chưa được cài đặt trên trình duyệt.",
+    });
+  } else {
+    // 2. Hỏi người dùng trên Desktop (Chrome Extension)
+    Swal.fire({
+      title: "Cài đặt tiện ích",
+      text: "Trình duyệt của bạn chưa có Universal Profile Extension.",
+      icon: "warning",
       showCancelButton: true,
+      confirmButtonColor: "#5d3a1a",
       confirmButtonText: "Cài tiện ích",
       cancelButtonText: "Đóng",
-        })
-        .then(() => {
-          if (result.isConfirmed) {
+    }).then((result) => {
+      if (result.isConfirmed) {
         window.open("https://chromewebstore.google.com/detail/universal-profiles/abpickdkkbnbcoepogfhkhennhfhehfn", "_blank");
       }
-        });
-    }
-  };
+    });
+  }
+};
 
   const handleRedirectToStore = () => {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
   const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
   const isAndroid = /android/i.test(userAgent);
 
-  // ID ứng dụng LUKSO Universal Profile
-  const appIdIOS = "6443617025";
-  const appIdAndroid = "io.lukso.up";
+  // ID thực tế bạn đã kiểm tra (Cập nhật 2026)
+  const appIdIOS = "6702018631"; 
+  const appIdAndroid = "io.universaleverything.universalprofiles";
 
-  sweetalert2.popupAlert({
-    title: "Cài đặt Universal Profile",
-    text: "Ứng dụng chưa được cài đặt. Nhấn để tải về từ kho ứng dụng.",
-    confirmButtonText: "Tải ngay",
-    showCancelButton: true
-  }).then((result) => {
-    if (result.isConfirmed) {
-      if (isIOS) {
-        // Thử mở thẳng App Store
-        window.location.href = `https://apps.apple.com/app/id${appIdIOS}`;
-      } else if (isAndroid) {
-        // Thử mở bằng giao thức market:// trước, nếu lỗi thì dùng https://
-        window.location.href = `market://details?id=${appIdAndroid}`;
-        
-        // Fallback sau 500ms nếu market:// không chạy
-        setTimeout(() => {
-          window.location.href = `https://play.google.com/store/apps/details?id=${appIdAndroid}`;
-        }, 500);
-      }
-    }
-  });
+  if (isIOS) {
+    // Chuyển hướng thẳng đến App Store
+    window.location.href = `https://apps.apple.com/app/id${appIdIOS}`;
+  } else if (isAndroid) {
+    // Thử mở bằng giao thức app trước (Market)
+    window.location.href = `market://details?id=${appIdAndroid}`;
+    
+    // Fallback nếu máy không phản hồi giao thức market://
+    setTimeout(() => {
+      window.location.href = `https://play.google.com/store/apps/details?id=${appIdAndroid}`;
+    }, 500);
+  }
 };
 
   // Sử dụng useRef để theo dõi trạng thái scanner, tránh khởi tạo nhiều lần
