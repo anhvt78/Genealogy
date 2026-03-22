@@ -233,68 +233,117 @@ export default function ConnectForm() {
   //   2. Injected provider  → window.lukso (Extension PC / WebView mobile)
   //   3. Không tìm thấy    → hướng dẫn theo thiết bị
 
-const connectWalletHandler = () => {
-  if (detectGridContext()) {
-    connectViaUPProvider();
-  } else if (detectInjectedProvider()) {
-    connectViaInjected();
-  } else if (isMobile) {
-    // 1. Hỏi người dùng trên Mobile
-    Swal.fire({
-      title: "Cài đặt ứng dụng ví",
-      text: "Để kết nối Gia Phả, bạn cần cài đặt Universal Profile. Bạn có muốn tải ngay không?",
-      icon: "info",
-      showCancelButton: true,
-      confirmButtonColor: "#5d3a1a", // Màu nâu gỗ hợp tone Gia Phả
-      cancelButtonColor: "#8e8e8e",
-      confirmButtonText: "Tải ứng dụng",
-      cancelButtonText: "Để sau",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Gọi hàm chuyển hướng thẳng, không hiện popup nữa
-        handleRedirectToStore();
+  // ── Thử mở Universal Profiles App bằng deep link ───────────────────────
+  // Nếu app đã cài → app mở ngay, trình duyệt sẽ blur/hide → visibilitychange
+  // Nếu app chưa cài → không có phản hồi → sau timeout hiện dialog cài app
+  const tryOpenAppOrPromptInstall = () => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    const isAndroid = /android/i.test(userAgent);
+
+    const appIdIOS = "6702018631";
+    const appIdAndroid = "io.universaleverything.universalprofiles";
+
+    // Deep link scheme của Universal Profiles app
+    // App sẽ bắt scheme này nếu đã được cài đặt
+    const deepLink = isIOS
+      ? `universalprofiles://`
+      : `intent://universalprofiles/#Intent;scheme=universalprofiles;package=${appIdAndroid};end`;
+
+    let appOpened = false;
+
+    // Lắng nghe khi trang bị ẩn đi (người dùng đã chuyển sang app)
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        appOpened = true;
       }
-    });
-  } else {
-    // 2. Hỏi người dùng trên Desktop (Chrome Extension)
-    Swal.fire({
-      title: "Cài đặt tiện ích",
-      text: "Trình duyệt của bạn chưa có Universal Profile Extension.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#5d3a1a",
-      confirmButtonText: "Cài tiện ích",
-      cancelButtonText: "Đóng",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.open("https://chromewebstore.google.com/detail/universal-profiles/abpickdkkbnbcoepogfhkhennhfhehfn", "_blank");
+    };
+    // Lắng nghe khi cửa sổ mất focus (dấu hiệu app đã mở trên một số thiết bị)
+    const onBlur = () => {
+      appOpened = true;
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("blur", onBlur);
+
+    // Thử mở deep link
+    if (isIOS) {
+      window.location.href = deepLink;
+    } else if (isAndroid) {
+      window.location.href = deepLink;
+    }
+
+    // Sau 2000ms: nếu app chưa mở → hiện dialog yêu cầu cài app
+    const fallbackTimer = setTimeout(() => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("blur", onBlur);
+
+      if (!appOpened) {
+        // App chưa cài — hỏi người dùng có muốn tải không
+        Swal.fire({
+          title: "Cài đặt ứng dụng ví",
+          text: "Để kết nối Gia Phả, bạn cần cài đặt Universal Profiles. Bạn có muốn tải ngay không?",
+          icon: "info",
+          showCancelButton: true,
+          confirmButtonColor: "#5d3a1a",
+          cancelButtonColor: "#8e8e8e",
+          confirmButtonText: "Tải ứng dụng",
+          cancelButtonText: "Để sau",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if (isIOS) {
+              window.location.href = `https://apps.apple.com/app/id${appIdIOS}`;
+            } else if (isAndroid) {
+              window.location.href = `market://details?id=${appIdAndroid}`;
+              setTimeout(() => {
+                window.location.href = `https://play.google.com/store/apps/details?id=${appIdAndroid}`;
+              }, 500);
+            }
+          }
+        });
       }
-    });
-  }
-};
+    }, 2000);
 
-  const handleRedirectToStore = () => {
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-  const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-  const isAndroid = /android/i.test(userAgent);
+    // Dọn dẹp nếu app đã mở (trang lấy lại focus sau khi người dùng quay lại)
+    const onFocus = () => {
+      clearTimeout(fallbackTimer);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("blur", onBlur);
+      window.removeEventListener("focus", onFocus);
+    };
+    window.addEventListener("focus", onFocus);
+  };
 
-  // ID thực tế bạn đã kiểm tra (Cập nhật 2026)
-  const appIdIOS = "6702018631"; 
-  const appIdAndroid = "io.universaleverything.universalprofiles";
-
-  if (isIOS) {
-    // Chuyển hướng thẳng đến App Store
-    window.location.href = `https://apps.apple.com/app/id${appIdIOS}`;
-  } else if (isAndroid) {
-    // Thử mở bằng giao thức app trước (Market)
-    window.location.href = `market://details?id=${appIdAndroid}`;
-    
-    // Fallback nếu máy không phản hồi giao thức market://
-    setTimeout(() => {
-      window.location.href = `https://play.google.com/store/apps/details?id=${appIdAndroid}`;
-    }, 500);
-  }
-};
+  const connectWalletHandler = () => {
+    if (detectGridContext()) {
+      connectViaUPProvider();
+    } else if (detectInjectedProvider()) {
+      // Provider đã inject (đang trong WebView của app, hoặc đã cài Extension)
+      connectViaInjected();
+    } else if (isMobile) {
+      // Mobile nhưng chưa có provider → thử mở app bằng deep link trước
+      // Nếu app đã cài: app mở ngay; nếu chưa cài: hiện dialog sau 2s
+      tryOpenAppOrPromptInstall();
+    } else {
+      // Desktop không có Extension
+      Swal.fire({
+        title: "Cài đặt tiện ích",
+        text: "Trình duyệt của bạn chưa có Universal Profile Extension.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#5d3a1a",
+        confirmButtonText: "Cài tiện ích",
+        cancelButtonText: "Đóng",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.open(
+            "https://chromewebstore.google.com/detail/universal-profiles/abpickdkkbnbcoepogfhkhennhfhehfn",
+            "_blank"
+          );
+        }
+      });
+    }
+  };
 
   // Sử dụng useRef để theo dõi trạng thái scanner, tránh khởi tạo nhiều lần
   const scannerRef = useRef(null);
