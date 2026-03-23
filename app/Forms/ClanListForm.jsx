@@ -181,13 +181,14 @@ export default function ClanListForm({ userWalletAddress }) {
         </div>
       )}
 
-      {/* Modal Hộp Thoại */}
+      {/* Modal Hộp Thoại - Đã sửa lỗi Scroll và Lệch hàng */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#f2e2ba] border-4 border-[#5d3a1a] w-full max-w-lg p-8 shadow-[20px_20px_0px_0px_rgba(93,58,26,0.3)] relative animate-in fade-in zoom-in duration-300">
+          {/* Thêm max-h-[90vh] và overflow-y-auto để cho phép cuộn trên mobile */}
+          <div className="bg-[#f2e2ba] border-4 border-[#5d3a1a] w-full max-w-lg p-6 md:p-8 shadow-[20px_20px_0px_0px_rgba(93,58,26,0.3)] relative animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-2xl text-[#5d3a1a] hover:rotate-90 transition-transform"
+              className="absolute top-4 right-4 text-2xl text-[#5d3a1a] hover:rotate-90 transition-transform z-10"
             >
               ✕
             </button>
@@ -206,7 +207,7 @@ export default function ClanListForm({ userWalletAddress }) {
                   name="clanName"
                   required
                   onChange={handleInputChange}
-                  className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white transition-colors"
+                  className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white text-sm"
                   placeholder="VD: Nguyễn Tộc"
                 />
               </div>
@@ -220,7 +221,7 @@ export default function ClanListForm({ userWalletAddress }) {
                   rows="2"
                   onChange={handleInputChange}
                   placeholder="Thông tin sơ lược về dòng tộc."
-                  className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white transition-colors"
+                  className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white text-sm resize-none"
                 ></textarea>
               </div>
 
@@ -233,13 +234,13 @@ export default function ClanListForm({ userWalletAddress }) {
                   name="ancestorName"
                   required
                   onChange={handleInputChange}
-                  className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white transition-colors"
+                  className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white text-sm"
                   placeholder="Tên vị tổ tiên đời thứ nhất"
                 />
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-[#3d2611] font-bold mb-2 text-xs uppercase">
+              <div>
+                <label className="block text-[#3d2611] font-bold mb-1 text-xs uppercase">
                   Tiểu sử tóm tắt của Thủy tổ
                 </label>
                 <textarea
@@ -251,7 +252,8 @@ export default function ClanListForm({ userWalletAddress }) {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              {/* PHẦN QUAN TRỌNG: Tách thành 2 hàng trên mobile, 2 cột trên PC */}
+              <div className="flex flex-col md:grid md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-[#5d3a1a] font-bold text-xs uppercase mb-1">
                     Năm/Ngày sinh
@@ -261,7 +263,7 @@ export default function ClanListForm({ userWalletAddress }) {
                     name="birthDate"
                     onChange={handleInputChange}
                     placeholder="VD: 1900 hoặc 01/01/1900"
-                    className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white text-sm"
+                    className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white text-sm h-[42px]"
                   />
                 </div>
                 <div>
@@ -289,7 +291,11 @@ export default function ClanListForm({ userWalletAddress }) {
                         ? "Đang trống..."
                         : "VD: 1980 hoặc 30/04/1980"
                     }
-                    className={`w-full border-2 border-[#5d3a1a] p-2 outline-none text-sm transition-all ${isStillAlive ? "bg-gray-300/50 opacity-50 cursor-not-allowed" : "bg-white/50 focus:bg-white"}`}
+                    className={`w-full border-2 border-[#5d3a1a] p-2 outline-none text-sm h-[42px] transition-all ${
+                      isStillAlive
+                        ? "bg-gray-300/50 opacity-50 cursor-not-allowed"
+                        : "bg-white/50 focus:bg-white"
+                    }`}
                   />
                 </div>
               </div>
@@ -297,7 +303,7 @@ export default function ClanListForm({ userWalletAddress }) {
               <button
                 type="submit"
                 disabled={isProcessing}
-                className="w-full bg-[#5d3a1a] text-[#f2e2ba] font-bold py-4 mt-2 hover:bg-[#3d2611] transition-all uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-3"
+                className="w-full bg-[#5d3a1a] text-[#f2e2ba] font-bold py-4 mt-4 hover:bg-[#3d2611] transition-all uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-3 active:scale-95"
               >
                 {isProcessing && (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#eeeae6]"></div>
