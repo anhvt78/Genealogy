@@ -161,6 +161,7 @@ export const GenealogyProvider = ({ children }) => {
       };
     } catch (error) {
       return { sts: false, data: error };
+      // console.log("error = ", error);
     }
   };
 
@@ -237,6 +238,7 @@ export const GenealogyProvider = ({ children }) => {
         familyNftABI,
       );
       const ownerOfToken = await familyNFTContract.read.tokenOwnerOf([personId]);
+      // console.log("tokenIdMetadata: ", tokenIdMetadata);
 
       return {
         sts: true,
@@ -269,25 +271,11 @@ export const GenealogyProvider = ({ children }) => {
       ]);
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-
-      // FIX: Kiểm tra transaction có thành công không
-      if (receipt.status !== "success") {
-        handleErr("Transaction reverted", receipt);
-        return;
-      }
-
-      // FIX: Đổi tên event arg từ _creatorAddress → creatorAddress (đúng tên trong contract)
       const logs = parseEventLogs({ abi: genealogyABI, eventName: "ClanCreated", logs: receipt.logs });
       const event = logs.find(
-        (l) => l.args.creatorAddress?.toLowerCase() === walletAddress.toLowerCase()
+        (l) => l.args._creatorAddress?.toLowerCase() === walletAddress.toLowerCase()
       );
-
-      if (event) {
-        // FIX: Đổi event.args.clanId → event.args.nftAddress (đúng tên trong contract)
-        callBack(event.args.nftAddress);
-      } else {
-        handleErr("Event not found", "ClanCreated event not found in receipt");
-      }
+      if (event) callBack(event.args.clanId);
     } catch (error) {
       handleErr("Error", error);
     }
@@ -309,25 +297,8 @@ export const GenealogyProvider = ({ children }) => {
       });
 
       const txHash = await contract.write.setClanShortDesc([newShortDesc]);
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-
-      // FIX: Kiểm tra transaction status
-      if (receipt.status !== "success") {
-        handleErr("Transaction reverted", receipt);
-        return;
-      }
-
-      // FIX: Parse và xác nhận event ClanShortDescChanged từ contract
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "ClanShortDescChanged", logs: receipt.logs });
-      const event = logs.find(
-        (l) => l.args.owner?.toLowerCase() === walletAddress.toLowerCase()
-      );
-
-      if (event) {
-        callBack();
-      } else {
-        handleErr("Event not found", "ClanShortDescChanged event not found in receipt");
-      }
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      callBack();
     } catch (error) {
       handleErr("Error", error);
     }
@@ -348,6 +319,8 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
+      // console.log("Dữ liệu AddChild: ", formData);
+
       const txHash = await contract.write.addChild([
         formData.parentId,
         formData.name,
@@ -358,22 +331,11 @@ export const GenealogyProvider = ({ children }) => {
       ]);
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-
-      if (receipt.status !== "success") {
-        handleErr("Transaction reverted", receipt);
-        return;
-      }
-
       const logs = parseEventLogs({ abi: familyNftABI, eventName: "ChildAdded", logs: receipt.logs });
       const event = logs.find(
         (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
       );
-
-      if (event) {
-        callBack(event.args.newChildId);
-      } else {
-        handleErr("Event not found", "ChildAdded event not found in receipt");
-      }
+      if (event) callBack(event.args.newChildId);
     } catch (error) {
       handleErr("Error", error);
     }
@@ -395,25 +357,8 @@ export const GenealogyProvider = ({ children }) => {
       });
 
       const txHash = await contract.write.removeChild([childId]);
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-
-      // FIX: Kiểm tra transaction status
-      if (receipt.status !== "success") {
-        handleErr("Transaction reverted", receipt);
-        return;
-      }
-
-      // FIX: Parse và xác nhận event ChildRemoved từ contract
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "ChildRemoved", logs: receipt.logs });
-      const event = logs.find(
-        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
-      );
-
-      if (event) {
-        callBack();
-      } else {
-        handleErr("Event not found", "ChildRemoved event not found in receipt");
-      }
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      callBack();
     } catch (error) {
       handleErr("Error", error);
     }
@@ -436,25 +381,8 @@ export const GenealogyProvider = ({ children }) => {
       });
 
       const txHash = await contract.write.removeSpouse([personId, spouseId]);
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-
-      // FIX: Kiểm tra transaction status
-      if (receipt.status !== "success") {
-        handleErr("Transaction reverted", receipt);
-        return;
-      }
-
-      // FIX: Parse và xác nhận event SpouseRemoved từ contract
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "SpouseRemoved", logs: receipt.logs });
-      const event = logs.find(
-        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
-      );
-
-      if (event) {
-        callBack();
-      } else {
-        handleErr("Event not found", "SpouseRemoved event not found in receipt");
-      }
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      callBack();
     } catch (error) {
       handleErr("Error", error);
     }
@@ -484,22 +412,11 @@ export const GenealogyProvider = ({ children }) => {
       ]);
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-
-      if (receipt.status !== "success") {
-        handleErr("Transaction reverted", receipt);
-        return;
-      }
-
       const logs = parseEventLogs({ abi: familyNftABI, eventName: "SpouseAdded", logs: receipt.logs });
       const event = logs.find(
         (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
       );
-
-      if (event) {
-        callBack(event.args.newSpouseId);
-      } else {
-        handleErr("Event not found", "SpouseAdded event not found in receipt");
-      }
+      if (event) callBack(event.args.newSpouseId);
     } catch (error) {
       handleErr("Error", error);
     }
@@ -520,6 +437,7 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
+      // console.log("382: formData: ", formData);
       const txHash = await contract.write.updatePersonData([
         formData.personId,
         formData.name,
@@ -528,25 +446,8 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathYear,
       ]);
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-
-      // FIX: Kiểm tra transaction status
-      if (receipt.status !== "success") {
-        handleErr("Transaction reverted", receipt);
-        return;
-      }
-
-      // FIX: Parse và xác nhận event UpdatePersonData từ contract
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "UpdatePersonData", logs: receipt.logs });
-      const event = logs.find(
-        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
-      );
-
-      if (event) {
-        callBack();
-      } else {
-        handleErr("Event not found", "UpdatePersonData event not found in receipt");
-      }
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      callBack();
     } catch (error) {
       handleErr("Error", error);
     }
@@ -567,27 +468,10 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
 
+      // console.log("382: formData: ", formData);
       const txHash = await contract.write.transferOwnership([newOwner]);
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-
-      // FIX: Kiểm tra transaction status
-      if (receipt.status !== "success") {
-        handleErr("Transaction reverted", receipt);
-        return;
-      }
-
-      // FIX: Parse event OwnershipTransferred (standard từ LSP8/Ownable) để xác nhận
-      // newOwner on-chain khớp với địa chỉ đã truyền vào
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "OwnershipTransferred", logs: receipt.logs });
-      const event = logs.find(
-        (l) => l.args.newOwner?.toLowerCase() === newOwner.toLowerCase()
-      );
-
-      if (event) {
-        callBack();
-      } else {
-        handleErr("Event not found", "OwnershipTransferred event not found in receipt");
-      }
+      await publicClient.waitForTransactionReceipt({ hash: txHash });
+      callBack();
     } catch (error) {
       handleErr("Error", error);
     }
@@ -600,6 +484,7 @@ export const GenealogyProvider = ({ children }) => {
         transport: http(RPC_URL),
       });
       const code = await publicClient.getBytecode({ address });
+      // console.log("code: ", code);
 
       return code !== undefined && code !== "0x";
     } catch (error) {
@@ -610,6 +495,7 @@ export const GenealogyProvider = ({ children }) => {
   const getUserProfile = async (walletAddress) => {
     const isContract = await checkDeployedCode(walletAddress);
 
+    // console.log("isContract: ", isContract);
     if (isContract) {
       try {
         const userData = await fetchContractData(
@@ -617,9 +503,12 @@ export const GenealogyProvider = ({ children }) => {
           profileSchema,
           "LSP3Profile",
         );
+        // console.log("userData = ", userData);
 
         return { sts: true, data: { userData: userData } };
       } catch (error) {
+        // console.log("err: ", error);
+
         return {
           sts: false,
           data: error,
@@ -641,6 +530,7 @@ export const GenealogyProvider = ({ children }) => {
         walletAddress,
         profileSchema,
         "LSP5ReceivedAssets[]",
+        // "LSP12IssuedAssets[]",
       );
 
       const nftContract = connectingSmartContractByPrivatekey(
@@ -648,9 +538,12 @@ export const GenealogyProvider = ({ children }) => {
         genealogyABI,
       );
 
+      // console.log(": ", receivedAssetsValue);
       if (Array.isArray(receivedAssetsValue?.value)) {
         await Promise.all(
           receivedAssetsValue?.value?.map(async (el) => {
+            // console.log("receivedAssetsValue: ", el);
+
             const ownerNFT = await nftContract.read.getClanOwner([el]);
             if (ownerNFT != 0x0000000000000000000000000000000000000000) {
               if (!allNFT.includes(el)) {
@@ -664,8 +557,11 @@ export const GenealogyProvider = ({ children }) => {
         );
       }
 
+      // console.log("allNFT: ", allNFT);
       return { sts: true, data: { allNFT: allNFT, isCreator: isCreator } };
     } catch (error) {
+      // console.log("error: ", error);
+
       return { sts: false, data: error };
     }
   };
