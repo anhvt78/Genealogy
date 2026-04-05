@@ -2,7 +2,7 @@
 const nextConfig = {
   /* config options here */
   output: "export", // Kích hoạt chế độ Static Export
-  // basePath: "/Genealogy",
+   basePath: "/Genealogy",
   // assetPrefix: "/Genealogy/",
   reactStrictMode: true,
   swcMinify: true,
