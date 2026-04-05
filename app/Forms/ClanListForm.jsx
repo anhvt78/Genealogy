@@ -262,7 +262,7 @@ export default function ClanListForm({ userWalletAddress }) {
                     type="text"
                     name="birthDate"
                     onChange={handleInputChange}
-                    placeholder="VD: 1900 hoặc 01/01/1900"
+                    placeholder="VD: 01/01/1980 hoặc 1980"
                     className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white text-sm h-[42px]"
                   />
                 </div>
@@ -289,7 +289,7 @@ export default function ClanListForm({ userWalletAddress }) {
                     placeholder={
                       isStillAlive
                         ? "Đang trống..."
-                        : "VD: 1980 hoặc 30/04/1980"
+                        : "VD: 01/01/1980 hoặc 1980"
                     }
                     className={`w-full border-2 border-[#5d3a1a] p-2 outline-none text-sm h-[42px] transition-all ${
                       isStillAlive

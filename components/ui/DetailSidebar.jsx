@@ -644,7 +644,7 @@ export default function DetailSidebar({
                         <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest">
                           Thông tin Tiểu sử
                         </h3>
-
+                        {owner === userWalletAddress && 
                         <a
                           href={`https://universaleverything.io/asset/${clanItem.clanId}/tokenId/${person.id}`}
                           target="_blank"
@@ -676,6 +676,7 @@ export default function DetailSidebar({
                             ></path>
                           </svg>
                         </a>
+                        }
                       </div>
 
                       <div className="relative">

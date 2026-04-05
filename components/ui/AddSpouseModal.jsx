@@ -160,7 +160,7 @@ export default function AddSpouseModal({
           </div>
 
           {/* Hàng 2: Ngày sinh và Ngày mất (Gộp chung hàng) */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-[#5d3a1a] uppercase tracking-widest mb-1">
                 Ngày sinh
@@ -208,7 +208,64 @@ export default function AddSpouseModal({
                 }
               />
             </div>
-          </div>
+          </div> */}
+
+                                  <div className="flex flex-col md:grid md:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-[#5d3a1a] font-bold text-xs uppercase mb-1">
+                    Năm/Ngày sinh
+                  </label>
+                  <input
+                    type="text"
+                    name="birthDate"
+                    disabled={isProcessing}
+                    value={formData.birthDate}
+                onChange={(e) => {
+                  setFormData({ ...formData, birthDate: e.target.value });
+                  if (errors.birthDate)
+                    setErrors({ ...errors, birthDate: null });
+                }}
+                    placeholder="VD: 01/01/1980 hoặc 1980"
+                    className="w-full bg-white/50 border-2 border-[#5d3a1a] p-2 outline-none focus:bg-white text-sm h-[42px]"
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="text-[#5d3a1a] font-bold text-xs uppercase">
+                      Năm/Ngày mất
+                    </label>
+                    <label className="flex items-center gap-1 text-[10px] font-bold text-[#5d3a1a] cursor-pointer">
+                      <input
+                        type="checkbox"
+                        disabled={isProcessing}
+                    checked={isStillAlive}
+                    onChange={(e) => setIsStillAlive(e.target.checked)}
+                        className="accent-[#5d3a1a]"
+                      />
+                      CÒN SỐNG
+                    </label>
+                  </div>
+                  <input
+                    type="text"
+                    name="deathDate"
+                    disabled={isStillAlive || isProcessing}
+                    value={isStillAlive ? "" : formData.deathDate}
+                onChange={(e) =>
+                  setFormData({ ...formData, deathDate: e.target.value })
+                }
+                    placeholder={
+                      isStillAlive
+                        ? "Đang trống..."
+                        : "VD: 01/01/1980 hoặc 1980"
+                    }
+                    className={`w-full border-2 border-[#5d3a1a] p-2 outline-none text-sm h-[42px] transition-all ${
+                      isStillAlive
+                        ? "bg-gray-300/50 opacity-50 cursor-not-allowed"
+                        : "bg-white/50 focus:bg-white"
+                    }`}
+                  />
+                </div>
+              </div>
 
           {/* Tiểu sử ngắn */}
           <div>
@@ -245,7 +302,7 @@ export default function AddSpouseModal({
               {isProcessing && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#f2e2ba]"></div>
               )}
-              <span>{isProcessing ? "Đang ghi sổ..." : "LƯU VÀO TỘC PHẢ"}</span>
+              <span>{isProcessing ? "Đang ghi sổ..." : "LƯU TỘC PHẢ"}</span>
             </button>
           </div>
         </form>
