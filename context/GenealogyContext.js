@@ -41,7 +41,7 @@ const connectingWithSmartContract = async (smAddr, smABI) => {
   if (!accounts?.length) throw new Error("EMPTY_ACCOUNTS");
 
   const walletClient = createWalletClient({
-    account: accounts[0],   // ← gắn account vào client, viem mới cho phép write
+    account: accounts[0], // ← gắn account vào client, viem mới cho phép write
     chain: lukso,
     transport: custom(injectedProvider),
   });
@@ -64,7 +64,7 @@ const connectingWithSmartContract = async (smAddr, smABI) => {
 const connectingSmartContractByPrivatekey = (contractAddress, contractABI) => {
   try {
     const account = privateKeyToAccount(
-      privateKey.startsWith("0x") ? privateKey : `0x${privateKey}`
+      privateKey.startsWith("0x") ? privateKey : `0x${privateKey}`,
     );
 
     const publicClient = createPublicClient({
@@ -236,7 +236,9 @@ export const GenealogyProvider = ({ children }) => {
         clanId,
         familyNftABI,
       );
-      const ownerOfToken = await familyNFTContract.read.tokenOwnerOf([personId]);
+      const ownerOfToken = await familyNFTContract.read.tokenOwnerOf([
+        personId,
+      ]);
 
       return {
         sts: true,
@@ -249,6 +251,8 @@ export const GenealogyProvider = ({ children }) => {
 
   const createClan = async (walletAddress, formData, callBack, handleErr) => {
     try {
+      console.log("formData: ", formData);
+
       const contract = await connectingWithSmartContract(
         genealogyAddress,
         genealogyABI,
@@ -268,7 +272,9 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathDate,
       ]);
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
 
       // FIX: Kiểm tra transaction có thành công không
       if (receipt.status !== "success") {
@@ -277,9 +283,14 @@ export const GenealogyProvider = ({ children }) => {
       }
 
       // FIX: Đổi tên event arg từ _creatorAddress → creatorAddress (đúng tên trong contract)
-      const logs = parseEventLogs({ abi: genealogyABI, eventName: "ClanCreated", logs: receipt.logs });
+      const logs = parseEventLogs({
+        abi: genealogyABI,
+        eventName: "ClanCreated",
+        logs: receipt.logs,
+      });
       const event = logs.find(
-        (l) => l.args.creatorAddress?.toLowerCase() === walletAddress.toLowerCase()
+        (l) =>
+          l.args.creatorAddress?.toLowerCase() === walletAddress.toLowerCase(),
       );
 
       if (event) {
@@ -309,7 +320,9 @@ export const GenealogyProvider = ({ children }) => {
       });
 
       const txHash = await contract.write.setClanShortDesc([newShortDesc]);
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
 
       // FIX: Kiểm tra transaction status
       if (receipt.status !== "success") {
@@ -318,15 +331,22 @@ export const GenealogyProvider = ({ children }) => {
       }
 
       // FIX: Parse và xác nhận event ClanShortDescChanged từ contract
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "ClanShortDescChanged", logs: receipt.logs });
+      const logs = parseEventLogs({
+        abi: familyNftABI,
+        eventName: "ClanShortDescChanged",
+        logs: receipt.logs,
+      });
       const event = logs.find(
-        (l) => l.args.owner?.toLowerCase() === walletAddress.toLowerCase()
+        (l) => l.args.owner?.toLowerCase() === walletAddress.toLowerCase(),
       );
 
       if (event) {
         callBack();
       } else {
-        handleErr("Event not found", "ClanShortDescChanged event not found in receipt");
+        handleErr(
+          "Event not found",
+          "ClanShortDescChanged event not found in receipt",
+        );
       }
     } catch (error) {
       handleErr("Error", error);
@@ -357,16 +377,22 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathDate,
       ]);
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
 
       if (receipt.status !== "success") {
         handleErr("Transaction reverted", receipt);
         return;
       }
 
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "ChildAdded", logs: receipt.logs });
+      const logs = parseEventLogs({
+        abi: familyNftABI,
+        eventName: "ChildAdded",
+        logs: receipt.logs,
+      });
       const event = logs.find(
-        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
+        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase(),
       );
 
       if (event) {
@@ -395,7 +421,9 @@ export const GenealogyProvider = ({ children }) => {
       });
 
       const txHash = await contract.write.removeChild([childId]);
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
 
       // FIX: Kiểm tra transaction status
       if (receipt.status !== "success") {
@@ -404,9 +432,13 @@ export const GenealogyProvider = ({ children }) => {
       }
 
       // FIX: Parse và xác nhận event ChildRemoved từ contract
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "ChildRemoved", logs: receipt.logs });
+      const logs = parseEventLogs({
+        abi: familyNftABI,
+        eventName: "ChildRemoved",
+        logs: receipt.logs,
+      });
       const event = logs.find(
-        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
+        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase(),
       );
 
       if (event) {
@@ -436,7 +468,9 @@ export const GenealogyProvider = ({ children }) => {
       });
 
       const txHash = await contract.write.removeSpouse([personId, spouseId]);
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
 
       // FIX: Kiểm tra transaction status
       if (receipt.status !== "success") {
@@ -445,15 +479,22 @@ export const GenealogyProvider = ({ children }) => {
       }
 
       // FIX: Parse và xác nhận event SpouseRemoved từ contract
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "SpouseRemoved", logs: receipt.logs });
+      const logs = parseEventLogs({
+        abi: familyNftABI,
+        eventName: "SpouseRemoved",
+        logs: receipt.logs,
+      });
       const event = logs.find(
-        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
+        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase(),
       );
 
       if (event) {
         callBack();
       } else {
-        handleErr("Event not found", "SpouseRemoved event not found in receipt");
+        handleErr(
+          "Event not found",
+          "SpouseRemoved event not found in receipt",
+        );
       }
     } catch (error) {
       handleErr("Error", error);
@@ -483,16 +524,22 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathDate,
       ]);
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
 
       if (receipt.status !== "success") {
         handleErr("Transaction reverted", receipt);
         return;
       }
 
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "SpouseAdded", logs: receipt.logs });
+      const logs = parseEventLogs({
+        abi: familyNftABI,
+        eventName: "SpouseAdded",
+        logs: receipt.logs,
+      });
       const event = logs.find(
-        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
+        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase(),
       );
 
       if (event) {
@@ -528,7 +575,9 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathYear,
       ]);
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
 
       // FIX: Kiểm tra transaction status
       if (receipt.status !== "success") {
@@ -537,15 +586,22 @@ export const GenealogyProvider = ({ children }) => {
       }
 
       // FIX: Parse và xác nhận event UpdatePersonData từ contract
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "UpdatePersonData", logs: receipt.logs });
+      const logs = parseEventLogs({
+        abi: familyNftABI,
+        eventName: "UpdatePersonData",
+        logs: receipt.logs,
+      });
       const event = logs.find(
-        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
+        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase(),
       );
 
       if (event) {
         callBack();
       } else {
-        handleErr("Event not found", "UpdatePersonData event not found in receipt");
+        handleErr(
+          "Event not found",
+          "UpdatePersonData event not found in receipt",
+        );
       }
     } catch (error) {
       handleErr("Error", error);
@@ -568,7 +624,9 @@ export const GenealogyProvider = ({ children }) => {
       });
 
       const txHash = await contract.write.transferOwnership([newOwner]);
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
 
       // FIX: Kiểm tra transaction status
       if (receipt.status !== "success") {
@@ -578,15 +636,22 @@ export const GenealogyProvider = ({ children }) => {
 
       // FIX: Parse event OwnershipTransferred (standard từ LSP8/Ownable) để xác nhận
       // newOwner on-chain khớp với địa chỉ đã truyền vào
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "OwnershipTransferred", logs: receipt.logs });
+      const logs = parseEventLogs({
+        abi: familyNftABI,
+        eventName: "OwnershipTransferred",
+        logs: receipt.logs,
+      });
       const event = logs.find(
-        (l) => l.args.newOwner?.toLowerCase() === newOwner.toLowerCase()
+        (l) => l.args.newOwner?.toLowerCase() === newOwner.toLowerCase(),
       );
 
       if (event) {
         callBack();
       } else {
-        handleErr("Event not found", "OwnershipTransferred event not found in receipt");
+        handleErr(
+          "Event not found",
+          "OwnershipTransferred event not found in receipt",
+        );
       }
     } catch (error) {
       handleErr("Error", error);
