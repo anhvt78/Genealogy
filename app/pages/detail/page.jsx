@@ -230,6 +230,9 @@ function GenealogyDetailContent() {
             />
           ) : (
             <LoadingState message="Đang truy vấn dữ liệu dòng tộc..." />
+            // <div className="fixed inset-0 flex items-center justify-center px-4">
+            //   <LoadingState message="Đang truy vấn dữ liệu dòng tộc..." />
+            // </div>
           )}
         </>
       )}
@@ -255,12 +258,24 @@ function GenealogyDetailContent() {
 // 2. Component Loading dùng chung
 function LoadingState({ message }) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center font-serif bg-[#f2e2ba]">
+    // <div className="flex-1 flex flex-col items-center justify-center font-serif bg-[#f2e2ba]">
+    //   <div className="w-48 h-48 mb-4">
+    //     <Lottie animationData={gettingDataAnimation} loop={true} />
+    //   </div>
+    //   <div className="relative">
+    //     <p className="text-[#000000] animate-pulse text-xl font-bold tracking-widest uppercase">
+    //       {message}
+    //     </p>
+    //     {/* <div className="mt-2 h-0.5 w-full bg-[#5d3a1a] origin-left animate-expand"></div> */}
+    //   </div>
+    // </div>
+    <div className="flex-1 flex flex-col items-center justify-center font-serif ">
       <div className="w-48 h-48 mb-4">
         <Lottie animationData={gettingDataAnimation} loop={true} />
       </div>
-      <div className="relative">
-        <p className="text-[#000000] animate-pulse text-xl font-bold tracking-widest uppercase">
+      {/* Thêm w-full để container chiếm hết chiều ngang và px-4 để cách lề 16px */}
+      <div className="relative w-full px-4 flex justify-center">
+        <p className="text-[#000000] animate-pulse text-xl font-bold tracking-widest uppercase text-center px-4">
           {message}
         </p>
         {/* <div className="mt-2 h-0.5 w-full bg-[#5d3a1a] origin-left animate-expand"></div> */}
