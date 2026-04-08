@@ -2,7 +2,7 @@
 const nextConfig = {
   output: "export",
   basePath: "/Genealogy",
-  assetPrefix: "/Genealogy/",   // ← THÊM DÒNG NÀY
+  assetPrefix: "/Genealogy/",   // ← THÊM DÒNG NÀY, QUAN TRỌNG!
   trailingSlash: true,
   reactStrictMode: true,
   images: {
