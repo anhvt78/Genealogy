@@ -2,11 +2,12 @@
 const nextConfig = {
   output: "export",
   basePath: "/Genealogy",
-  trailingSlash: true, // Thêm dòng này để hỗ trợ GitHub Pages tốt hơn
+  // Lưu ý: Không dùng assetPrefix khi đã có basePath trên GitHub Pages
+  trailingSlash: true, // Rất quan trọng để GitHub Pages hiểu các đường dẫn con
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["ipfs.io", "i.ibb.co"],
+    domains: ["m2c.infura-ipfs.io", "ipfs.io", "i.ibb.co"],
     unoptimized: true,
   },
   env: {
@@ -14,4 +15,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig; // Sử dụng export default cho file .mjs
+export default nextConfig;
