@@ -30,6 +30,15 @@ jobs:
 
       - name: Build with Next.js
         run: npm run build
+        
+      - name: List output directory     # ← THÊM ĐỂ DEBUG
+        run: |
+          echo "=== Nội dung thư mục out/ ==="
+          ls -la ./out/
+          echo "=== Kiểm tra _next ==="
+          ls -la ./out/_next/ || echo "_next KHÔNG TỒN TẠI!"
+          echo "=== Kiểm tra .nojekyll ==="
+          ls -la ./out/.nojekyll || echo ".nojekyll KHÔNG TỒN TẠI!"
 
       - name: Add .nojekyll
         run: touch ./out/.nojekyll        # ← CHỈ THÊM DÒNG NÀY
