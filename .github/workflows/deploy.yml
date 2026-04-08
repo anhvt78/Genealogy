@@ -30,18 +30,14 @@ jobs:
 
       - name: Build with Next.js
         run: npm run build
-        
-      - name: List output directory     # ← THÊM ĐỂ DEBUG
-        run: |
-          echo "=== Nội dung thư mục out/ ==="
-          ls -la ./out/
-          echo "=== Kiểm tra _next ==="
-          ls -la ./out/_next/ || echo "_next KHÔNG TỒN TẠI!"
-          echo "=== Kiểm tra .nojekyll ==="
-          ls -la ./out/.nojekyll || echo ".nojekyll KHÔNG TỒN TẠI!"
 
-      - name: Add .nojekyll
-        run: touch ./out/.nojekyll        # ← CHỈ THÊM DÒNG NÀY
+      - name: Verify build output        # ← KIỂM TRA
+        run: |
+          echo "Files in out/_next/static/:"
+          find ./out/_next/static -type f | head -30
+
+      - name: Create .nojekyll           # ← TẠO ĐÚNG CÁCH
+        run: echo "" > ./out/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
