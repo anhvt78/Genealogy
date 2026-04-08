@@ -2,7 +2,7 @@ name: Deploy Next.js to GitHub Pages
 
 on:
   push:
-    branches: ["main"] # Tự động chạy khi bạn push code lên nhánh main
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -10,7 +10,6 @@ permissions:
   id-token: write
 
 env:
-  # Kích hoạt Node.js 24 ngay bây giờ để tránh cảnh báo deprecation
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -23,7 +22,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "24" # Nâng cấp lên phiên bản 24
+          node-version: "24"
           cache: "npm"
 
       - name: Install dependencies
@@ -32,10 +31,13 @@ jobs:
       - name: Build with Next.js
         run: npm run build
 
+      - name: Add .nojekyll
+        run: touch ./out/.nojekyll        # ← CHỈ THÊM DÒNG NÀY
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out # Thư mục chứa file tĩnh đã build
+          path: ./out
 
   deploy:
     environment:
