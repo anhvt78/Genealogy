@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "export",
-  basePath: "/Genealogy",
-  assetPrefix: "/Genealogy/",
+  // KHÔNG cần basePath và assetPrefix khi dùng custom domain
   trailingSlash: true,
   reactStrictMode: true,
   images: {
