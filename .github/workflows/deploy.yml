@@ -9,6 +9,10 @@ permissions:
   pages: write
   id-token: write
 
+env:
+  # Kích hoạt Node.js 24 ngay bây giờ để tránh cảnh báo deprecation
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,7 +23,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24" # Nâng cấp lên phiên bản 24
           cache: "npm"
 
       - name: Install dependencies
