@@ -2,10 +2,9 @@
 const nextConfig = {
   output: "export",
   basePath: "/Genealogy",
-  // Lưu ý: Không dùng assetPrefix khi đã có basePath trên GitHub Pages
-  trailingSlash: true, // Rất quan trọng để GitHub Pages hiểu các đường dẫn con
+  assetPrefix: "/Genealogy/",   // ← THÊM DÒNG NÀY
+  trailingSlash: true,
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     domains: ["m2c.infura-ipfs.io", "ipfs.io", "i.ibb.co"],
     unoptimized: true,
