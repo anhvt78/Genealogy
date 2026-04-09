@@ -114,7 +114,7 @@ export default function GenealogyDetailForm({
           - Chữ render trong Canvas → không bao giờ lệch khi zoom
       */}
       <div
-        className="w-full border-b-2 border-[#5d3a1a] flex justify-center"
+        className="w-full border-b-4 border-[#5d3a1a] flex justify-center"
         style={{ backgroundColor: "#e8d5b5" }}
       >
         {bannerDataUrl ? (
@@ -136,7 +136,7 @@ export default function GenealogyDetailForm({
         {/* Cột trái: Thông tin chính */}
         <div className="order-last md:order-0 md:col-span-2 space-y-8">
           <section>
-            <div className="flex items-center justify-between border-b-1 border-[#5d3a1a] pb-2 mb-4">
+            <div className="flex items-center justify-between border-b-2 border-[#5d3a1a] pb-2 mb-4">
               <h2 className="text-2xl font-bold text-[#3d2611] uppercase tracking-widest">
                 Tóm lược
               </h2>
@@ -178,7 +178,7 @@ export default function GenealogyDetailForm({
           </section>
 
           <section>
-            <div className="flex items-center justify-between border-b-1 border-[#5d3a1a] pb-2 mb-4">
+            <div className="flex items-center justify-between border-b-2 border-[#5d3a1a] pb-2 mb-4">
               <h2 className="text-2xl font-bold text-[#3d2611] uppercase tracking-widest">
                 Lịch sử dòng tộc
               </h2>
@@ -223,14 +223,14 @@ export default function GenealogyDetailForm({
 
           {/* Bộ sưu tập hình ảnh */}
           <section>
-            <h2 className="text-2xl font-bold text-[#3d2611] border-b-1 border-[#5d3a1a] pb-2 mb-6 uppercase tracking-widest">
+            <h2 className="text-2xl font-bold text-[#3d2611] border-b-2 border-[#5d3a1a] pb-2 mb-6 uppercase tracking-widest">
               Bộ sưu tập hình ảnh
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {clanItem?.allImageUrls.map((img, index) => (
                 <div
                   key={index}
-                  className="h-40 overflow-hidden border-1 border-[#5d3a1a] shadow-md group"
+                  className="h-40 overflow-hidden border-2 border-[#5d3a1a] shadow-md group"
                   onClick={() => setCurrentIndex(index)}
                 >
                   <img
