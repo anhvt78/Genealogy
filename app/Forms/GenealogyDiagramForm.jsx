@@ -91,7 +91,12 @@ export default function GenealogyDiagramForm({
             (p) => p.gender !== "female" && p.gender !== "FEMALE",
           )
     ).sort(
-      (a, b) => a.createdAt - b.createdAt, // tăng dần
+      // (a, b) => a.createdAt - b.createdAt, // tăng dần
+      (a, b) => {
+        const aVal = BigInt(a.createdAt ?? 0);
+        const bVal = BigInt(b.createdAt ?? 0);
+        return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+      },
     );
 
     const visibleFamily = getVisibleData(filteredData, collapsedIds);
