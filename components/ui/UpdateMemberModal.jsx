@@ -4,6 +4,7 @@ import { formatDisplayDate } from "../Utils/helpers";
 import sweetalert2 from "@/configs/swal";
 import { GenealogyContext } from "@/context/GenealogyContext";
 import { useSelector } from "react-redux";
+import { formatDate } from "../Utils/helpers";
 
 export default function UpdateMemberModal({
   person,
@@ -21,8 +22,8 @@ export default function UpdateMemberModal({
     personId: person.id,
     name: person?.name || "",
     // Chuyển object ngày tháng thành chuỗi DD/MM/YYYY ngay khi khởi tạo
-    birthYear: formatDisplayDate(person?.birthYear),
-    deathYear: formatDisplayDate(person?.deathYear),
+    birthDate: formatDisplayDate(person?.birthDate),
+    deathDate: formatDisplayDate(person?.deathDate),
     shortDesc: person?.shortDesc,
   });
 
@@ -67,18 +68,13 @@ export default function UpdateMemberModal({
     setErrors({}); // Xóa sạch lỗi cũ nếu mọi thứ ổn
 
     setIsProcessing(true); // Bắt đầu trạng thái chờ giống ClanListForm
-    // console.log("formData.birthYear: ", formData.birthYear);
-    // console.log(
-    //   "parseDateInput(formData.birthYear): ",
-    //   parseDateInput(formData.birthYear),
-    // );
 
     const formattedData = {
       ...formData,
-      birthYear: parseDateInput(formData.birthYear),
-      deathYear: isStillAlive
+      birthDate: parseDateInput(formData.birthDate),
+      deathDate: isStillAlive
         ? { day: 0, month: 0, year: 0 }
-        : parseDateInput(formData.deathYear),
+        : parseDateInput(formData.deathDate),
     };
 
     updatePersonData(
@@ -155,59 +151,6 @@ export default function UpdateMemberModal({
             />
             {renderError("name")}
           </div>
-
-          {/* <div className="grid grid-cols-2 gap-4">
-            
-            <div>
-              <label className="block text-xs font-bold text-[#5d3a1a] uppercase tracking-widest mb-1">
-                Ngày sinh
-              </label>
-              <input
-                type="text"
-                disabled={isProcessing}
-                className="w-full px-4 py-2 bg-[#f4ece1] border border-[#8b5a2b]/40 outline-none text-[#3d2611] disabled:opacity-50"
-                placeholder="VD: 1990 hoặc 01/01/1990"
-                value={formData.birthYear}
-                onChange={(e) => {
-                  setFormData({ ...formData, birthYear: e.target.value });
-                  if (errors.birthYear)
-                    setErrors({ ...errors, birthYear: null });
-                }}
-              />
-              {renderError("birthYear")}
-            </div>
-
-         
-            <div>
-              <div className="flex justify-between items-center mb-1">
-                <label className="block text-xs font-bold text-[#5d3a1a] uppercase tracking-widest">
-                  Ngày mất
-                </label>
-                <label className="flex items-center gap-1 text-[10px] font-bold text-[#8b5a2b] cursor-pointer uppercase">
-                  <input
-                    type="checkbox"
-                    disabled={isProcessing}
-                    checked={isStillAlive}
-                    onChange={(e) => setIsStillAlive(e.target.checked)}
-                    className="accent-[#5d3a1a]"
-                  />
-                  Còn sống
-                </label>
-              </div>
-              <input
-                type="text"
-                disabled={isStillAlive || isProcessing}
-                className={`w-full px-4 py-2 border border-[#8b5a2b]/40 outline-none text-[#3d2611] transition-all ${
-                  isStillAlive ? "bg-stone-200 opacity-50" : "bg-[#f4ece1]"
-                }`}
-                placeholder={isStillAlive ? "---" : "VD: 2020 hoặc 15/05/2020"}
-                value={isStillAlive ? "" : formData.deathYear}
-                onChange={(e) =>
-                  setFormData({ ...formData, deathYear: e.target.value })
-                }
-              />
-            </div>
-          </div> */}
 
           <div className="flex flex-col md:grid md:grid-cols-2 gap-5">
             <div>

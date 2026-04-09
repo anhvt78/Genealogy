@@ -4,13 +4,9 @@ import ReactFlow, { Background, Controls } from "reactflow";
 import "reactflow/dist/style.css";
 import { toPng } from "html-to-image";
 
-// --- IMPORT CÁC COMPONENT ---
 import PersonNode from "@/components/nodes/PersonNode";
-
-import DetailSidebar from "@/components/ui/DetailSidebar"; // Bạn cần tạo file này
-
+import DetailSidebar from "@/components/ui/DetailSidebar";
 import { getLayoutedElements } from "@/utils/layoutEngine";
-
 import ClanTitleNode from "@/components/nodes/ClanTitleNode";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -21,13 +17,11 @@ import QRGeneratorModal from "@/components/ui/QRGeneratorModal";
 import TransferOwnershipModal from "@/components/ui/TransferOwnershipModal";
 import { ConnectorModal } from "@/components/Modals/ConnectorModal";
 
-// Đăng ký loại node tùy chỉnh
 const nodeTypes = {
   personNode: PersonNode,
   clanTitle: ClanTitleNode,
 };
 
-// 2. Hàm đệ quy xác định các Node bị ẩn khi thu gọn
 const getVisibleData = (allData, collapsedList) => {
   const hiddenIds = new Set();
   const addChildrenToHidden = (parentId) => {
@@ -52,37 +46,30 @@ export default function GenealogyDiagramForm({
 }) {
   const dispatch = useDispatch();
   const router = useRouter();
-  // Thêm vào trong component FamilyTreePage
   const [modalQROpen, setModalQROpen] = useState(false);
   const [modalTransferOwner, setModalTransferOwner] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showFemales, setShowFemales] = useState(true); // State để gạt ẩn/hiện con gái
-
+  const [showFemales, setShowFemales] = useState(true);
   const [isLocked, setIsLocked] = useState(false);
-
   const [collapsedIds, setCollapsedIds] = useState([]);
   const [selectedPerson, setSelectedPerson] = useState(null);
-
-  const [isShowModalConnector, setIsShowModalConnector] = useState(false); // Quản lý ẩn hiện modal đăng nhập
+  const [isShowModalConnector, setIsShowModalConnector] = useState(false);
 
   const userWalletAddress = useSelector(
     (state) => state.genealogyReducer.walletAddress,
   );
 
-  // 1. Hàm xử lý Đóng/Mở nhánh
   const toggleCollapse = (id) => {
     setCollapsedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
 
-  // 3. Xử lý khi click vào Node để hiện Sidebar
   const onNodeClick = (event, node) => {
     const person = familyData.find((p) => p.id === node.id);
     if (person) setSelectedPerson(person);
   };
 
-  // 4. Tính toán Nodes và Edges
   const { nodes, edges } = useMemo(() => {
     const filteredData = (
       showFemales
@@ -90,14 +77,12 @@ export default function GenealogyDiagramForm({
         : familyData.filter(
             (p) => p.gender !== "female" && p.gender !== "FEMALE",
           )
-    ).sort(
-      // (a, b) => a.createdAt - b.createdAt, // tăng dần
-      (a, b) => {
-        const aVal = BigInt(a.createdAt ?? 0);
-        const bVal = BigInt(b.createdAt ?? 0);
-        return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-      },
-    );
+    ).sort((a, b) => {
+      // ✅ FIX: So sánh BigInt đúng cách, không dùng phép trừ
+      const aVal = BigInt(a.createdAt ?? 0);
+      const bVal = BigInt(b.createdAt ?? 0);
+      return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+    });
 
     const visibleFamily = getVisibleData(filteredData, collapsedIds);
 
@@ -124,10 +109,6 @@ export default function GenealogyDiagramForm({
           onNodeClick: (nodeData) => setSelectedPerson(nodeData),
           spouseNumber: p.spouses?.length || 0,
           gender: p.gender || "undefined",
-          // onAddChild: (id) =>
-          //   setModalState({ isOpen: true, type: "child", targetId: id }),
-          // onAddSpouse: (id) =>
-          //   setModalState({ isOpen: true, type: "spouse", targetId: id }),
           onToggleCollapse: toggleCollapse,
           showFemales: showFemales,
         },
@@ -135,10 +116,8 @@ export default function GenealogyDiagramForm({
       })),
     ];
 
-    // Tạo Edges (Đường nối)
     const rawEdges = [];
     visibleFamily.forEach((p) => {
-      // Nối Cha -> Con
       if (p.parents && p.parents.length > 0) {
         const primaryParent = p.parents[0];
         rawEdges.push({
@@ -150,7 +129,6 @@ export default function GenealogyDiagramForm({
         });
       }
 
-      // Nối Vợ <-> Chồng
       if (p.partners && p.partners.length > 0) {
         p.partners.forEach((partnerId) => {
           if (p.id < partnerId) {
@@ -178,7 +156,6 @@ export default function GenealogyDiagramForm({
     };
   }, [familyData, collapsedIds, clanItem, showFemales]);
 
-  // Hàm xuất ảnh PNG
   const exportImage = () => {
     const el = document.querySelector(".react-flow__viewport");
     if (el) {
@@ -206,10 +183,7 @@ export default function GenealogyDiagramForm({
 
           <div className="flex flex-col gap-4 flex-grow">
             <button
-              // onClick={() => router.push(`/pages/detail/${clanId}`)}
-              onClick={() => {
-                setTabIndex(0);
-              }}
+              onClick={() => setTabIndex(0)}
               className="flex items-center gap-3 px-4 py-3 bg-[#5d3a1a] hover:bg-[#8b5a2b] transition-colors rounded-md text-sm font-semibold"
             >
               <svg
@@ -229,15 +203,11 @@ export default function GenealogyDiagramForm({
               </svg>
               Xem chi tiết
             </button>
-            {/* NÚT XOÁ GIA PHẢ - MỚI THÊM */}
+
             {userWalletAddress && (
               <>
                 <button
-                  onClick={() => {
-                    // Logic xử lý chuyển quyền (ví dụ: mở modal nhập địa chỉ ví mới)
-                    setModalTransferOwner(true);
-                    // Bạn có thể gọi một hàm handleTransferOwnership() tại đây
-                  }}
+                  onClick={() => setModalTransferOwner(true)}
                   className="flex items-center gap-3 px-4 py-3 bg-[#5d3a1a] hover:bg-[#8b5a2b] transition-colors rounded-md text-sm font-semibold"
                 >
                   <svg
@@ -249,19 +219,19 @@ export default function GenealogyDiagramForm({
                     strokeWidth="2"
                     viewBox="0 0 24 24"
                   >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="8.5" cy="7" r="4" />
-                    <polyline points="17 11 19 13 23 9" />
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                   </svg>
-                  Chuyển quyền quản lý
+                  Chuyển quyền sở hữu
                 </button>
               </>
             )}
 
-            {/* Nút Gạt Ẩn/Hiện Con Gái (Đã thêm Icon Con mắt) */}
+            {/* Nút Gạt Ẩn/Hiện Con Gái */}
             <div className="flex items-center justify-between px-4 py-3 bg-[#5d3a1a] rounded-md text-sm font-semibold">
               {showFemales ? (
-                /* Icon Con mắt mở (Khi đang HIỆN) */
                 <div className="flex items-center gap-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -279,7 +249,6 @@ export default function GenealogyDiagramForm({
                   <span>Hiện nữ giới</span>
                 </div>
               ) : (
-                /* Icon Con mắt gạch chéo (Khi đang ẨN) */
                 <div className="flex items-center gap-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -297,7 +266,6 @@ export default function GenealogyDiagramForm({
                   <span>Ẩn nữ giới</span>
                 </div>
               )}
-              {/* <span>Ẩn nữ giới</span> */}
 
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -329,7 +297,6 @@ export default function GenealogyDiagramForm({
               In mã QR
             </button>
 
-            {/* 4. Nút Xuất Ảnh (Chuyển xuống dưới nút Hiện con gái) */}
             <button
               onClick={exportImage}
               className="flex items-center gap-3 px-4 py-3 bg-[#5d3a1a] hover:bg-[#8b5a2b] transition-colors rounded-md text-sm font-semibold"
@@ -348,9 +315,7 @@ export default function GenealogyDiagramForm({
               Xuất ảnh gia phả
             </button>
 
-            {/* 5. Nút Đăng nhập / Đăng xuất */}
             {userWalletAddress ? (
-              // Nếu đã đăng nhập -> Hiện nút Đăng xuất
               <button
                 onClick={() => {
                   dispatch(userSignOut());
@@ -372,7 +337,6 @@ export default function GenealogyDiagramForm({
                 Đăng xuất
               </button>
             ) : (
-              // Nếu chưa đăng nhập -> Hiện nút Đăng nhập
               <button
                 onClick={() => setIsShowModalConnector(true)}
                 className="flex items-center gap-3 px-4 py-3 bg-green-900/40 hover:bg-green-800 transition-colors rounded-md text-sm font-semibold text-green-200 mt-auto mb-4"
@@ -395,7 +359,7 @@ export default function GenealogyDiagramForm({
         </div>
       </div>
 
-      {/* NÚT ĐÓNG/MỞ SIDEBAR (Nằm lơ lửng) */}
+      {/* NÚT ĐÓNG/MỞ SIDEBAR */}
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         className="fixed left-4 top-4 z-[60] p-2 bg-[#5d3a1a] text-[#f2e2ba] rounded-full shadow-md hover:bg-[#8b5a2b] transition-all"
@@ -418,27 +382,23 @@ export default function GenealogyDiagramForm({
           />
         </svg>
       </button>
+
       {/* Vùng sơ đồ chính */}
       <div className="flex-grow relative">
-        {/* <header className="absolute top-8 left-8 z-20 pointer-events-none"></header> */}
-
         <ReactFlow
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}
           onNodeClick={onNodeClick}
           onPaneClick={() => setSelectedPerson(null)}
-          // --- CÁC THUỘC TÍNH KHÓA ---
-          nodesDraggable={!isLocked} // Khóa kéo thả Node
-          nodesConnectable={!isLocked} // Khóa tạo kết nối mới
-          panOnDrag={!isLocked} // Khóa kéo bản đồ (Pan)
-          zoomOnScroll={!isLocked} // Khóa zoom bằng cuộn chuột
-          zoomOnPinch={!isLocked} // Khóa zoom trên bàn di chuột/màn hình cảm ứng
+          nodesDraggable={!isLocked}
+          nodesConnectable={!isLocked}
+          panOnDrag={!isLocked}
+          zoomOnScroll={!isLocked}
+          zoomOnPinch={!isLocked}
           fitView
         >
           <Background color="#8b5a2b" opacity={0.1} />
-
-          {/* Tùy chỉnh Controls để nút Khóa điều khiển State của chúng ta */}
           <Controls
             onInteractiveChange={(interactive) => setIsLocked(!interactive)}
             showInteractive={true}
@@ -446,7 +406,6 @@ export default function GenealogyDiagramForm({
         </ReactFlow>
       </div>
 
-      {/* Sidebar chi tiết bên phải */}
       {selectedPerson && (
         <DetailSidebar
           person={selectedPerson}
@@ -461,8 +420,6 @@ export default function GenealogyDiagramForm({
           onClose={() => setModalQROpen(false)}
         />
       )}
-
-      {/* Modal thêm thành viên */}
       {modalTransferOwner && (
         <TransferOwnershipModal
           clanItem={clanItem}

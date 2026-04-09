@@ -35,7 +35,7 @@ export default function PersonCard({ person, subTitle, isMain, onNodeSelect }) {
           </div>
         </div>
         <div className="text-[10px] mt-2 opacity-70 font-mono">
-          {formatDate(person.birthYear)} — {formatDate(person.deathYear)}
+          {formatDate(person.birthDate)} — {formatDate(person.deathDate)}
         </div>
       </div>
     </div>

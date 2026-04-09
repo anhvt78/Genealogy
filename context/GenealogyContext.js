@@ -571,8 +571,8 @@ export const GenealogyProvider = ({ children }) => {
         formData.personId,
         formData.name,
         formData.shortDesc,
-        formData.birthYear,
-        formData.deathYear,
+        formData.birthDate,
+        formData.deathDate,
       ]);
 
       const receipt = await publicClient.waitForTransactionReceipt({

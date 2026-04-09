@@ -3,9 +3,7 @@ import React, { useContext, useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import GenealogyDetailForm from "@/app/Forms/GenealogyDetailForm";
 import GenealogyDiagramForm from "@/app/Forms/GenealogyDiagramForm";
-import { useRouter } from "next/navigation"; // Thêm router để điều hướng
-// import { initialFamilyData } from "@/constants/mockData.js";
-// import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useRouter } from "next/navigation";
 import sweetalert2 from "@/configs/swal";
 import { GenealogyContext } from "@/context/GenealogyContext";
 import {
@@ -24,18 +22,12 @@ const GENDER_MAP = {
   2: "undefined",
 };
 
-// viem trả về số dạng BigInt — helper chuyển về Number an toàn
-// const toNum = (val) => (val !== undefined && val !== null ? Number(val) : null);
-// const toStr = (val) => (val !== undefined && val !== null ? String(val) : "");
-
 function GenealogyDetailContent() {
   const router = useRouter();
-  const searchParams = useSearchParams(); // Lấy 'id' từ thư mục [id]
-  // const clanId = params.id;
+  const searchParams = useSearchParams();
   const clanId = searchParams.get("id");
 
   const [tabIndex, setTabIndex] = useState(0);
-
   const [familyData, setFamilyData] = useState(null);
 
   const { getClanDetail, getPersonData } = useContext(GenealogyContext);
@@ -45,25 +37,17 @@ function GenealogyDetailContent() {
   const [loadingClanDialog, setLoadingClanDialog] = useState(true);
 
   useEffect(() => {
-    // Kiểm tra nếu không có clanId thì dừng sớm và tắt loading
     if (!clanId) {
       setLoadingClanDetail(false);
       setLoadingClanDialog(false);
       return;
     }
-
-    // Nếu muốn chắc chắn, bạn có thể bọc trong một hàm async
-
     fetchDataDetail();
   }, [clanId]);
 
   const fetchDataDetail = async () => {
-    // setLoadingClanDetail(true); // Có thể gọi ở đây nếu khởi tạo là false
-
     try {
       const result = await getClanDetail(clanId);
-
-      // console.log("result1: ", result);
 
       if (result.sts) {
         fetchDataDialog();
@@ -83,7 +67,6 @@ function GenealogyDetailContent() {
               .filter((url) => url);
           }
         } catch (error) {
-          // console.error("Error extracting CIDs:", error);
           router.push(`/`);
         }
 
@@ -100,7 +83,7 @@ function GenealogyDetailContent() {
       } else {
         sweetalert2.popupAlert({
           title: "Đã xảy ra lỗi",
-          text: "Lỗi khi tải thông tin Gia phả.Vui lòng kiểm tra lại thông tin địa chỉ dòng họ!",
+          text: "Lỗi khi tải thông tin Gia phả. Vui lòng kiểm tra lại thông tin địa chỉ dòng họ!",
         });
         router.push(`/`);
       }
@@ -111,7 +94,6 @@ function GenealogyDetailContent() {
       });
       router.push(`/`);
     } finally {
-      // Tắt loading sau khi kết thúc (dù thành công hay thất bại)
       setLoadingClanDetail(false);
     }
   };
@@ -119,21 +101,15 @@ function GenealogyDetailContent() {
   const fetchDataDialog = async () => {
     setLoadingClanDialog(true);
     const ancestorId = numberToByte32(1);
-
-    // console.log("ancestorId: ", ancestorId);
     const tempList = [];
 
-    // console.log("159. ancestorId: ", ancestorId);
-
-    const traverse = async (personId) => {
-      // console.log("231. personId: ", personId);
-
+    // ✅ FIX 1: Thêm tham số generation (mặc định = 1 cho tiên tổ)
+    const traverse = async (personId, generation = 1) => {
       try {
         const result = await getPersonData(clanId, personId);
 
         console.log("167. result: ", result);
 
-        // Nếu API trả về thất bại ở bất kỳ mắt xích nào
         if (!result.sts) {
           throw new Error(
             `Không thể tải dữ liệu cho cá nhân có ID: ${personId}. Xin vui lòng kiểm tra lại!`,
@@ -154,28 +130,31 @@ function GenealogyDetailContent() {
             return {
               id: el,
               name: spouseResult.data.name,
-              birthYear: spouseResult.data.birthDate,
-              deathYear: spouseResult.data.deathDate,
+              birthDate: spouseResult.data.birthDate,
+              deathDate: spouseResult.data.deathDate,
               shortDesc: spouseResult.data.shortDesc,
               gender: GENDER_MAP[spouseResult.data.sex] || "undefined",
               isSpouse: true,
               spouseId: personId,
+              // ✅ Vợ/chồng không có generation riêng, dùng cùng thế hệ với người phối ngẫu
+              generation: generation,
               createdAt: spouseResult.data.createdAt,
             };
           }),
         );
 
-        // console.log("198. spousesDetails: ", spousesDetails);
-
         const item = {
           id: personId,
           name: data.name,
           gender: GENDER_MAP[data.sex] || "undefined",
-          birthYear: data.birthDate,
-          deathYear: data.deathDate,
+          birthDate: data.birthDate,
+          deathDate: data.deathDate,
           shortDesc: data.shortDesc,
           parents: data.parentId !== NONE_ID ? [data.parentId] : [],
           spouses: spousesDetails,
+          // ✅ FIX 1: Lưu thế hệ vào item
+          generation: generation,
+          // ✅ FIX 2: Chuyển createdAt về BigInt an toàn để sort
           createdAt: data.createdAt,
         };
 
@@ -183,26 +162,22 @@ function GenealogyDetailContent() {
 
         console.log("159. data.children: ", data.children);
 
-        // Đệ quy lấy dữ liệu con cái
+        // ✅ FIX 1: Đệ quy con với generation + 1
         if (data.children && data.children.length > 0) {
-          await Promise.all(data.children.map((childId) => traverse(childId)));
+          await Promise.all(
+            data.children.map((childId) => traverse(childId, generation + 1)),
+          );
         }
       } catch (err) {
-        // Đẩy lỗi lên cấp cao hơn để dừng toàn bộ quá trình
         throw err;
       }
     };
 
     try {
-      // Bắt đầu quá trình đệ quy
-      await traverse(ancestorId);
-
-      // Nếu thành công hết mới cập nhật State
+      await traverse(ancestorId, 1);
       setFamilyData(tempList);
     } catch (error) {
       console.error("Gia phả bị gián đoạn:", error);
-
-      // Hiển thị SweetAlert2 thông báo lỗi cụ thể
       sweetalert2.popupAlert({
         title: "Lỗi cấu trúc Gia phả",
         text:
@@ -210,9 +185,6 @@ function GenealogyDetailContent() {
           "Có lỗi xảy ra trong quá trình truy vấn cây gia phả.",
         icon: "error",
       });
-
-      // Reset hoặc xóa dữ liệu tạm nếu cần để tránh hiển thị sai
-      // setFamilyData([]);
     } finally {
       setLoadingClanDialog(false);
     }
@@ -230,9 +202,6 @@ function GenealogyDetailContent() {
             />
           ) : (
             <LoadingState message="Đang truy vấn dữ liệu dòng tộc..." />
-            // <div className="fixed inset-0 flex items-center justify-center px-4">
-            //   <LoadingState message="Đang truy vấn dữ liệu dòng tộc..." />
-            // </div>
           )}
         </>
       )}
@@ -255,36 +224,21 @@ function GenealogyDetailContent() {
   );
 }
 
-// 2. Component Loading dùng chung
 function LoadingState({ message }) {
   return (
-    // <div className="flex-1 flex flex-col items-center justify-center font-serif bg-[#f2e2ba]">
-    //   <div className="w-48 h-48 mb-4">
-    //     <Lottie animationData={gettingDataAnimation} loop={true} />
-    //   </div>
-    //   <div className="relative">
-    //     <p className="text-[#000000] animate-pulse text-xl font-bold tracking-widest uppercase">
-    //       {message}
-    //     </p>
-    //     {/* <div className="mt-2 h-0.5 w-full bg-[#5d3a1a] origin-left animate-expand"></div> */}
-    //   </div>
-    // </div>
-    <div className="flex-1 flex flex-col items-center justify-center font-serif ">
+    <div className="flex-1 flex flex-col items-center justify-center font-serif">
       <div className="w-48 h-48 mb-4">
         <Lottie animationData={gettingDataAnimation} loop={true} />
       </div>
-      {/* Thêm w-full để container chiếm hết chiều ngang và px-4 để cách lề 16px */}
       <div className="relative w-full px-4 flex justify-center">
         <p className="text-[#000000] animate-pulse text-xl font-bold tracking-widest uppercase text-center px-4">
           {message}
         </p>
-        {/* <div className="mt-2 h-0.5 w-full bg-[#5d3a1a] origin-left animate-expand"></div> */}
       </div>
     </div>
   );
 }
 
-// 3. Export mặc định hàm mới được bọc trong Suspense
 export default function GenealogyDetail() {
   return (
     <Suspense fallback={<LoadingState message="Đang khởi động..." />}>

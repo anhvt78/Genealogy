@@ -592,7 +592,7 @@ export default function DetailSidebar({
                         Năm sinh
                       </p>
                       <p className="font-bold text-[#3d2611]">
-                        {formatDate(person.birthYear)}
+                        {formatDate(person.birthDate)}
                       </p>
                     </div>
                     <div className="bg-white/50 p-3 rounded border border-[#8b5a2b]/10">
@@ -600,7 +600,7 @@ export default function DetailSidebar({
                         Năm mất
                       </p>
                       <p className="font-bold text-[#3d2611]">
-                        {formatDate(person.deathYear)}
+                        {formatDate(person.deathDate)}
                       </p>
                     </div>
                   </div>
@@ -644,39 +644,39 @@ export default function DetailSidebar({
                         <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest">
                           Thông tin Tiểu sử
                         </h3>
-                        {owner === userWalletAddress && 
-                        <a
-                          href={`https://universaleverything.io/asset/${clanItem.clanId}/tokenId/${person.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex border border-[#8b5a2b]/10 size-10 items-center justify-center rounded-full transition-all duration-300 bg-neutral-97 cursor-pointer hover:scale-105 hover:bg-neutral-95"
-                          title="Cập nhật thông tin chi tiết trên Blockchain"
-                        >
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            style={{ width: "24px", height: "24px" }}
+                        {owner === userWalletAddress && (
+                          <a
+                            href={`https://universaleverything.io/asset/${clanItem.clanId}/tokenId/${person.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex border border-[#8b5a2b]/10 size-10 items-center justify-center rounded-full transition-all duration-300 bg-neutral-97 cursor-pointer hover:scale-105 hover:bg-neutral-95"
+                            title="Cập nhật thông tin chi tiết trên Blockchain"
                           >
-                            <path
-                              d="M9.20522 17.4916L18.5695 8.12731C18.9601 7.73679 18.9601 7.10362 18.5695 6.7131L16.5635 4.70704C16.173 4.31652 15.5398 4.31652 15.1493 4.70704L5.78495 14.0714C5.64561 14.2107 5.55055 14.3881 5.51169 14.5813L5.00661 17.0924C4.86572 17.7929 5.48368 18.4109 6.18417 18.27L8.6953 17.7649C8.88848 17.726 9.06588 17.631 9.20522 17.4916Z"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            ></path>
-                            <path
-                              d="M13.2913 6.28015L16.7115 9.70042"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            ></path>
-                          </svg>
-                        </a>
-                        }
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              style={{ width: "24px", height: "24px" }}
+                            >
+                              <path
+                                d="M9.20522 17.4916L18.5695 8.12731C18.9601 7.73679 18.9601 7.10362 18.5695 6.7131L16.5635 4.70704C16.173 4.31652 15.5398 4.31652 15.1493 4.70704L5.78495 14.0714C5.64561 14.2107 5.55055 14.3881 5.51169 14.5813L5.00661 17.0924C4.86572 17.7929 5.48368 18.4109 6.18417 18.27L8.6953 17.7649C8.88848 17.726 9.06588 17.631 9.20522 17.4916Z"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              ></path>
+                              <path
+                                d="M13.2913 6.28015L16.7115 9.70042"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              ></path>
+                            </svg>
+                          </a>
+                        )}
                       </div>
 
                       <div className="relative">

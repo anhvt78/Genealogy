@@ -41,7 +41,7 @@ const connectingWithSmartContract = async (smAddr, smABI) => {
   if (!accounts?.length) throw new Error("EMPTY_ACCOUNTS");
 
   const walletClient = createWalletClient({
-    account: accounts[0],   // ← gắn account vào client, viem mới cho phép write
+    account: accounts[0], // ← gắn account vào client, viem mới cho phép write
     chain: lukso,
     transport: custom(injectedProvider),
   });
@@ -64,7 +64,7 @@ const connectingWithSmartContract = async (smAddr, smABI) => {
 const connectingSmartContractByPrivatekey = (contractAddress, contractABI) => {
   try {
     const account = privateKeyToAccount(
-      privateKey.startsWith("0x") ? privateKey : `0x${privateKey}`
+      privateKey.startsWith("0x") ? privateKey : `0x${privateKey}`,
     );
 
     const publicClient = createPublicClient({
@@ -237,7 +237,9 @@ export const GenealogyProvider = ({ children }) => {
         clanId,
         familyNftABI,
       );
-      const ownerOfToken = await familyNFTContract.read.tokenOwnerOf([personId]);
+      const ownerOfToken = await familyNFTContract.read.tokenOwnerOf([
+        personId,
+      ]);
       // console.log("tokenIdMetadata: ", tokenIdMetadata);
 
       return {
@@ -270,10 +272,17 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathDate,
       ]);
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-      const logs = parseEventLogs({ abi: genealogyABI, eventName: "ClanCreated", logs: receipt.logs });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
+      const logs = parseEventLogs({
+        abi: genealogyABI,
+        eventName: "ClanCreated",
+        logs: receipt.logs,
+      });
       const event = logs.find(
-        (l) => l.args._creatorAddress?.toLowerCase() === walletAddress.toLowerCase()
+        (l) =>
+          l.args._creatorAddress?.toLowerCase() === walletAddress.toLowerCase(),
       );
       if (event) callBack(event.args.clanId);
     } catch (error) {
@@ -330,10 +339,16 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathDate,
       ]);
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "ChildAdded", logs: receipt.logs });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
+      const logs = parseEventLogs({
+        abi: familyNftABI,
+        eventName: "ChildAdded",
+        logs: receipt.logs,
+      });
       const event = logs.find(
-        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
+        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase(),
       );
       if (event) callBack(event.args.newChildId);
     } catch (error) {
@@ -411,10 +426,16 @@ export const GenealogyProvider = ({ children }) => {
         formData.deathDate,
       ]);
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-      const logs = parseEventLogs({ abi: familyNftABI, eventName: "SpouseAdded", logs: receipt.logs });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
+      const logs = parseEventLogs({
+        abi: familyNftABI,
+        eventName: "SpouseAdded",
+        logs: receipt.logs,
+      });
       const event = logs.find(
-        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase()
+        (l) => l.args.sender?.toLowerCase() === walletAddress.toLowerCase(),
       );
       if (event) callBack(event.args.newSpouseId);
     } catch (error) {
@@ -442,8 +463,8 @@ export const GenealogyProvider = ({ children }) => {
         formData.personId,
         formData.name,
         formData.shortDesc,
-        formData.birthYear,
-        formData.deathYear,
+        formData.birthDate,
+        formData.deathDate,
       ]);
 
       await publicClient.waitForTransactionReceipt({ hash: txHash });

@@ -674,8 +674,9 @@ export const formatDisplayDate = (dateObj) => {
 
   // Nếu tất cả đều là 0, có thể trả về chuỗi trống hoặc "??/??/????" tùy bạn
   // Ở đây tôi xử lý từng thành phần:
-  const day = dateObj.day === 0 ? "??" : dateObj.day;
-  const month = dateObj.month === 0 ? "??" : dateObj.month;
+  const day = dateObj.day === 0 ? "??" : String(dateObj.day).padStart(2, "0");
+  const month =
+    dateObj.month === 0 ? "??" : String(dateObj.month).padStart(2, "0");
   const year = dateObj.year === 0 ? "????" : dateObj.year;
 
   return `${day}/${month}/${year}`;
