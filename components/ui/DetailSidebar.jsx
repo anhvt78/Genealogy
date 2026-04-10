@@ -376,8 +376,8 @@ export default function DetailSidebar({
           </>
         ) : (
           <>
-            {owner === userWalletAddress ||
-                clanItem?.clanOwner == userWalletAddress && (
+            {(owner === userWalletAddress ||
+                clanItem?.clanOwner == userWalletAddress) && (
               <div className="absolute top-4 left-4 z-[70]">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
