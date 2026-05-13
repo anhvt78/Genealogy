@@ -1,12 +1,11 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-  // useCallback,
-} from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { formatDate } from "../Utils/helpers";
-// import { useSelector } from "react-redux";
+
+const GENERATION_LABELS = {
+  1: "Tiên tổ", 2: "Nhị đại tôn", 3: "Tam đại tôn", 4: "Tứ đại tôn",
+  5: "Ngũ đại tôn", 6: "Lục đại tôn", 7: "Thất đại tôn", 8: "Bát đại tôn",
+  9: "Cửu đại tôn", 10: "Thập đại tôn",
+};
 import { GenealogyContext } from "@/context/GenealogyContext";
 import AddSpouseModal from "./AddSpouseModal";
 import AddChildModal from "./AddChildModal";
@@ -23,15 +22,10 @@ export default function DetailSidebar({
   person,
   clanItem,
   onClose,
-  // onAddChild,
-  // onAddSpouse,
   fetchDataDialog,
 }) {
-  // console.log("21. person: ", person);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(true);
-  //   // 1. Khởi tạo chiều rộng từ localStorage (nếu có) hoặc mặc định là 384px
   const [width, setWidth] = useState(() => {
     if (typeof window !== "undefined") {
       const savedWidth = localStorage.getItem("sidebarWidth");
@@ -42,10 +36,8 @@ export default function DetailSidebar({
 
   const isResizing = useRef(false);
 
-  // 2. Định nghĩa các hàm xử lý kéo (Dùng function để tránh lỗi thứ tự khai báo)
   function resize(e) {
     if (isResizing.current) {
-      // Tính toán chiều rộng dựa trên vị trí chuột (Sidebar nằm bên phải)
       const newWidth = window.innerWidth - e.clientX;
       if (newWidth > 300 && newWidth < 900) {
         setWidth(newWidth);
@@ -57,8 +49,6 @@ export default function DetailSidebar({
     isResizing.current = false;
     document.removeEventListener("mousemove", resize);
     document.removeEventListener("mouseup", stopResizing);
-
-    // THAY ĐỔI: Sử dụng classList thay vì .style
     if (typeof document !== "undefined") {
       document.body.classList.remove("is-resizing");
     }
@@ -68,38 +58,24 @@ export default function DetailSidebar({
     isResizing.current = true;
     document.addEventListener("mousemove", resize);
     document.addEventListener("mouseup", stopResizing);
-
-    // THAY ĐỔI: Sử dụng classList thay vì .style
     if (typeof document !== "undefined") {
       document.body.classList.add("is-resizing");
     }
   }
 
-  // 2. Đảm bảo dọn dẹp (Cleanup) khi Sidebar bị đóng
   useEffect(() => {
     return () => {
-      // Khi component unmount, đưa mọi thứ về mặc định để tránh treo cursor
       if (typeof document !== "undefined") {
-        document.body.style.cursor = "default";
-        document.body.style.userSelect = "auto";
+        document.body.classList.remove("is-resizing");
       }
       document.removeEventListener("mousemove", resize);
       document.removeEventListener("mouseup", stopResizing);
     };
   }, []);
 
-  // 3. Ghi nhớ chiều rộng vào localStorage
   useEffect(() => {
     localStorage.setItem("sidebarWidth", width);
   }, [width]);
-
-  // Đảm bảo gỡ bỏ sự kiện khi Component bị hủy (unmount)
-  useEffect(() => {
-    return () => {
-      document.removeEventListener("mousemove", resize);
-      document.removeEventListener("mouseup", stopResizing);
-    };
-  }, []);
 
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -113,10 +89,6 @@ export default function DetailSidebar({
   const userWalletAddress = useSelector(
     (state) => state.genealogyReducer.walletAddress,
   );
-
-  // const userWalletAddress = "0x7D351Aad461ea7FE599Ba572eFEf0d8bF8c0B9cC";
-
-  // console.log("userWalletAddress: ", userWalletAddress);
 
   const { getOwner, removeChild, removeSpouse, getPersonDetail } =
     useContext(GenealogyContext);
@@ -138,51 +110,29 @@ export default function DetailSidebar({
   }, [userWalletAddress, person]);
 
   useEffect(() => {
-    getPersonDetail(clanItem?.clanId, person.id).then(
-      (personMetadataResult) => {
-        console.log("personMetadataResult: ", personMetadataResult);
-        setIsGettingMetadata(false);
-        if (personMetadataResult.sts) {
-          // setPersonMetadata(personMetadataResult.data);
-          // const object = JSON.parse(personMetadataResult.data);
-          let allImageUrls = [];
-
-          // console.log("object: ", object);
-
-          try {
-            const imagesData = personMetadataResult?.data?.images;
-            if (Array.isArray(imagesData)) {
-              allImageUrls = imagesData
-                .map((subArray) => {
-                  if (Array.isArray(subArray) && subArray.length > 0) {
-                    // return subArray[0];
-                    console.log("157: subArray[0]: ", subArray[0]?.url);
-
-                    console.log(
-                      "161: subArray[0]: ",
-                      generateMetadataLink(subArray[0]?.url),
-                    );
-                    return generateMetadataLink(subArray[0]?.url);
-                  }
-                  return null;
-                })
-                .filter((url) => url);
-            }
-          } catch (error) {
-            // console.error("Error extracting CIDs:", error);
+    getPersonDetail(clanItem?.clanId, person.id).then((personMetadataResult) => {
+      setIsGettingMetadata(false);
+      if (personMetadataResult.sts) {
+        let allImageUrls = [];
+        try {
+          const imagesData = personMetadataResult?.data?.images;
+          if (Array.isArray(imagesData)) {
+            allImageUrls = imagesData
+              .map((subArray) => {
+                if (Array.isArray(subArray) && subArray.length > 0) {
+                  return generateMetadataLink(subArray[0]?.url);
+                }
+                return null;
+              })
+              .filter((url) => url);
           }
-
-          const item = {
-            allImageUrls: allImageUrls,
-            description: personMetadataResult?.data?.description,
-          };
-
-          console.log("170: item: ", item);
-
-          setPersonDetail(item);
-        }
-      },
-    );
+        } catch {}
+        setPersonDetail({
+          allImageUrls,
+          description: personMetadataResult?.data?.description,
+        });
+      }
+    });
   }, [person]);
 
   const handleDelete = async () => {
@@ -191,97 +141,47 @@ export default function DetailSidebar({
       text: `Bạn có chắc chắn muốn xóa ${person.name} khỏi gia phả? Hành động này không thể hoàn tác.`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33", // Màu đỏ cho nút xóa
-      cancelButtonColor: "#3085d6", // Màu xanh cho nút hủy
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
       confirmButtonText: "Đồng ý",
       cancelButtonText: "Huỷ",
-      reverseButtons: true, // Đưa nút Huỷ sang bên phải cho tự nhiên
+      reverseButtons: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
         Swal.fire({
           title: "Đang xử lý...",
           text: "Vui lòng chờ trong giây lát",
           allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading(); // Hiển thị biểu tượng quay (spinner)
-          },
+          didOpen: () => Swal.showLoading(),
         });
-        // try {
-        // setIsProcessing(true); // Bật trạng thái đang xử lý
-
-        // --- CHỖ NÀY: Gọi hàm xóa từ Context hoặc API của bạn ---
-        // Ví dụ: const res = await deleteMember(clanItem.clanId, person.id);
         if (person.isSpouse) {
-          removeSpouse(
-            userWalletAddress,
-            clanItem?.clanId,
-            person.spouseId,
-            person.id,
-            callBack,
-            handleErr,
-          );
+          removeSpouse(userWalletAddress, clanItem?.clanId, person.spouseId, person.id, callBack, handleErr);
         } else {
-          removeChild(
-            userWalletAddress,
-            clanItem?.clanId,
-            person.id,
-            callBack,
-            handleErr,
-          );
+          removeChild(userWalletAddress, clanItem?.clanId, person.id, callBack, handleErr);
         }
-
-        // Giả lập xử lý thành công:
-        //   setTimeout(() => {
-        //     Swal.fire(
-        //       "Đã xóa!",
-        //       "Thành viên đã được loại bỏ khỏi gia phả.",
-        //       "success",
-        //     );
-
-        //     // Gọi callback để load lại dữ liệu và đóng sidebar
-        //     callBack();
-        //   }, 2000);
-        // } catch (error) {
-        //   handleErr("Lỗi khi xóa", error.message);
-        // } finally {
-        //   setIsProcessing(false);
-        // }
       }
     });
   };
 
-  const callBack = (newChildId) => {
-    // console.log("newChildId: ", newChildId);
+  const callBack = () => {
     onClose();
-    // setIsProcessing(false);
     Swal.fire("Đã xóa!", "Thành viên đã được loại bỏ khỏi gia phả.", "success");
     fetchDataDialog();
-    // router.push(`/pages/detail/${clanId}`);
   };
 
   const handleErr = (title, error) => {
-    // setIsProcessing(false);
     onClose();
-    sweetalert2.popupAlert({
-      title: title,
-      text: error,
-    });
+    sweetalert2.popupAlert({ title, text: error });
   };
 
-  // Hàm chuyển ảnh tiếp theo
   const nextImage = (e) => {
     e.stopPropagation();
     setCurrentIndex((prev) => (prev + 1) % personDetail?.allImageUrls.length);
   };
 
-  // Hàm quay lại ảnh trước
   const prevImage = (e) => {
     e.stopPropagation();
-    setCurrentIndex(
-      (prev) =>
-        (prev - 1 + personDetail?.allImageUrls.length) %
-        personDetail?.allImageUrls.length,
-    );
+    setCurrentIndex((prev) => (prev - 1 + personDetail?.allImageUrls.length) % personDetail?.allImageUrls.length);
   };
 
   return (
@@ -335,9 +235,8 @@ export default function DetailSidebar({
               alt="Full view"
               onClick={(e) => e.stopPropagation()}
             />
-            {/* Hiển thị số thứ tự ảnh (Ví dụ: 1/8) */}
             <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-white/80 font-sans text-sm tracking-widest">
-              {currentIndex + 1} / {clanItem?.allImageUrls.length}
+              {currentIndex + 1} / {personDetail?.allImageUrls?.length}
             </div>
           </div>
 
@@ -367,7 +266,6 @@ export default function DetailSidebar({
         title="Kéo để thay đổi kích thước"
       />
       <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-        {/* DROPDOWN MENU - GÓC TRÊN BÊN TRÁI */}
         {isProcessing ? (
           <>
             {userWalletAddress && (
@@ -404,11 +302,11 @@ export default function DetailSidebar({
                 {isMenuOpen && (
                   <>
                     <div
-                      className="fixed inset-0 z-[-1]"
+                      className="fixed inset-0 z-[65]"
                       onClick={() => setIsMenuOpen(false)}
-                    ></div>
+                    />
 
-                    <div className="absolute left-0 mt-2 w-56 bg-white border border-[#8b5a2b]/20 shadow-xl rounded-md overflow-hidden animate-in fade-in zoom-in duration-200">
+                    <div className="absolute left-0 mt-2 w-56 bg-white border border-[#8b5a2b]/20 shadow-xl rounded-md overflow-hidden animate-in fade-in zoom-in duration-200 z-[70]">
                       {/* Nhóm: Thêm mới */}
                       {!person.isSpouse && (
                         <>
@@ -556,29 +454,38 @@ export default function DetailSidebar({
           <div className="p-8 h-full flex flex-col">
             <div className="flex-grow overflow-y-auto pr-2">
               <div className="flex flex-col items-center mb-8">
-                <div className="w-28 h-28 rounded-full bg-[#8b5a2b]/10 border-4 border-[#8b5a2b]/30 flex items-center justify-center mb-4 shadow-inner overflow-hidden">
-                  {personDetail?.allImageUrls &&
-                  personDetail.allImageUrls.length > 0 ? (
-                    <img
-                      src={personDetail.allImageUrls[0]}
-                      alt={person.name}
-                      className="w-full h-full object-cover"
-                    />
+                <div
+                  className="w-28 h-28 rounded-full border-4 border-[#8b5a2b]/30 flex items-center justify-center mb-4 shadow-inner overflow-hidden"
+                  style={{ backgroundColor: person.gender === "male" ? "#5d3a1a" : "#c4956a" }}
+                >
+                  {personDetail?.allImageUrls && personDetail.allImageUrls.length > 0 ? (
+                    <img src={personDetail.allImageUrls[0]} alt={person.name} className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-5xl">
-                      {person.gender === "male" ? "👴" : "👵"}
-                    </span>
+                    <svg width="52" height="52" fill="none" stroke="#f2e2ba" strokeWidth="1.4" viewBox="0 0 24 24">
+                      <circle cx="12" cy="8" r="4"/>
+                      <path d="M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6"/>
+                    </svg>
                   )}
                 </div>
                 <div className="text-center">
                   <p className="text-[10px] text-[#8b5a2b] uppercase tracking-[0.3em] mb-1 font-bold">
-                    {person.gender === "male"
-                      ? "Thành viên Nam"
-                      : "Thành viên Nữ"}
+                    {person.isSpouse
+                      ? (person.gender === "male" ? "Phu quân · Hôn phối" : "Phu nhân · Hôn phối")
+                      : (person.gender === "male" ? "Thành viên Nam" : "Thành viên Nữ")}
                   </p>
-                  <h2 className="text-2xl font-bold text-[#3d2611] uppercase tracking-tight">
+                  <h2 className="text-2xl font-bold text-[#3d2611] uppercase tracking-tight mb-2">
                     {person.name}
                   </h2>
+                  {person.generation && (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#5d3a1a]/10 border border-[#5d3a1a]/20">
+                      <span className="w-4 h-4 bg-[#5d3a1a] flex items-center justify-center text-[#f2e2ba] text-[9px] font-black shrink-0">
+                        {person.generation}
+                      </span>
+                      <span className="text-[10px] font-black text-[#5d3a1a] uppercase tracking-wider">
+                        {GENERATION_LABELS[person.generation] || `Đời thứ ${person.generation}`}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -607,9 +514,38 @@ export default function DetailSidebar({
                   </div>
                 </section>
 
+                {!person.isSpouse && person.spouses?.length > 0 && (
+                  <section>
+                    <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest border-b border-[#8b5a2b]/20 pb-1 mb-3">
+                      Hôn phối ({person.spouses.length})
+                    </h3>
+                    <div className="space-y-2">
+                      {person.spouses.map((sp, i) => (
+                        <div key={i} className="flex items-center gap-3 p-2.5 bg-white/50 border border-[#8b5a2b]/10">
+                          <div
+                            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                            style={{ backgroundColor: sp.gender === "male" ? "#5d3a1a" : "#c4956a" }}
+                          >
+                            <svg width="16" height="16" fill="none" stroke="#f2e2ba" strokeWidth="1.5" viewBox="0 0 24 24">
+                              <circle cx="12" cy="8" r="3"/>
+                              <path d="M4 20c0-3 3.1-5 8-5s8 2 8 5"/>
+                            </svg>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-[#3d2611] text-sm uppercase truncate">{sp.name}</p>
+                            <p className="text-[10px] text-[#8b5a2b]/60 font-semibold">
+                              {sp.gender === "male" ? "Phu quân" : "Phu nhân"}
+                              {sp.birthDate?.year ? ` · ${formatDate(sp.birthDate)}` : ""}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
                 {person.shortDesc && (
                   <section>
-                    {/* Thẻ div bao ngoài để căn lề giữa text và icon */}
                     <div className="flex items-center justify-between border-b border-[#8b5a2b]/20 pb-1 mb-3">
                       <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest">
                         Thông tin sơ lược
@@ -632,16 +568,13 @@ export default function DetailSidebar({
                 )}
 
                 {isGettingMetadata ? (
-                  /* Hiệu ứng loading cho Avatar */
-                  // <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#8b5a2b]"></div>
                   <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#8b5a2b]"></div>
                   </div>
                 ) : (
                   <>
                     <section>
-                      {/* Thẻ div bao ngoài để căn lề giữa text và icon */}
-                      <div className="flex items-center justify-between border-b border-[#8b5a2b]/20 pb-1 mb-3">
+                        <div className="flex items-center justify-between border-b border-[#8b5a2b]/20 pb-1 mb-3">
                         <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest">
                           Thông tin Tiểu sử
                         </h3>
@@ -650,31 +583,12 @@ export default function DetailSidebar({
                             href={`https://universaleverything.io/asset/${clanItem.clanId}/tokenId/${person.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex border border-[#8b5a2b]/10 size-10 items-center justify-center rounded-full transition-all duration-300 bg-neutral-97 cursor-pointer hover:scale-105 hover:bg-neutral-95"
+                            className="flex border border-[#8b5a2b]/15 size-9 items-center justify-center rounded-full transition-all duration-200 cursor-pointer hover:scale-105 hover:bg-[#5d3a1a]/8 text-[#5d3a1a]"
                             title="Cập nhật thông tin chi tiết trên Blockchain"
                           >
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              style={{ width: "24px", height: "24px" }}
-                            >
-                              <path
-                                d="M9.20522 17.4916L18.5695 8.12731C18.9601 7.73679 18.9601 7.10362 18.5695 6.7131L16.5635 4.70704C16.173 4.31652 15.5398 4.31652 15.1493 4.70704L5.78495 14.0714C5.64561 14.2107 5.55055 14.3881 5.51169 14.5813L5.00661 17.0924C4.86572 17.7929 5.48368 18.4109 6.18417 18.27L8.6953 17.7649C8.88848 17.726 9.06588 17.631 9.20522 17.4916Z"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              ></path>
-                              <path
-                                d="M13.2913 6.28015L16.7115 9.70042"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              ></path>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M9.2 17.5L18.6 8.1c.4-.4.4-1 0-1.4l-2-2c-.4-.4-1-.4-1.4 0L5.8 14.1c-.1.1-.2.4-.2.6l-.5 2.5c-.1.7.5 1.3 1.2 1.2l2.5-.5c.2 0 .3-.1.4-.2z"/>
+                              <path d="M13.3 6.3l3.4 3.4"/>
                             </svg>
                           </a>
                         )}
@@ -694,101 +608,53 @@ export default function DetailSidebar({
                       </div>
                     </section>
 
-                    <section>
-                      <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest border-b border-[#8b5a2b]/20 pb-1 mb-3">
-                        Bộ sưu tập hình ảnh
-                      </h3>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                        {personDetail?.allImageUrls.map((img, index) => (
-                          <div
-                            key={index}
-                            className="h-40 overflow-hidden border-2 border-[#5d3a1a] shadow-md group"
-                            onClick={() => setCurrentIndex(index)} // Truyền index vào state
-                          >
-                            <img
-                              src={img}
-                              className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 cursor-pointer"
-                              alt={`gallery-${index}`}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </section>
+                    {personDetail?.allImageUrls?.length > 0 && (
+                      <section>
+                        <h3 className="text-xs font-bold text-[#8b5a2b] uppercase tracking-widest border-b border-[#8b5a2b]/20 pb-1 mb-3">
+                          Bộ sưu tập hình ảnh ({personDetail.allImageUrls.length})
+                        </h3>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {personDetail.allImageUrls.map((img, index) => (
+                            <div
+                              key={index}
+                              className="h-36 overflow-hidden border-2 border-[#5d3a1a] shadow-md group cursor-pointer"
+                              onClick={() => setCurrentIndex(index)}
+                            >
+                              <img
+                                src={img}
+                                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                                alt={`gallery-${index}`}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+                    )}
                   </>
                 )}
               </div>
             </div>
 
-            {/* Cụm nút thao tác ở dưới cùng */}
-            {/* {owner == userWalletAddress && (
-              <div className="mt-6 pt-6 border-t-2 border-[#8b5a2b]/20 flex flex-col gap-3">
-                <button
-                  onClick={() => setModalAddChildState(true)}
-                  className="w-full bg-[#5d3a1a] text-[#f2e2ba] py-3 rounded font-bold text-xs hover:bg-black transition-all shadow-md uppercase tracking-wider"
-                >
-                  + Thêm con trực hệ
-                </button>
-
-                {person.gender === "male" && (
-                  <button
-                    onClick={() =>
-                      setModalState({
-                        isOpen: true,
-                        type: "child",
-                        targetId: person.id,
-                      })
-                    }
-                    className="w-full bg-[#8b5a2b] text-[#f2e2ba] py-3 rounded font-bold text-xs hover:bg-[#3d2611] transition-all shadow-md uppercase tracking-wider"
-                  >
-                    + Thêm{" "}
-                    {person.gender === "male"
-                      ? "Phu nhân (Vợ)"
-                      : "Phu quân (Chồng)"}
-                  </button>
-                )}
-              </div>
-            )} */}
           </div>
         )}
 
         {modalState.isOpen && (
           <AddSpouseModal
-            // isOpen={modalState.isOpen}
-            onClose={() =>
-              setModalState({ isOpen: false, type: null, targetId: null })
-            }
-            // onAdd={(newData) => {
-            //   setFamilyData([
-            //     ...familyData,
-            //     { ...newData, id: Date.now().toString() },
-            //   ]);
-            //   setModalState({ isOpen: false, type: null, targetId: null });
-            // }}
+            onClose={() => setModalState({ isOpen: false, type: null, targetId: null })}
             person={person}
             clanItem={clanItem}
             type={modalState.type}
             fetchDataDialog={fetchDataDialog}
-            // targetId={modalState.targetId}
           />
         )}
 
         {modalAddChildState && (
           <AddChildModal
-            // isOpen={modalState.isOpen}
             onClose={() => setModalAddChildState(false)}
-            // onAdd={(newData) => {
-            //   setFamilyData([
-            //     ...familyData,
-            //     { ...newData, id: Date.now().toString() },
-            //   ]);
-            //   setModalState({ isOpen: false, type: null, targetId: null });
-            // }}
             person={person}
             clanItem={clanItem}
             type={modalState.type}
             fetchDataDialog={fetchDataDialog}
-            // targetId={modalState.targetId}
           />
         )}
         {modalUpdateState && (

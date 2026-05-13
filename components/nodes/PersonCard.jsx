@@ -2,15 +2,13 @@ import React from "react";
 import { formatDate } from "../Utils/helpers";
 
 export default function PersonCard({ person, subTitle, isMain, onNodeSelect }) {
-  // console.log("person: ", person);
-
   return (
     <div
       onClick={(e) => {
         e.stopPropagation();
         if (onNodeSelect) onNodeSelect(person);
       }}
-      className={`min-w-[220px] p-5 shadow-2xl transition-all border-2 rounded-sm cursor-pointer
+      className={`min-w-[220px] shadow-2xl transition-all border-2 rounded-sm cursor-pointer overflow-hidden
         ${
           person.gender === "male"
             ? !person.isSpouse
@@ -19,10 +17,11 @@ export default function PersonCard({ person, subTitle, isMain, onNodeSelect }) {
             : !person.isSpouse
               ? "bg-[#fdf3df] border-[#d4a373]/30 hover:border-[#8b5a2b]"
               : "bg-[#ffffff] border-[#d4a373]/30 hover:border-[#8b5a2b]"
-        } 
+        }
         ${isMain ? "scale-100" : "scale-100 opacity-90"}`}
     >
-      <div className="flex flex-col items-center font-serif text-[#3d2611]">
+      <div className={`h-0.5 w-full ${person.gender === "male" ? "bg-[#5d3a1a]/50" : "bg-[#d4a373]/80"}`} />
+      <div className="p-5 flex flex-col items-center font-serif text-[#3d2611]">
         <div className="text-[9px] uppercase tracking-[0.2em] mb-1 opacity-60">
           {subTitle}
         </div>

@@ -48,3 +48,24 @@
 .animate-shake {
   animation: shake 0.5s ease-in-out;
 }
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(139, 90, 43, 0.3);
+  border-radius: 2px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(139, 90, 43, 0.55);
+}
+
+/* Sidebar resize cursor */
+body.is-resizing {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
