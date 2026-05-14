@@ -1,7 +1,7 @@
 import React from "react";
 import { formatDate } from "../Utils/helpers";
 
-export default function PersonCard({ person, subTitle, isMain, onNodeSelect }) {
+export default function PersonCard({ person, subTitle, onNodeSelect }) {
   return (
     <div
       onClick={(e) => {
@@ -17,8 +17,7 @@ export default function PersonCard({ person, subTitle, isMain, onNodeSelect }) {
             : !person.isSpouse
               ? "bg-[#fdf3df] border-[#d4a373]/30 hover:border-[#8b5a2b]"
               : "bg-[#ffffff] border-[#d4a373]/30 hover:border-[#8b5a2b]"
-        }
-        ${isMain ? "scale-100" : "scale-100 opacity-90"}`}
+        }`}
     >
       <div className={`h-0.5 w-full ${person.gender === "male" ? "bg-[#5d3a1a]/50" : "bg-[#d4a373]/80"}`} />
       <div className="p-5 flex flex-col items-center font-serif text-[#3d2611]">

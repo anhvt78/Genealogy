@@ -92,7 +92,6 @@ export default function PersonNode({ data }) {
           <PersonCard
             person={data}
             subTitle={subTitle}
-            isMain={true}
             onNodeSelect={data.onNodeClick}
           />
 
@@ -135,10 +134,8 @@ export default function PersonNode({ data }) {
                   <div className="w-2 border-t-2 border-dashed border-[#8b5a2b]/40"></div>
                   <div className="relative">
                     <PersonCard
-                      data={data}
                       person={spouse}
                       subTitle={spouseSubTitle.trim()}
-                      isMain={false}
                       onNodeSelect={data.onNodeClick}
                     />
                   </div>
