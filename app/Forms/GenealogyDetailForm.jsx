@@ -28,6 +28,56 @@ export default function GenealogyDetailForm({
   const [currentIndex, setCurrentIndex] = useState(null);
   const [modalUpdateState, setModalUpdateState] = useState(false);
 
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
+
+  const anniversaryList = useMemo(() => {
+    if (!familyData || familyData.length === 0) return [];
+
+    const ancestor = familyData.find((p) => Number(p.generation) === 1 && !p.isSpouse);
+    const ancestorId = ancestor?.id;
+
+    const all = [
+      ...familyData,
+      ...familyData.flatMap((p) => p.spouses || []),
+    ].filter(
+      (p) => !p.isAlive && p.deathDate?.month > 0 && p.deathDate?.day > 0
+    ).map((p) => ({ ...p, _isAncestor: p.id === ancestorId }));
+
+    const byMonth = {};
+    all.forEach((p) => {
+      const m = p.deathDate.month;
+      if (!byMonth[m]) byMonth[m] = [];
+      byMonth[m].push(p);
+    });
+
+    // Trong mỗi tháng: Tiên tổ luôn đứng đầu, sau đó sắp xếp theo ngày
+    Object.values(byMonth).forEach((arr) =>
+      arr.sort((a, b) => {
+        if (a._isAncestor) return -1;
+        if (b._isAncestor) return 1;
+        return a.deathDate.day - b.deathDate.day;
+      })
+    );
+
+    const ancestorMonth = ancestor?.deathDate?.year > 0 && ancestor?.deathDate?.month > 0 && ancestor?.deathDate?.day > 0
+      ? ancestor.deathDate.month
+      : null;
+
+    // Tháng của Tiên tổ luôn đứng đầu, sau đó sắp theo tháng gần nhất
+    const months = Object.keys(byMonth)
+      .map(Number)
+      .sort((a, b) => {
+        if (ancestorMonth !== null) {
+          if (a === ancestorMonth) return -1;
+          if (b === ancestorMonth) return 1;
+        }
+        return ((a - currentMonth + 12) % 12) - ((b - currentMonth + 12) % 12);
+      });
+
+    return months.map((m) => ({ month: m, members: byMonth[m] }));
+  }, [familyData]);
+
   const clanStats = useMemo(() => {
     if (!familyData || familyData.length === 0) return null;
 
@@ -348,6 +398,157 @@ export default function GenealogyDetailForm({
                   ))}
                 </div>
               </>
+            )}
+          </section>
+
+          {/* Ngày giỗ dòng tộc */}
+          <section>
+            <div className="flex items-center justify-between border-b-2 border-[#5d3a1a] pb-2 mb-6">
+              <h2 className="text-xl font-bold text-[#3d2611] uppercase tracking-widest">
+                Ngày giỗ dòng tộc
+              </h2>
+              {!loadingClanDialog && anniversaryList.length > 0 && (
+                <span className="text-[10px] font-black text-[#5d3a1a]/40 uppercase tracking-widest">
+                  {anniversaryList.reduce((s, g) => s + g.members.length, 0)} người
+                </span>
+              )}
+            </div>
+
+            {loadingClanDialog ? (
+              <div className="space-y-4 animate-pulse">
+                {[1, 2].map((i) => (
+                  <div key={i}>
+                    <div className="h-5 w-24 bg-[#5d3a1a]/10 mb-2" />
+                    <div className="space-y-2">
+                      {[1, 2].map((j) => <div key={j} className="h-14 bg-[#5d3a1a]/5" />)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : anniversaryList.length === 0 ? (
+              <p className="text-[#5d3a1a]/50 italic text-sm">
+                Chưa có thành viên nào có đầy đủ thông tin ngày mất để tổng hợp.
+              </p>
+            ) : (
+              <div className="space-y-6">
+                {anniversaryList.map(({ month, members }) => {
+                  const isCurrentMonth = month === currentMonth;
+                  return (
+                    <div key={month}>
+                      {/* Month header */}
+                      <div className={`flex items-center gap-3 mb-3 ${isCurrentMonth ? "" : ""}`}>
+                        <div className={`flex items-center gap-2 px-3 py-1.5 ${isCurrentMonth ? "bg-[#3d2611] text-[#f2e2ba]" : "bg-[#5d3a1a]/10 text-[#5d3a1a]"}`}>
+                          <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path d="M12 2c0 0-4 3-4 7a4 4 0 0 0 8 0c0-4-4-7-4-7z"/>
+                            <path d="M12 13v9M9 22h6"/>
+                          </svg>
+                          <span className="text-[11px] font-black uppercase tracking-widest">
+                            Tháng {month}
+                          </span>
+                          {isCurrentMonth && (
+                            <span className="text-[9px] font-black bg-[#f2e2ba]/20 px-1.5 py-0.5 tracking-wider">
+                              THÁNG NÀY
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex-1 h-px bg-[#5d3a1a]/10" />
+                        <span className="text-[10px] text-[#5d3a1a]/40 font-semibold">{members.length} ngày giỗ</span>
+                      </div>
+
+                      {/* Members list */}
+                      <div className="space-y-2">
+                        {members.map((p, i) => {
+                          const role = p.isSpouse
+                            ? (p.gender === "male" ? "Phu quân" : "Phu nhân")
+                            : (GENERATION_LABELS[p.generation] || `Đời thứ ${p.generation}`);
+                          const yearsSince = currentYear - p.deathDate.year;
+                          const isThisMonth = month === currentMonth;
+
+                          if (p._isAncestor) {
+                            return (
+                              <div
+                                key={i}
+                                className="flex items-center gap-4 px-4 py-3 bg-[#3d2611] border-2 border-[#3d2611]"
+                              >
+                                {/* Day badge */}
+                                <div className="w-10 h-10 flex flex-col items-center justify-center shrink-0 bg-[#f2e2ba]/15">
+                                  <span className="text-base font-black leading-none text-[#f2e2ba]">
+                                    {String(p.deathDate.day).padStart(2, "0")}
+                                  </span>
+                                  <span className="text-[8px] font-black text-[#f2e2ba]/50 uppercase">
+                                    th.{month}
+                                  </span>
+                                </div>
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-0.5">
+                                    <span className="text-[9px] font-black bg-[#f2e2ba]/15 text-[#f2e2ba]/70 px-1.5 py-0.5 uppercase tracking-widest shrink-0">
+                                      NGÀY GIỖ TỔ
+                                    </span>
+                                  </div>
+                                  <p className="font-black text-[#f2e2ba] uppercase tracking-tight truncate text-sm">
+                                    {p.name}
+                                  </p>
+                                  <p className="text-[10px] text-[#f2e2ba]/45 font-semibold">
+                                    Tiên tổ
+                                    {yearsSince > 0 && (
+                                      <span className="ml-2">· {p.deathDate.year} ({yearsSince} năm)</span>
+                                    )}
+                                  </p>
+                                </div>
+                                <svg width="14" height="14" fill="none" stroke="#c4956a" strokeWidth="1.8" viewBox="0 0 24 24">
+                                  <path d="M12 2c0 0-4 3-4 7a4 4 0 0 0 8 0c0-4-4-7-4-7z"/>
+                                  <path d="M12 13v9M9 22h6"/>
+                                </svg>
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div
+                              key={i}
+                              className={`flex items-center gap-4 px-4 py-3 border transition-colors ${
+                                isThisMonth
+                                  ? "bg-[#3d2611]/5 border-[#5d3a1a]/30 hover:bg-[#3d2611]/8"
+                                  : "bg-[#f2e2ba]/40 border-[#5d3a1a]/10 hover:bg-[#f2e2ba]/70"
+                              }`}
+                            >
+                              {/* Day badge */}
+                              <div className={`w-10 h-10 flex flex-col items-center justify-center shrink-0 ${isThisMonth ? "bg-[#3d2611] text-[#f2e2ba]" : "bg-[#5d3a1a]/10 text-[#3d2611]"}`}>
+                                <span className="text-base font-black leading-none">
+                                  {String(p.deathDate.day).padStart(2, "0")}
+                                </span>
+                                <span className="text-[8px] font-black opacity-60 uppercase">
+                                  th.{month}
+                                </span>
+                              </div>
+                              {/* Info */}
+                              <div className="flex-1 min-w-0">
+                                <p className="font-black text-[#3d2611] uppercase tracking-tight truncate text-sm">
+                                  {p.name}
+                                </p>
+                                <p className="text-[10px] text-[#5d3a1a]/55 font-semibold mt-0.5">
+                                  {role}
+                                  {p.deathDate.year > 0 && (
+                                    <span className="ml-2 text-[#5d3a1a]/35">
+                                      · {p.deathDate.year} ({yearsSince > 0 ? `${yearsSince} năm trước` : "năm nay"})
+                                    </span>
+                                  )}
+                                </p>
+                              </div>
+                              {/* Gender dot */}
+                              <div
+                                className="w-2 h-2 rounded-full shrink-0"
+                                style={{ backgroundColor: p.gender === "male" ? "#5d3a1a" : "#c4956a" }}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </section>
 

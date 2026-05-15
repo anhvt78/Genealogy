@@ -18,9 +18,17 @@ import { generateMetadataLink } from "@/components/Utils/helpers";
 const ANCESTOR_ID =
   "0x0000000000000000000000000000000000000000000000000000000000000001";
 
+function buildAncestryChain(personId, familyData) {
+  const person = familyData?.find((p) => p.id === personId);
+  if (!person) return [];
+  if (!person.parents?.length) return [person];
+  return [...buildAncestryChain(person.parents[0], familyData), person];
+}
+
 export default function DetailSidebar({
   person,
   clanItem,
+  familyData,
   onClose,
   fetchDataDialog,
 }) {
@@ -453,6 +461,32 @@ export default function DetailSidebar({
         {person && (
           <div className="p-8 h-full flex flex-col">
             <div className="flex-grow overflow-y-auto pr-2">
+              {/* Breadcrumb huyết thống */}
+              {familyData && !person.isSpouse && (() => {
+                const chain = buildAncestryChain(person.id, familyData);
+                if (chain.length <= 1) return null;
+                const maxShow = 3;
+                const truncated = chain.length > maxShow + 1;
+                const visible = truncated
+                  ? [chain[0], null, ...chain.slice(-(maxShow))]
+                  : chain;
+                return (
+                  <div className="flex items-center flex-wrap gap-1 mb-6 text-[10px] text-[#8b5a2b]/60 font-semibold">
+                    {visible.map((p, i) =>
+                      p === null ? (
+                        <span key="ellipsis" className="opacity-40">···</span>
+                      ) : (
+                        <span key={p.id} className="flex items-center gap-1">
+                          {i > 0 && <span className="opacity-30">›</span>}
+                          <span className={p.id === person.id ? "text-[#3d2611] font-black" : ""}>
+                            {p.name}
+                          </span>
+                        </span>
+                      )
+                    )}
+                  </div>
+                );
+              })()}
               <div className="flex flex-col items-center mb-8">
                 <div
                   className="w-28 h-28 rounded-full border-4 border-[#8b5a2b]/30 flex items-center justify-center mb-4 shadow-inner overflow-hidden"
@@ -496,22 +530,28 @@ export default function DetailSidebar({
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-white/50 p-3 rounded border border-[#8b5a2b]/10">
-                      <p className="text-[10px] text-[#8b5a2b] uppercase">
-                        Năm sinh
-                      </p>
-                      <p className="font-bold text-[#3d2611]">
-                        {formatDate(person.birthDate)}
-                      </p>
+                      <p className="text-[10px] text-[#8b5a2b] uppercase">Năm sinh</p>
+                      <p className="font-bold text-[#3d2611]">{formatDate(person.birthDate)}</p>
                     </div>
                     <div className="bg-white/50 p-3 rounded border border-[#8b5a2b]/10">
-                      <p className="text-[10px] text-[#8b5a2b] uppercase">
-                        Năm mất
-                      </p>
-                      <p className="font-bold text-[#3d2611]">
-                        {formatDate(person.deathDate)}
-                      </p>
+                      <p className="text-[10px] text-[#8b5a2b] uppercase">Năm mất</p>
+                      <p className="font-bold text-[#3d2611]">{formatDate(person.deathDate)}</p>
                     </div>
                   </div>
+                  {!person.isAlive && person.deathDate?.month > 0 && person.deathDate?.day > 0 && (
+                    <div className="mt-3 flex items-center gap-3 px-3 py-2.5 bg-[#3d2611]/5 border border-[#5d3a1a]/20">
+                      <svg width="15" height="15" fill="none" stroke="#8b5a2b" strokeWidth="1.8" viewBox="0 0 24 24">
+                        <path d="M12 2c0 0-4 3-4 7a4 4 0 0 0 8 0c0-4-4-7-4-7z"/>
+                        <path d="M12 13v9M9 22h6"/>
+                      </svg>
+                      <div>
+                        <p className="text-[10px] text-[#8b5a2b] uppercase font-bold tracking-wider">Ngày giỗ (dương lịch)</p>
+                        <p className="font-black text-[#3d2611] text-sm">
+                          {String(person.deathDate.day).padStart(2, "0")}/{String(person.deathDate.month).padStart(2, "0")} hàng năm
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </section>
 
                 {!person.isSpouse && person.spouses?.length > 0 && (

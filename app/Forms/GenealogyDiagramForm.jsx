@@ -43,6 +43,8 @@ export default function GenealogyDiagramForm({
   setTabIndex,
   fetchDataDetail,
   fetchDataDialog,
+  previewMember,
+  onPreviewConsumed,
 }) {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -167,6 +169,23 @@ export default function GenealogyDiagramForm({
         ),
       ].slice(0, 8)
     : [];
+
+  // Khi chuyển từ tab Thành viên sang Phả đồ với previewMember
+  useEffect(() => {
+    if (!previewMember) return;
+    setSelectedPerson(previewMember);
+    const nodeId = previewMember.isSpouse ? previewMember.spouseId : previewMember.id;
+    const ancestorIds = [];
+    const collectAncestors = (id) => {
+      const person = familyData.find((p) => p.id === id);
+      if (!person) return;
+      (person.parents || []).forEach((parentId) => { ancestorIds.push(parentId); collectAncestors(parentId); });
+    };
+    collectAncestors(nodeId);
+    if (ancestorIds.length > 0) setCollapsedIds((prev) => prev.filter((id) => !ancestorIds.includes(id)));
+    setPendingNavId(nodeId);
+    if (onPreviewConsumed) onPreviewConsumed();
+  }, [previewMember]);
 
   // Sau khi nodes re-render (do expand), navigate đến node đang chờ
   useEffect(() => {
@@ -429,10 +448,29 @@ export default function GenealogyDiagramForm({
         </ReactFlow>
       </div>
 
+      {/* Onboarding hint — chỉ hiện khi gia phả chưa có con cháu */}
+      {familyData?.length === 1 && (
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
+          <div className="bg-[#3d2611] text-[#f2e2ba] px-5 py-3.5 shadow-2xl flex items-start gap-3 max-w-xs animate-bounce">
+            <svg width="18" height="18" fill="none" stroke="#c4956a" strokeWidth="1.8" viewBox="0 0 24 24" className="shrink-0 mt-0.5">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 8v4M12 16h.01"/>
+            </svg>
+            <div>
+              <p className="text-xs font-black uppercase tracking-wider mb-1">Bắt đầu xây dựng phả đồ</p>
+              <p className="text-[10px] text-[#f2e2ba]/60 leading-relaxed">
+                Nhấn vào node <strong className="text-[#f2e2ba]/90">Tiên tổ</strong> → <strong className="text-[#f2e2ba]/90">Tùy chọn</strong> → <strong className="text-[#f2e2ba]/90">Thêm con cái</strong> để bắt đầu.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {selectedPerson && (
         <DetailSidebar
           person={selectedPerson}
           clanItem={clanItem}
+          familyData={familyData}
           onClose={() => setSelectedPerson(null)}
           fetchDataDialog={fetchDataDialog}
         />

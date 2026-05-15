@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useRef, useState, Suspense } from "react"
 import { useSearchParams } from "next/navigation";
 import GenealogyDetailForm from "@/app/Forms/GenealogyDetailForm";
 import GenealogyDiagramForm from "@/app/Forms/GenealogyDiagramForm";
+import MemberListForm from "@/app/Forms/MemberListForm";
 import { useRouter } from "next/navigation";
 import sweetalert2 from "@/configs/swal";
 import { GenealogyContext } from "@/context/GenealogyContext";
@@ -20,43 +21,60 @@ const NONE_ID =
 const GENDER_MAP = { 0: "male", 1: "female", 2: "undefined" };
 
 function TabBar({ tabIndex, setTabIndex, loadingClanDialog }) {
-  return (
-    <div className="flex border-b-2 border-[#5d3a1a] bg-[#e8d5b5] shrink-0 px-2">
-      <button
-        onClick={() => setTabIndex(0)}
-        className={`flex items-center gap-2 px-5 py-3 text-xs font-black uppercase tracking-widest transition-all border-b-2 -mb-[2px] ${
-          tabIndex === 0
-            ? "border-[#3d2611] text-[#3d2611]"
-            : "border-transparent text-[#5d3a1a]/45 hover:text-[#5d3a1a]"
-        }`}
-      >
+  const tabs = [
+    {
+      index: 0,
+      label: "Thông tin",
+      icon: (
         <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
           <polyline points="14 2 14 8 20 8" />
         </svg>
-        Thông tin
-      </button>
-
-      <button
-        onClick={() => setTabIndex(1)}
-        className={`flex items-center gap-2 px-5 py-3 text-xs font-black uppercase tracking-widest transition-all border-b-2 -mb-[2px] ${
-          tabIndex === 1
-            ? "border-[#3d2611] text-[#3d2611]"
-            : "border-transparent text-[#5d3a1a]/45 hover:text-[#5d3a1a]"
-        }`}
-      >
+      ),
+    },
+    {
+      index: 1,
+      label: "Phả đồ",
+      icon: (
         <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
-          <circle cx="12" cy="5" r="3" />
-          <circle cx="5" cy="19" r="3" />
-          <circle cx="19" cy="19" r="3" />
-          <line x1="12" y1="8" x2="5" y2="16" />
-          <line x1="12" y1="8" x2="19" y2="16" />
+          <circle cx="12" cy="5" r="3" /><circle cx="5" cy="19" r="3" /><circle cx="19" cy="19" r="3" />
+          <line x1="12" y1="8" x2="5" y2="16" /><line x1="12" y1="8" x2="19" y2="16" />
         </svg>
-        Phả đồ
-        {loadingClanDialog && (
-          <span className="w-3 h-3 border border-[#5d3a1a] border-t-transparent rounded-full animate-spin" />
-        )}
-      </button>
+      ),
+      loading: loadingClanDialog,
+    },
+    {
+      index: 2,
+      label: "Thành viên",
+      icon: (
+        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      ),
+      loading: loadingClanDialog,
+    },
+  ];
+
+  return (
+    <div className="flex border-b-2 border-[#5d3a1a] bg-[#e8d5b5] shrink-0 px-2">
+      {tabs.map((tab) => (
+        <button
+          key={tab.index}
+          onClick={() => setTabIndex(tab.index)}
+          className={`flex items-center gap-2 px-5 py-3 text-xs font-black uppercase tracking-widest transition-all border-b-2 -mb-[2px] ${
+            tabIndex === tab.index
+              ? "border-[#3d2611] text-[#3d2611]"
+              : "border-transparent text-[#5d3a1a]/45 hover:text-[#5d3a1a]"
+          }`}
+        >
+          {tab.icon}
+          {tab.label}
+          {tab.loading && (
+            <span className="w-3 h-3 border border-[#5d3a1a] border-t-transparent rounded-full animate-spin" />
+          )}
+        </button>
+      ))}
     </div>
   );
 }
@@ -72,6 +90,9 @@ function GenealogyDetailContent() {
   const [clanItem, setClanItem] = useState();
   const [loadingClanDetail, setLoadingClanDetail] = useState(true);
   const [loadingClanDialog, setLoadingClanDialog] = useState(true);
+  const [anniversaryMembers, setAnniversaryMembers] = useState([]);
+  const [showAnniversaryModal, setShowAnniversaryModal] = useState(false);
+  const [previewMember, setPreviewMember] = useState(null);
 
   // ── Auto-hide nav logic (diagram tab only) ──────────────────────────────
   const [navVisible, setNavVisible] = useState(true);
@@ -118,6 +139,21 @@ function GenealogyDetailContent() {
     }
     fetchDataDetail();
   }, [clanId]);
+
+  useEffect(() => {
+    if (!familyData || familyData.length === 0) return;
+    const currentMonth = new Date().getMonth() + 1;
+    const members = [
+      ...familyData,
+      ...familyData.flatMap((p) => p.spouses || []),
+    ].filter(
+      (p) => !p.isAlive && p.deathDate?.month === currentMonth && p.deathDate?.day > 0
+    );
+    if (members.length > 0) {
+      setAnniversaryMembers(members);
+      setShowAnniversaryModal(true);
+    }
+  }, [familyData]);
 
   const fetchDataDetail = async () => {
     try {
@@ -193,6 +229,7 @@ function GenealogyDetailContent() {
               spouseId: personId,
               generation,
               createdAt: spouseResult.data.createdAt,
+              isAlive: spouseResult.data.isAlive,
             };
           }),
         );
@@ -208,6 +245,7 @@ function GenealogyDetailContent() {
           spouses: spousesDetails,
           generation,
           createdAt: data.createdAt,
+          isAlive: data.isAlive,
         });
 
         if (data.children?.length > 0) {
@@ -236,6 +274,12 @@ function GenealogyDetailContent() {
 
   return (
     <div className="w-full h-screen bg-[#e8d5b5] flex flex-col overflow-hidden relative">
+      {showAnniversaryModal && (
+        <AnniversaryModal
+          members={anniversaryMembers}
+          onClose={() => setShowAnniversaryModal(false)}
+        />
+      )}
 
       {/*
         ── Navigation wrapper ──────────────────────────────────────────────
@@ -290,8 +334,100 @@ function GenealogyDetailContent() {
                 setTabIndex={setTabIndex}
                 fetchDataDialog={fetchDataDialog}
                 fetchDataDetail={fetchDataDetail}
+                previewMember={previewMember}
+                onPreviewConsumed={() => setPreviewMember(null)}
               />
         )}
+        {tabIndex === 2 && (
+          <MemberListForm
+            familyData={familyData}
+            loadingClanDialog={loadingClanDialog}
+            onSelectMember={(member) => {
+              setPreviewMember(member);
+              setTabIndex(1);
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function AnniversaryModal({ members, onClose }) {
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-[#f2e2ba] border-4 border-[#5d3a1a] w-full max-w-md shadow-[16px_16px_0px_rgba(61,38,17,0.25)] animate-in slide-in-from-bottom md:zoom-in duration-300">
+        {/* Header */}
+        <div className="bg-[#3d2611] px-5 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <svg width="20" height="20" fill="none" stroke="#c4956a" strokeWidth="1.8" viewBox="0 0 24 24">
+              <path d="M12 2c0 0-4 3-4 7a4 4 0 0 0 8 0c0-4-4-7-4-7z"/>
+              <path d="M12 13v9M9 22h6"/>
+            </svg>
+            <div>
+              <p className="text-[10px] text-[#f2e2ba]/40 uppercase tracking-[0.2em] font-black">Nhắc nhở</p>
+              <h3 className="text-[#f2e2ba] font-black uppercase tracking-wider text-sm">
+                Ngày giỗ tháng {currentMonth}
+              </h3>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-[#f2e2ba]/40 hover:text-[#f2e2ba] transition-colors"
+          >
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* List */}
+        <div className="p-4 space-y-2.5 max-h-72 overflow-y-auto custom-scrollbar">
+          {members.map((m, i) => {
+            const yearsSince = currentYear - (m.deathDate?.year || 0);
+            return (
+              <div key={i} className="flex items-center gap-3 p-3 bg-[#3d2611]/5 border border-[#5d3a1a]/15">
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: m.gender === "male" ? "#5d3a1a" : "#c4956a" }}
+                >
+                  <svg width="16" height="16" fill="none" stroke="#f2e2ba" strokeWidth="1.5" viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="3"/>
+                    <path d="M4 20c0-3 3.1-5 8-5s8 2 8 5"/>
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-black text-[#3d2611] uppercase text-sm truncate">{m.name}</p>
+                  <p className="text-[10px] text-[#5d3a1a]/55 font-semibold">
+                    {m.isSpouse ? (m.gender === "male" ? "Phu quân" : "Phu nhân") : (m.gender === "male" ? "Thành viên nam" : "Thành viên nữ")}
+                    {yearsSince > 0 && ` · Năm thứ ${yearsSince}`}
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-2xl font-black text-[#3d2611] leading-none">
+                    {String(m.deathDate.day).padStart(2, "0")}
+                  </p>
+                  <p className="text-[10px] text-[#5d3a1a]/50 font-semibold">
+                    tháng {m.deathDate.month}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Footer */}
+        <div className="px-4 pb-4">
+          <button
+            onClick={onClose}
+            className="w-full py-3 bg-[#5d3a1a] text-[#f2e2ba] font-black uppercase tracking-widest text-xs hover:bg-[#3d2611] transition-colors active:scale-95"
+          >
+            Đã biết
+          </button>
+        </div>
       </div>
     </div>
   );
